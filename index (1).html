@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workspace — by Loan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --s1:#0f0f0f;
+  --s2:#161616;
+  --s3:#1e1e1e;
+  --b:rgba(255,255,255,.06);
+  --bh:rgba(255,255,255,.14);
+  --text:#f0f0f0;
+  --sub:rgba(255,255,255,.4);
+  --dim:rgba(255,255,255,.15);
+  --acc:#6366f1;
+  --acc2:#a855f7;
+  --grn:#22c55e;
+  --red:#ef4444;
+  --yel:#f59e0b;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ══════════════════════════════════════
+   LANDING / HOME SCREEN
+══════════════════════════════════════ */
+#home{position:fixed;inset:0;display:flex;flex-direction:column;overflow-y:auto;background:var(--bg)}
+
+/* Animated bg grain */
+#home::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(99,102,241,.18) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(168,85,247,.08) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* TOP NAV */
+.ws-nav{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--b);position:sticky;top:0;background:rgba(8,8,8,.85);backdrop-filter:blur(20px);z-index:100;flex-shrink:0}
+.ws-nav-logo{font-size:18px;font-weight:800;letter-spacing:-.04em;display:flex;align-items:center;gap:6px}
+.ws-nav-logo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));flex-shrink:0}
+.ws-nav-logo span{background:linear-gradient(90deg,#fff 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ws-nav-right{display:flex;align-items:center;gap:12px}
+.ws-nav-by{font-size:11px;color:var(--dim)}
+.ws-nav-by strong{color:var(--sub)}
+
+/* HERO */
+.ws-hero{padding:80px 40px 60px;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.ws-hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--acc);letter-spacing:.06em}
+.ws-hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse2 2s infinite}
+@keyframes pulse2{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.ws-hero-title{font-size:clamp(40px,6vw,72px);font-weight:900;letter-spacing:-.04em;line-height:1.05;max-width:700px}
+.ws-hero-title .accent{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ws-hero-sub{font-size:16px;color:var(--sub);max-width:480px;line-height:1.6;font-weight:400}
+.ws-hero-cta{display:flex;gap:12px;margin-top:8px}
+.btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:-.01em}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(99,102,241,.4)}
+.btn-ghost{padding:14px 28px;background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:10px;color:var(--sub);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:flex;align-items:center}
+.btn-ghost:hover{border-color:var(--bh);color:var(--text);background:rgba(255,255,255,.08)}
+
+/* LIVE STATS BAR */
+.ws-stats-bar{padding:0 40px;position:relative;z-index:1;margin-bottom:60px}
+.ws-stats-inner{background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:16px;padding:24px 36px;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.ws-stat-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 20px;position:relative}
+.ws-stat-item+.ws-stat-item::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;background:var(--b)}
+.ws-stat-val{font-size:32px;font-weight:800;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+.ws-stat-lbl{font-size:10px;font-weight:600;color:var(--dim);letter-spacing:.08em}
+.ws-stat-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(34,197,94,.15);color:var(--grn)}
+.ws-stat-badge.time{background:rgba(99,102,241,.15);color:var(--acc);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+
+/* TOOLS SECTION */
+.ws-tools{padding:0 40px 80px;position:relative;z-index:1}
+.ws-section-header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.ws-section-title{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.1em}
+.ws-section-line{flex:1;height:1px;background:var(--b)}
+
+.ws-tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* Tool card */
+.tool-card{background:var(--s1);border:1px solid var(--b);border-radius:18px;padding:28px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;min-height:220px}
+.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;border-radius:18px}
+.tool-card:hover{transform:translateY(-4px);border-color:var(--bh)}
+.tool-card:hover::before{opacity:1}
+
+/* Loop Builder card */
+.tool-card.loop::before{background:radial-gradient(ellipse at top left,rgba(99,102,241,.12) 0%,transparent 60%)}
+.tool-card.loop:hover{border-color:rgba(99,102,241,.4);box-shadow:0 16px 48px rgba(99,102,241,.15)}
+.tool-card.loop .tool-icon-wrap{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)}
+
+/* Ideas card */
+.tool-card.ideas::before{background:radial-gradient(ellipse at top left,rgba(251,191,36,.08) 0%,transparent 60%)}
+.tool-card.ideas:hover{border-color:rgba(251,191,36,.3);box-shadow:0 16px 48px rgba(251,191,36,.1)}
+.tool-card.ideas .tool-icon-wrap{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2)}
+
+/* Calendar card */
+.tool-card.cal::before{background:radial-gradient(ellipse at top left,rgba(34,197,94,.1) 0%,transparent 60%)}
+.tool-card.cal:hover{border-color:rgba(34,197,94,.4);box-shadow:0 16px 48px rgba(34,197,94,.12)}
+.tool-card.cal .tool-icon-wrap{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
+.tool-card.cal .tool-card-action-lbl{color:var(--grn)}
+.tool-card.soon:hover{transform:none;border-color:var(--b);box-shadow:none}
+.tool-card.soon::before{display:none}
+.tool-card.soon .tool-icon-wrap{background:rgba(255,255,255,.05);border:1px solid var(--b)}
+
+.tool-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.tool-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;letter-spacing:.05em;width:fit-content}
+.tool-badge.live{background:rgba(34,197,94,.12);color:var(--grn)}
+.tool-badge.new{background:rgba(99,102,241,.15);color:var(--acc)}
+.tool-badge.soon{background:rgba(255,255,255,.06);color:var(--dim)}
+.tool-card-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.1}
+.tool-card-desc{font-size:13px;color:var(--sub);line-height:1.6;flex:1}
+.tool-card-action{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;border-top:1px solid var(--b)}
+.tool-card-action-lbl{font-size:12px;font-weight:600;color:var(--acc)}
+.tool-card.ideas .tool-card-action-lbl{color:var(--yel)}
+.tool-card.soon .tool-card-action-lbl{color:var(--dim)}
+.tool-arrow{font-size:18px;transition:transform .2s}
+.tool-card:not(.soon):hover .tool-arrow{transform:translateX(4px)}
+
+/* FOOTER */
+.ws-footer{padding:24px 40px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.ws-footer-left{font-size:11px;color:var(--dim)}
+.ws-footer-left strong{color:var(--sub)}
+.ws-footer-right{font-size:11px;color:var(--dim);display:flex;gap:16px}
+.ws-footer-right a{color:var(--dim);text-decoration:none}
+.ws-footer-right a:hover{color:var(--sub)}
+
+/* ══════════════════════════════════════
+   APP FRAME (quand on ouvre un outil)
+══════════════════════════════════════ */
+#app-frame{position:fixed;inset:0;z-index:200;display:none;flex-direction:column}
+#app-frame.open{display:flex}
+.af-topbar{height:48px;background:rgba(8,8,8,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);display:flex;align-items:center;gap:14px;padding:0 20px;flex-shrink:0}
+.af-back{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:7px;padding:6px 12px;color:var(--sub);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;flex-shrink:0}
+.af-back:hover{border-color:var(--bh);color:var(--text)}
+.af-breadcrumb{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.af-breadcrumb strong{color:var(--sub)}
+.af-iframe-wrap{flex:1;position:relative;overflow:hidden}
+#app-iframe{width:100%;height:100%;border:none;background:var(--bg);display:block}
+
+/* LOADING overlay */
+.af-loading{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:10;transition:opacity .4s}
+.af-loading.hidden{opacity:0;pointer-events:none}
+.af-loader{width:36px;height:36px;border-radius:50%;border:3px solid var(--b);border-top-color:var(--acc);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.af-loading-txt{font-size:13px;color:var(--sub)}
+
+/* TICKER scroll animation */
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ══ -->
+<div id="home">
+
+  <!-- Nav -->
+  <nav class="ws-nav">
+    <div class="ws-nav-logo">
+      <div class="ws-nav-logo-dot"></div>
+      <span>Workspace</span>
+    </div>
+    <div class="ws-nav-right">
+      <div id="yt-setup-zone" style="display:flex;align-items:center;gap:8px">
+        <input id="ws-api-key" type="password" placeholder="Clé API YouTube…" autocomplete="off" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;padding:7px 12px;outline:none;width:200px">
+        <input id="ws-yt-handle" placeholder="@handle ou UCxxx…" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;padding:7px 12px;outline:none;width:160px">
+        <button onclick="saveYTSetup()" style="padding:7px 14px;background:#6366f1;border:none;border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Connecter</button>
+      </div>
+      <button id="yt-edit-btn" onclick="toggleYTSetup()" style="display:none;padding:7px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer">⚙ Chaîne</button>
+      <div class="ws-nav-by">Créé par <strong>Loan</strong></div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="ws-hero">
+    <div class="ws-hero-badge">
+      <div class="ws-hero-badge-dot"></div>
+      Espace de travail YouTube — Actif
+    </div>
+    <div class="ws-hero-title">
+      Tout ce qu'il faut pour<br>faire des vidéos qui <span class="accent">cartonnent</span>
+    </div>
+    <div class="ws-hero-sub">
+      Un espace pensé pour structurer, planifier et analyser chaque vidéo. Pas de bruit. Juste les outils qui comptent.
+    </div>
+    <div class="ws-hero-cta">
+      <button class="btn-primary" onclick="scrollToTools()">Accéder aux outils →</button>
+      <a class="btn-ghost" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank">💡 Proposer une idée</a>
+    </div>
+  </div>
+
+  <!-- Live stats bar -->
+  <div class="ws-stats-bar">
+    <div class="ws-stats-inner">
+      <div class="ws-stat-item">
+        <div class="ws-stat-val" id="live-subs">—</div>
+        <div class="ws-stat-lbl">ABONNÉS</div>
+        <div class="ws-stat-badge">EN DIRECT</div>
+      </div>
+      <div class="ws-stat-item">
+        <div class="ws-stat-val" id="live-views">—</div>
+        <div class="ws-stat-lbl">VUES TOTALES</div>
+        <div class="ws-stat-badge">CUMULÉ</div>
+      </div>
+      <div class="ws-stat-item">
+        <div class="ws-stat-val" id="live-videos">—</div>
+        <div class="ws-stat-lbl">VIDÉOS PUBLIÉES</div>
+        <div class="ws-stat-badge">TOTAL</div>
+      </div>
+      <div class="ws-stat-item">
+        <div class="ws-stat-val" id="live-cd-val" style="font-size:clamp(20px,3vw,32px);letter-spacing:.02em;font-variant-numeric:tabular-nums">—</div>
+        <div class="ws-stat-lbl">PROCHAINE VIDÉO</div>
+        <div class="ws-stat-badge" id="live-cd-lbl" style="background:rgba(99,102,241,.15);color:var(--acc)">En attente</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tools section -->
+  <div class="ws-tools" id="tools-section">
+    <div class="ws-section-header">
+      <div class="ws-section-title">MES OUTILS</div>
+      <div class="ws-section-line"></div>
+    </div>
+
+    <div class="ws-tools-grid">
+
+      <!-- LOOP BUILDER -->
+      <div class="tool-card loop" onclick="openTool('loop-builder')">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">🔁</div>
+          <div class="tool-badge live">● DISPONIBLE</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Loop Builder</div>
+          <div class="tool-card-desc">Structure ta vidéo boucle par boucle. Timeline interactive, courbe émotionnelle, stats YouTube en direct.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">Ouvrir Loop Builder</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- CALENDRIER ÉDITORIAL -->
+      <div class="tool-card cal" onclick="openTool('calendar')">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">📅</div>
+          <div class="tool-badge live">● DISPONIBLE</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Calendrier Éditorial</div>
+          <div class="tool-card-desc">Planifie ta stratégie de contenu. Deadlines avec compte à rebours en direct, planning de tes longues et Shorts.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">Ouvrir le calendrier</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- IDEAS -->
+      <div class="tool-card ideas" onclick="openIdeas()">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">💡</div>
+          <div class="tool-badge new">NOUVEAU</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Idées pour Workspace</div>
+          <div class="tool-card-desc">Tu as une idée d'outil, de fonctionnalité ou d'amélioration ? Dis-le directement. Chaque suggestion est lue.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl" style="color:var(--yel)">Soumettre une idée</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- COMING SOON -->
+      <div class="tool-card soon">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">📊</div>
+          <div class="tool-badge soon">BIENTÔT</div>
+        </div>
+        <div>
+          <div class="tool-card-title" style="color:var(--sub)">Analytics Pro</div>
+          <div class="tool-card-desc">Analyse de rétention, prédiction de performance, comparaison de tes vidéos. En développement.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">En développement…</span>
+          <span class="tool-arrow" style="color:var(--dim)">→</span>
+        </div>
+      </div>
+
+      <div class="tool-card soon">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">🎬</div>
+          <div class="tool-badge soon">BIENTÔT</div>
+        </div>
+        <div>
+          <div class="tool-card-title" style="color:var(--sub)">Script Writer</div>
+          <div class="tool-card-desc">Génère et structure tes scripts vidéo avec les techniques narratives qui fonctionnent.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">En développement…</span>
+          <span class="tool-arrow" style="color:var(--dim)">→</span>
+        </div>
+      </div>
+
+      <div class="tool-card soon">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">🖼️</div>
+          <div class="tool-badge soon">BIENTÔT</div>
+        </div>
+        <div>
+          <div class="tool-card-title" style="color:var(--sub)">Thumbnail Lab</div>
+          <div class="tool-card-desc">Teste et compare tes miniatures avant publication. Analyse l'impact visuel et le CTR potentiel.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">En développement…</span>
+          <span class="tool-arrow" style="color:var(--dim)">→</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="ws-footer">
+    <div class="ws-footer-left">© 2026 <strong>Workspace</strong> — Créé par <strong>Loan</strong></div>
+    <div class="ws-footer-right">
+      <a href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank">💡 Proposer une idée</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP FRAME ══ -->
+<div id="app-frame">
+  <div class="af-topbar">
+    <button class="af-back" onclick="closeTool()">← Workspace</button>
+    <div class="af-breadcrumb">Workspace <span style="color:var(--b)">•</span> <strong id="af-label">Loop Builder</strong></div>
+  </div>
+  <div class="af-iframe-wrap">
+    <div class="af-loading" id="af-loading">
+      <div class="af-loader"></div>
+      <div class="af-loading-txt">Chargement de l'outil…</div>
+    </div>
+    <iframe id="app-iframe" src="" title="Outil"></iframe>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function fmtNum(n){
+  if(!n||isNaN(n))return '—';
+  n=+n;
+  if(n>=1e9)return(n/1e9).toFixed(1)+'G';
+  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
+  if(n>=1e3)return Math.round(n/1e3)+'k';
+  return n.toLocaleString('fr-FR');
+}
+
+function pad(n){return String(n).padStart(2,'0');}
+
+// ═══════════════════════════════════════
+// LIVE STATS (from localStorage cache via Loop Builder)
+// ═══════════════════════════════════════
+function loadStats(){
+  try{
+    const d=JSON.parse(localStorage.getItem('loopbuilder_ch')||'{}');
+    if(d.subs)document.getElementById('live-subs').textContent=fmtNum(d.subs);
+    if(d.views)document.getElementById('live-views').textContent=fmtNum(d.views);
+    if(d.videos)document.getElementById('live-videos').textContent=fmtNum(d.videos);
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+// COUNTDOWN — Prochaine vidéo planifiée
+// ═══════════════════════════════════════
+function tickCountdown(){
+  try{
+    const events=JSON.parse(localStorage.getItem('loopbuilder_plan')||'{}');
+    const now=Date.now();
+    const next=Object.entries(events)
+      .filter(([k,v])=>{
+        const dt=v.datetime?new Date(v.datetime):new Date(k+'T18:00:00');
+        return dt>now&&v.type!=='idea';
+      })
+      .sort(([,a],[,b])=>{
+        return new Date(a.datetime||a.date+'T18:00:00')-new Date(b.datetime||b.date+'T18:00:00');
+      })[0];
+
+    const valEl=document.getElementById('live-cd-val');
+    const lblEl=document.getElementById('live-cd-lbl');
+
+    if(!next){
+      if(valEl)valEl.textContent='—';
+      if(lblEl){lblEl.textContent='Aucune planifiée';lblEl.style.background='rgba(255,255,255,.06)';lblEl.style.color='var(--dim)';}
+      return;
+    }
+    const [dateKey,ev]=next;
+    const target=new Date(ev.datetime||dateKey+'T18:00:00');
+    const diff=target-Date.now();
+    if(diff<=0){
+      if(valEl)valEl.textContent="C'est l'heure !";
+      if(lblEl){lblEl.textContent=ev.title||'';lblEl.style.color='var(--grn)';}
+      return;
+    }
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    if(valEl)valEl.textContent=d>0?`${d}j ${pad(h)}h ${pad(m)}m`:`${pad(h)}:${pad(m)}:${pad(s)}`;
+    if(lblEl){
+      const title=ev.title?ev.title.slice(0,22)+(ev.title.length>22?'…':''):'Prochaine vidéo';
+      lblEl.textContent=title;
+      lblEl.style.background='rgba(99,102,241,.15)';
+      lblEl.style.color='var(--acc)';
+    }
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+// TOOL NAVIGATION
+// ═══════════════════════════════════════
+const TOOL_URLS={
+  'loop-builder':'loop-builder.html',
+  'calendar':'planning.html',
+};
+const TOOL_LABELS={
+  'loop-builder':'Loop Builder',
+  'calendar':'Calendrier Éditorial',
+};
+
+function openTool(id){
+  const url=TOOL_URLS[id];
+  if(!url)return;
+  const frame=document.getElementById('app-frame');
+  const iframe=document.getElementById('app-iframe');
+  const loading=document.getElementById('af-loading');
+  document.getElementById('af-label').textContent=TOOL_LABELS[id]||id;
+  loading.classList.remove('hidden');
+  iframe.src='';
+  frame.classList.add('open');
+  document.getElementById('home').style.overflow='hidden';
+  setTimeout(()=>{
+    iframe.src=url;
+    iframe.onload=()=>{setTimeout(()=>loading.classList.add('hidden'),300);};
+  },100);
+}
+
+function openIdeas(){
+  window.open('https://forms.gle/7ujaNXwwpGVXtPDC7','_blank');
+}
+
+function closeTool(){
+  const frame=document.getElementById('app-frame');
+  frame.classList.remove('open');
+  document.getElementById('app-iframe').src='';
+  document.getElementById('home').style.overflow='';
+  loadStats();
+  tickCountdown();
+}
+
+function scrollToTools(){
+  document.getElementById('tools-section').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+// YOUTUBE SETUP
+// ═══════════════════════════════════════
+function getApiKey(){try{return localStorage.getItem('loopbuilder_apikey')||'';}catch(e){return '';}}
+
+function toggleYTSetup(){
+  const zone=document.getElementById('yt-setup-zone');
+  zone.style.display=zone.style.display==='none'?'flex':'none';
+}
+
+function loadYTSetup(){
+  const key=getApiKey();
+  const handle=localStorage.getItem('loopbuilder_yt')||'';
+  if(key&&handle){
+    // Already configured — show edit button only
+    document.getElementById('yt-setup-zone').style.display='none';
+    document.getElementById('yt-edit-btn').style.display='';
+    document.getElementById('ws-api-key').value='•'.repeat(20);
+    document.getElementById('ws-yt-handle').value=handle;
+  }
+}
+
+async function saveYTSetup(){
+  const key=document.getElementById('ws-api-key').value.trim();
+  const handle=document.getElementById('ws-yt-handle').value.trim();
+  if(!key||key.includes('•')){alert('Entre ta clé API YouTube (AIza…)');return;}
+  if(!handle){alert('Entre ton @handle ou ID de chaîne');return;}
+  try{localStorage.setItem('loopbuilder_apikey',key);}catch(e){}
+  try{localStorage.setItem('loopbuilder_yt',handle);}catch(e){}
+  // Fetch channel data
+  try{
+    const h=handle.startsWith('@')?handle.slice(1):handle;
+    let channelId='';
+    if(handle.startsWith('UC')&&handle.length>20){channelId=handle;}
+    else{
+      const r1=await fetch('https://www.googleapis.com/youtube/v3/channels?part=id&forHandle='+encodeURIComponent(h)+'&key='+key);
+      const d1=await r1.json();
+      if(d1.error){alert('Erreur API: '+d1.error.message);return;}
+      if(d1.items&&d1.items.length)channelId=d1.items[0].id;
+      else{
+        const r2=await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q='+encodeURIComponent(h)+'&maxResults=1&key='+key);
+        const d2=await r2.json();
+        if(d2.items&&d2.items.length)channelId=d2.items[0].snippet.channelId||d2.items[0].id.channelId;
+      }
+    }
+    if(!channelId){alert('Chaîne introuvable');return;}
+    const r3=await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id='+channelId+'&key='+key);
+    const d3=await r3.json();
+    if(!d3.items||!d3.items.length){alert('Données introuvables');return;}
+    const sn=d3.items[0].snippet,st=d3.items[0].statistics;
+    const subs=+st.subscriberCount||0,views=+st.viewCount||0,videos=+st.videoCount||0,avg=videos>0?Math.round(views/videos):0;
+    const avatarUrl=sn.thumbnails?.high?.url||sn.thumbnails?.medium?.url||'';
+    const customUrl=sn.customUrl||handle;
+    try{localStorage.setItem('loopbuilder_ch',JSON.stringify({channelId,name:sn.title,avatarUrl,customUrl,subs,views,videos,avgViews:avg,ts:Date.now()}));}catch(e){}
+    loadStats();
+    document.getElementById('yt-setup-zone').style.display='none';
+    document.getElementById('yt-edit-btn').style.display='';
+  }catch(err){console.error(err);alert('Erreur réseau — vérifie ta clé API');}
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+loadYTSetup();
+loadStats();
+tickCountdown();
+setInterval(tickCountdown,1000);
+</script>
+</body>
+</html>
