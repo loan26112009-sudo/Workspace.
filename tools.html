@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tous les outils — Workspace</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080808">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
+  --b:rgba(255,255,255,.06);--bh:rgba(255,255,255,.14);
+  --text:#f0f0f0;--sub:rgba(255,255,255,.4);--dim:rgba(255,255,255,.15);
+  --acc:#6366f1;--acc2:#a855f7;--grn:#22c55e;--red:#ef4444;--yel:#f59e0b;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+body{overflow-y:auto}
+
+.tb{height:60px;display:flex;align-items:center;gap:0;border-bottom:1px solid var(--b);position:sticky;top:0;background:rgba(8,8,8,.9);backdrop-filter:blur(20px);z-index:100}
+.tb-back{display:flex;align-items:center;gap:7px;padding:0 24px;height:100%;color:var(--sub);font-size:13px;font-weight:600;text-decoration:none;border-right:1px solid var(--b);transition:all .15s}
+.tb-back:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tb-logo{padding:0 24px;font-size:16px;font-weight:800;letter-spacing:-.03em}
+.tb-logo span{background:linear-gradient(90deg,#fff,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.page-head{padding:56px 40px 36px;text-align:center}
+.page-title{font-size:clamp(28px,4vw,42px);font-weight:900;letter-spacing:-.03em}
+.page-sub{font-size:14px;color:var(--sub);margin-top:10px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6}
+
+.tools-wrap{padding:0 40px 80px;max-width:1200px;margin:0 auto}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:900px){.tools-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.tools-grid{grid-template-columns:1fr}}
+
+.tool-card{background:var(--s1);border:1px solid var(--b);border-radius:18px;padding:28px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;min-height:220px}
+.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;border-radius:18px}
+.tool-card:hover{transform:translateY(-4px);border-color:var(--bh)}
+.tool-card:hover::before{opacity:1}
+.tool-card:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+
+.tool-card.loop::before{background:radial-gradient(ellipse at top left,rgba(99,102,241,.12) 0%,transparent 60%)}
+.tool-card.loop:hover{border-color:rgba(99,102,241,.4);box-shadow:0 16px 48px rgba(99,102,241,.15)}
+.tool-card.loop .tool-icon-wrap{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)}
+
+.tool-card.cal::before{background:radial-gradient(ellipse at top left,rgba(34,197,94,.1) 0%,transparent 60%)}
+.tool-card.cal:hover{border-color:rgba(34,197,94,.4);box-shadow:0 16px 48px rgba(34,197,94,.12)}
+.tool-card.cal .tool-icon-wrap{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
+
+.tool-card.school::before{background:radial-gradient(ellipse at top left,rgba(6,182,212,.1) 0%,transparent 60%)}
+.tool-card.school:hover{border-color:rgba(6,182,212,.4);box-shadow:0 16px 48px rgba(6,182,212,.12)}
+.tool-card.school .tool-icon-wrap{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)}
+
+.tool-card.ideas::before{background:radial-gradient(ellipse at top left,rgba(251,191,36,.08) 0%,transparent 60%)}
+.tool-card.ideas:hover{border-color:rgba(251,191,36,.3);box-shadow:0 16px 48px rgba(251,191,36,.1)}
+.tool-card.ideas .tool-icon-wrap{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2)}
+
+.tool-card.soon{cursor:default;opacity:.55}
+.tool-card.soon:hover{transform:none;border-color:var(--b);box-shadow:none}
+.tool-card.soon::before{display:none}
+.tool-card.soon .tool-icon-wrap{background:rgba(255,255,255,.05);border:1px solid var(--b)}
+
+.tool-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.tool-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;letter-spacing:.05em;width:fit-content}
+.tool-badge.live{background:rgba(34,197,94,.12);color:var(--grn)}
+.tool-badge.new{background:rgba(99,102,241,.15);color:var(--acc)}
+.tool-badge.soon{background:rgba(255,255,255,.06);color:var(--dim)}
+.tool-card-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.1}
+.tool-card-desc{font-size:13px;color:var(--sub);line-height:1.6;flex:1}
+.tool-card-action{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;border-top:1px solid var(--b)}
+.tool-card-action-lbl{font-size:12px;font-weight:600;color:var(--acc)}
+.tool-card.ideas .tool-card-action-lbl{color:var(--yel)}
+.tool-card.soon .tool-card-action-lbl{color:var(--dim)}
+.tool-arrow{font-size:18px;transition:transform .2s}
+.tool-card:not(.soon):hover .tool-arrow{transform:translateX(4px)}
+</style>
+</head>
+<body>
+
+<div class="tb">
+  <a href="index.html" class="tb-back">← Workspace</a>
+  <div class="tb-logo">Tous les <span>outils</span></div>
+</div>
+
+<div class="page-head">
+  <div class="page-title">La boîte à outils complète</div>
+  <div class="page-sub">Tout ce qu'il te faut pour gérer YouTube et ton année scolaire, au même endroit.</div>
+</div>
+
+<div class="tools-wrap">
+  <div class="tools-grid">
+
+    <div class="tool-card loop" onclick="location.href='loop-builder.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">🔁</div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Loop Builder</div>
+        <div class="tool-card-desc">Structure ta vidéo boucle par boucle. Timeline interactive, courbe émotionnelle, stats YouTube en direct.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl">Ouvrir Loop Builder</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card cal" onclick="location.href='planning.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">📅</div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Calendrier Éditorial</div>
+        <div class="tool-card-desc">Planifie ta stratégie de contenu. Deadlines avec compte à rebours en direct, planning de tes longues et Shorts.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl">Ouvrir le calendrier</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card school" onclick="location.href='school.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">📚</div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Organisation Scolaire</div>
+        <div class="tool-card-desc">Ton année organisée en un coup d'œil : DST à venir, moyenne calculée, et l'équilibre parfait entre l'école et YouTube.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl" style="color:#06b6d4">Ouvrir le dashboard</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card" onclick="location.href='index.html#proj-mgr-section'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">📋</div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Mes Projets</div>
+        <div class="tool-card-desc">Gestionnaire de projets vidéo : miniatures, notes, A/B tests, captures annotées, liens et suivi du montage.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl">Voir mes projets</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card ideas" onclick="window.open('https://forms.gle/7ujaNXwwpGVXtPDC7','_blank')" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">💡</div>
+        <div class="tool-badge new">NOUVEAU</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Idées pour Workspace</div>
+        <div class="tool-card-desc">Tu as une idée d'outil, de fonctionnalité ou d'amélioration ? Dis-le directement. Chaque suggestion est lue.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl" style="color:var(--yel)">Soumettre une idée</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card soon">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">📊</div>
+        <div class="tool-badge soon">BIENTÔT</div>
+      </div>
+      <div>
+        <div class="tool-card-title" style="color:var(--sub)">Analytics Pro</div>
+        <div class="tool-card-desc">Analyse de rétention, prédiction de performance, comparaison de tes vidéos. En développement.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl">En développement…</span>
+        <span class="tool-arrow" style="color:var(--dim)">→</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.tool-card[role="button"]').forEach(card=>{
+  card.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}
+  });
+});
+</script>
+</body>
+</html>
