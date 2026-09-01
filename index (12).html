@@ -1,0 +1,2925 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workspace — by Loan</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Workspace">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --s1:#0f0f0f;
+  --s2:#161616;
+  --s3:#1e1e1e;
+  --b:rgba(255,255,255,.06);
+  --bh:rgba(255,255,255,.14);
+  --text:#f0f0f0;
+  --sub:rgba(255,255,255,.4);
+  --dim:rgba(255,255,255,.15);
+  --acc:#6366f1;
+  --acc2:#a855f7;
+  --grn:#22c55e;
+  --red:#ef4444;
+  --yel:#f59e0b;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ══════════════════════════════════════
+   LANDING / HOME SCREEN
+══════════════════════════════════════ */
+#home{position:fixed;inset:0;display:flex;flex-direction:column;overflow-y:auto;background:var(--bg)}
+
+/* Animated bg grain */
+#home::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(99,102,241,.18) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 90% 80%,rgba(168,85,247,.08) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* TOP NAV */
+.ws-nav{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--b);position:sticky;top:0;background:rgba(8,8,8,.85);backdrop-filter:blur(20px);z-index:100;flex-shrink:0}
+.ws-nav-logo{font-size:18px;font-weight:800;letter-spacing:-.04em;display:flex;align-items:center;gap:6px}
+.ws-nav-logo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));flex-shrink:0}
+.ws-nav-logo span{background:linear-gradient(90deg,#fff 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ws-nav-right{display:flex;align-items:center;gap:12px}
+.ws-nav-by{font-size:11px;color:var(--dim)}
+.ws-nav-by strong{color:var(--sub)}
+
+/* HERO */
+/* Hero */
+.ws-hero{padding:40px 40px 32px;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.ws-hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--acc);letter-spacing:.06em}
+.ws-hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse2 2s infinite}
+@keyframes pulse2{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.ws-hero-title{font-size:clamp(30px,4.2vw,48px);font-weight:900;letter-spacing:-.04em;line-height:1.1;max-width:680px}
+.ws-hero-title .accent{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ws-hero-sub{font-size:15px;color:var(--sub);max-width:560px;line-height:1.65;font-weight:400}
+.ws-hero-cta{display:flex;gap:12px;margin-top:6px}
+
+/* App bar right side */
+.icon-btn{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--b);color:var(--sub);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icon-btn:hover{background:rgba(255,255,255,.1);color:var(--text);border-color:var(--bh)}
+.icon-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* YouTube setup panel */
+#yt-setup-zone{padding:16px 40px 0;position:relative;z-index:1}
+.yt-setup-inner{background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:14px;padding:16px 20px;max-width:640px;margin:0 auto}
+.yt-setup-label{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px}
+.yt-setup-row{display:flex;gap:8px;flex-wrap:wrap}
+.yt-setup-input{flex:1;min-width:140px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;outline:none}
+.yt-setup-input:focus{border-color:var(--acc)}
+
+/* App home greeting + stats */
+.app-home{padding:8px 40px 20px;position:relative;z-index:1}
+.app-pressure{font-size:12px;font-weight:600;color:var(--dim);letter-spacing:.06em;min-height:20px;transition:opacity .7s;opacity:0;margin-bottom:0;text-align:center}
+
+.btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:-.01em}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(99,102,241,.4)}
+.btn-primary:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.btn-ghost{padding:14px 28px;background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:10px;color:var(--sub);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:flex;align-items:center}
+.btn-ghost:hover{border-color:var(--bh);color:var(--text);background:rgba(255,255,255,.08)}
+.btn-ghost:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* Stat strip — the app's live pulse, touch-friendly */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+.stat-tile{background:var(--s1);border:1px solid var(--b);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;min-height:88px;transition:border-color .15s}
+.stat-tile:hover{border-color:var(--bh)}
+.stat-tile-val{font-size:26px;font-weight:800;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat-tile-lbl{font-size:11px;font-weight:600;color:var(--dim);letter-spacing:.04em}
+.stat-tile-cd{gap:6px}
+.stat-tile-actions{display:flex;gap:6px}
+.mode-btn{font-size:10px;font-weight:700;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.04em;transition:all .15s;min-height:26px}
+.mode-btn:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.mode-btn-stress{background:rgba(239,68,68,.15);color:#ef4444}
+.mode-btn-stress:hover{background:rgba(239,68,68,.28)}
+.mode-btn-soft{background:rgba(34,197,94,.12);color:#22c55e}
+.mode-btn-soft:hover{background:rgba(34,197,94,.24)}
+
+@media (max-width:820px){
+  .stat-strip{grid-template-columns:repeat(2,1fr)}
+  .app-home{padding:8px 20px 16px}
+  .ws-hero{padding:28px 20px 24px}
+  #yt-setup-zone{padding:14px 20px 0}
+}
+
+/* TOOLS SECTION */
+/* ══════════════════════════════════════
+   PROJECT MANAGER — Mes Projets — BOOSTED
+══════════════════════════════════════ */
+.proj-mgr{padding:0 40px 8px;position:relative;z-index:1}
+.pm-count-badge{background:rgba(99,102,241,.15);color:var(--acc);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;min-width:24px;text-align:center;border:1px solid rgba(99,102,241,.25)}
+.pm-new-btn{display:flex;align-items:center;gap:6px;padding:10px 20px !important;font-size:12.5px !important;position:relative;overflow:hidden}
+.pm-new-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%);transition:transform .5s}
+.pm-new-btn:hover::before{transform:translateX(100%)}
+.pm-new-plus{font-size:15px;font-weight:900;line-height:1}
+
+/* Toolbar */
+.pm-toolbar{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.pm-search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
+.pm-search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);font-size:14px;pointer-events:none}
+.pm-search{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--b);border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:12.5px;padding:9px 14px 9px 34px;outline:none;transition:all .15s}
+.pm-search:focus{border-color:rgba(99,102,241,.4);background:rgba(255,255,255,.07)}
+.pm-search::placeholder{color:rgba(255,255,255,.22)}
+.pm-filters{display:flex;gap:7px}
+.pm-filter-chip{padding:8px 14px;border-radius:9px;border:1px solid var(--b);background:rgba(255,255,255,.04);color:rgba(255,255,255,.45);font-size:11.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.pm-filter-chip:hover{border-color:var(--bh);color:#fff}
+.pm-filter-chip.sel{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.4);color:var(--acc)}
+
+.proj-mgr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:8px}
+.proj-mgr-empty{background:radial-gradient(ellipse at center,rgba(99,102,241,.06) 0%,transparent 70%),var(--s1);border:1px dashed rgba(255,255,255,.12);border-radius:20px;padding:56px 24px;text-align:center;position:relative;overflow:hidden}
+.pm-empty-orb{width:64px;height:64px;margin:0 auto;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));opacity:.9;filter:blur(2px);animation:pmOrbFloat 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:26px}
+.pm-empty-orb::after{content:'🎬';filter:blur(0)}
+@keyframes pmOrbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+
+/* ── FEATURED CARD — "reprendre où j'en étais" ── */
+.pm-featured{background:linear-gradient(135deg,rgba(99,102,241,.14) 0%,rgba(168,85,247,.08) 100%);border:1px solid rgba(99,102,241,.3);border-radius:20px;padding:4px;margin-bottom:20px;position:relative;overflow:hidden;animation:pmFadeUp .5s cubic-bezier(.16,1,.3,1)}
+.pm-featured::before{content:'';position:absolute;inset:-2px;background:conic-gradient(from 0deg,transparent,rgba(99,102,241,.5),transparent 30%);animation:pmSpin 4s linear infinite;opacity:.6}
+@keyframes pmSpin{to{transform:rotate(360deg)}}
+.pm-featured-inner{position:relative;background:#0c0c14;border-radius:17px;padding:22px;display:flex;gap:22px;align-items:center;z-index:1}
+.pm-featured-label{position:absolute;top:14px;left:22px;font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--acc);display:flex;align-items:center;gap:6px}
+.pm-featured-label-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse2 2s infinite}
+.pm-featured-thumb{width:180px;height:101px;border-radius:12px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:32px;opacity:1;position:relative}
+.pm-featured-thumb img{width:100%;height:100%;object-fit:cover}
+.pm-featured-body{flex:1;display:flex;flex-direction:column;gap:8px;padding-top:16px}
+.pm-featured-title{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.02em}
+.pm-featured-meta{font-size:12px;color:rgba(255,255,255,.4)}
+.pm-featured-cta{padding:11px 22px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;width:fit-content;margin-top:4px}
+.pm-featured-cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(99,102,241,.4)}
+
+@keyframes pmFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pmCardIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.pm-card{background:var(--s1);border:1px solid var(--b);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:all .25s cubic-bezier(.16,1,.3,1);position:relative;animation:pmCardIn .4s cubic-bezier(.16,1,.3,1) both}
+.pm-card::after{content:'';position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(135deg,transparent,transparent);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;transition:background .25s;z-index:2}
+.pm-card:hover{border-color:transparent;transform:translateY(-4px) scale(1.012);box-shadow:0 20px 48px rgba(0,0,0,.5),0 0 0 1px rgba(99,102,241,.15)}
+.pm-card:hover::after{background:linear-gradient(135deg,rgba(99,102,241,.6),rgba(168,85,247,.4))}
+.pm-card.urgent-card:hover{box-shadow:0 20px 48px rgba(0,0,0,.5),0 0 0 1px rgba(239,68,68,.25)}
+.pm-card.urgent-card:hover::after{background:linear-gradient(135deg,rgba(239,68,68,.6),rgba(245,158,11,.4))}
+
+.pm-thumb{width:100%;height:150px;background:linear-gradient(135deg,#1a1a2e,#16213e);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.pm-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.pm-card:hover .pm-thumb img{transform:scale(1.08)}
+.pm-thumb::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.5) 100%);opacity:0;transition:opacity .2s;z-index:1}
+.pm-card:hover .pm-thumb::before{opacity:1}
+.pm-thumb-placeholder{font-size:38px;opacity:.14;transition:all .3s}
+.pm-card:hover .pm-thumb-placeholder{opacity:.22;transform:scale(1.1)}
+.pm-thumb-edit{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:9px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(-4px);transition:all .2s;z-index:5}
+.pm-card:hover .pm-thumb-edit{opacity:1;transform:translateY(0)}
+.pm-thumb-edit:hover{background:var(--acc);border-color:var(--acc)}
+.pm-del{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:9px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:rgba(255,120,120,.85);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(-4px);transition:all .2s;z-index:5}
+.pm-card:hover .pm-del{opacity:1;transform:translateY(0)}
+.pm-del:hover{background:#ef4444;color:#fff;border-color:#ef4444}
+
+/* Urgency pulse dot on thumb */
+.pm-urgent-dot{position:absolute;bottom:8px;left:8px;display:flex;align-items:center;gap:5px;background:rgba(239,68,68,.9);backdrop-filter:blur(8px);padding:4px 9px;border-radius:20px;font-size:9.5px;font-weight:800;color:#fff;letter-spacing:.03em;z-index:5;box-shadow:0 4px 14px rgba(239,68,68,.4)}
+.pm-urgent-pulse{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse2 1.2s infinite}
+
+.pm-body{padding:15px 16px 14px;display:flex;flex-direction:column;gap:11px;flex:1}
+.pm-title{font-size:15px;font-weight:700;color:#fff;background:none;border:none;outline:none;font-family:'Inter',sans-serif;width:100%;padding:3px 0;border-bottom:1px solid transparent;transition:border-color .15s}
+.pm-title:hover{border-bottom-color:rgba(255,255,255,.1)}
+.pm-title:focus{border-bottom-color:var(--acc)}
+.pm-title-display{font-size:15px;font-weight:700;color:#fff;line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pm-status-badge{font-size:9.5px;font-weight:700;padding:4px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.pm-status-badge.status-idea{background:rgba(251,191,36,.13);color:#f59e0b}
+.pm-status-badge.status-progress{background:rgba(99,102,241,.13);color:var(--acc)}
+.pm-status-badge.status-published{background:rgba(34,197,94,.13);color:#22c55e}
+.pm-meta-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pm-badge{font-size:10px;font-weight:700;padding:4px 9px;border-radius:6px;letter-spacing:.02em;white-space:nowrap;transition:all .15s}
+.pm-badge.deadline-ok{background:rgba(34,197,94,.12);color:#22c55e}
+.pm-badge.deadline-soon{background:rgba(245,158,11,.15);color:#f59e0b}
+.pm-badge.deadline-urgent{background:rgba(239,68,68,.15);color:#ef4444;animation:pmBadgePulse 2s infinite}
+@keyframes pmBadgePulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 4px rgba(239,68,68,0)}}
+.pm-badge.deadline-none{background:rgba(255,255,255,.06);color:rgba(255,255,255,.35)}
+.pm-badge.loops{background:rgba(99,102,241,.12);color:var(--acc)}
+.pm-badge.linked{background:rgba(34,197,94,.1);color:#22c55e;cursor:default}
+.pm-badge.unlinked{background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);cursor:pointer;border:1px dashed rgba(255,255,255,.15)}
+.pm-badge.unlinked:hover{color:#fff;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.09);transform:translateY(-1px)}
+
+/* Progress bar — momentum indicator */
+.pm-progress-wrap{display:flex;align-items:center;gap:8px}
+.pm-progress-bar{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.pm-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s cubic-bezier(.16,1,.3,1)}
+.pm-progress-txt{font-size:9.5px;color:rgba(255,255,255,.3);font-weight:600;white-space:nowrap}
+
+.pm-notes{background:rgba(255,255,255,.035);border:1px solid transparent;border-radius:9px;color:rgba(255,255,255,.6);font-family:'Inter',sans-serif;font-size:11.5px;padding:9px 11px;outline:none;resize:none;min-height:46px;line-height:1.5;transition:all .15s}
+.pm-notes:hover{background:rgba(255,255,255,.05)}
+.pm-notes:focus{border-color:rgba(99,102,241,.3);background:rgba(255,255,255,.06)}
+.pm-notes::placeholder{color:rgba(255,255,255,.18)}
+
+.pm-footer{display:flex;align-items:center;gap:8px;padding-top:5px;border-top:1px solid var(--b);margin-top:auto}
+.pm-open-btn{flex:1;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:var(--acc);font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;padding:9px 10px;border-radius:9px;cursor:pointer;text-decoration:none;text-align:center;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.pm-open-btn:hover{background:var(--acc);color:#fff;transform:translateY(-1px);box-shadow:0 6px 18px rgba(99,102,241,.35)}
+.pm-open-btn-alt{background:rgba(255,255,255,.05);border-color:var(--b);color:rgba(255,255,255,.5)}
+.pm-open-btn-alt:hover{background:rgba(255,255,255,.1);color:#fff;box-shadow:none}
+.pm-open-btn .pm-arrow{transition:transform .2s}
+.pm-open-btn:hover .pm-arrow{transform:translateX(3px)}
+
+/* Modals */
+.pm-modal-bg{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.pm-modal-bg.open{display:flex;animation:pmFadeUp .25s ease-out}
+.pm-modal{background:#111;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:26px;width:420px;max-width:92vw;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.pm-modal-title{font-size:16px;font-weight:800;color:#fff}
+.pm-field{display:flex;flex-direction:column;gap:6px}
+.pm-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em}
+.pm-input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .15s}
+.pm-input:focus{border-color:var(--acc)}
+.pm-modal-btns{display:flex;gap:10px;margin-top:4px}
+.pm-modal-save{flex:1;padding:11px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.pm-modal-save:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,.4)}
+.pm-modal-cancel{padding:11px 18px;background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:9px;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* ══════════════════════════════════════
+   PROJECT DETAIL — page plein écran, thème clair et coloré
+══════════════════════════════════════ */
+#pm-detail-modal{background:rgba(10,10,20,.85)}
+.pm-detail-box{background:linear-gradient(160deg,#f7f8fc 0%,#eef0fa 40%,#e8ecfb 100%);border:none;border-radius:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:none;color:#1a1a2e;animation:pmPageIn .3s cubic-bezier(.16,1,.3,1)}
+@keyframes pmPageIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+
+.pm-detail-header{display:flex;align-items:flex-start;gap:18px;padding:26px 40px 20px;border-bottom:1px solid rgba(99,102,241,.12);background:rgba(255,255,255,.5);backdrop-filter:blur(10px);flex-wrap:wrap}
+.pm-detail-thumb-wrap{width:88px;height:88px;border-radius:16px;background:linear-gradient(135deg,#6366f1,#a855f7);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 8px 24px rgba(99,102,241,.25)}
+.pm-detail-thumb-wrap:hover{transform:scale(1.04) rotate(-1deg)}
+.pm-detail-thumb-wrap img{width:100%;height:100%;object-fit:cover}
+.pmd-title-input{background:none;border:none;outline:none;color:#161625;font-family:'Inter',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.03em;width:100%;padding:4px 0;border-bottom:2px solid transparent;transition:border-color .15s}
+.pmd-title-input::placeholder{color:rgba(22,22,37,.25)}
+.pmd-title-input:focus{border-bottom-color:#6366f1}
+.pmd-status-select{background:#fff;border:1px solid rgba(99,102,241,.25);border-radius:8px;color:#4338ca;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;outline:none;cursor:pointer;box-shadow:0 2px 6px rgba(99,102,241,.08)}
+.pmd-status-select option{background:#fff;color:#1a1a2e}
+.pmd-mini-input{background:#fff;border:1px solid rgba(99,102,241,.2);border-radius:8px;color:#4338ca;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:7px 12px;outline:none}
+.pm-detail-close{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid rgba(99,102,241,.15);color:#6b7280;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.pm-detail-close:hover{background:#fef2f2;color:#ef4444;border-color:rgba(239,68,68,.3)}
+.pmd-save-btn{padding:10px 22px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(34,197,94,.3);transition:all .2s;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.pmd-save-btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(34,197,94,.4)}
+.pmd-save-status{font-size:11px;color:#16a34a;font-weight:700;opacity:0;transition:opacity .3s;flex-shrink:0}
+.pmd-save-status.show{opacity:1}
+
+.pmd-video-row{display:flex;align-items:center;gap:10px;padding:16px 40px;border-bottom:1px solid rgba(99,102,241,.1);background:rgba(255,255,255,.35)}
+.pmd-video-ico{font-size:16px;flex-shrink:0}
+.pmd-video-input{flex:1;background:#fff;border:1px solid rgba(99,102,241,.2);border-radius:9px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:13px;padding:9px 13px;outline:none;transition:border-color .15s}
+.pmd-video-input::placeholder{color:rgba(22,22,37,.3)}
+.pmd-video-input:focus{border-color:#6366f1}
+.pmd-watch-link{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:all .15s;box-shadow:0 4px 12px rgba(239,68,68,.25)}
+.pmd-watch-link:hover{transform:translateY(-1px)}
+.pmd-deadline-sync-note{font-size:10.5px;color:#6366f1;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:4px}
+
+.pmd-tabs{display:flex;gap:2px;padding:0 40px;border-bottom:1px solid rgba(99,102,241,.1);overflow-x:auto;flex-shrink:0;background:rgba(255,255,255,.25)}
+.pmd-tabs::-webkit-scrollbar{display:none}
+.pmd-tab{padding:14px 18px;background:none;border:none;color:rgba(22,22,37,.45);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .15s}
+.pmd-tab:hover{color:#4338ca}
+.pmd-tab.on{color:#6366f1;border-bottom-color:#6366f1}
+
+.pmd-body{flex:1;overflow-y:auto;padding:28px 40px 60px;max-width:1000px;margin:0 auto;width:100%}
+.pmd-body::-webkit-scrollbar{width:6px}
+.pmd-body::-webkit-scrollbar-thumb{background:rgba(99,102,241,.2);border-radius:4px}
+.pmd-panel{display:none;flex-direction:column;gap:16px}
+.pmd-panel.on{display:flex;animation:pmFadeUp .3s ease-out}
+.pmd-panel-hint{font-size:13px;color:rgba(22,22,37,.5);line-height:1.6;background:rgba(99,102,241,.06);border-left:3px solid #6366f1;padding:12px 16px;border-radius:0 10px 10px 0}
+.pmd-textarea{width:100%;min-height:280px;background:#fff;border:1px solid rgba(99,102,241,.18);border-radius:14px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:14px;line-height:1.75;padding:18px 20px;outline:none;resize:vertical;transition:border-color .15s;box-shadow:0 2px 10px rgba(0,0,0,.03)}
+.pmd-textarea:focus{border-color:#6366f1;box-shadow:0 4px 16px rgba(99,102,241,.1)}
+.pmd-textarea-sm{min-height:110px}
+.pmd-textarea::placeholder{color:rgba(22,22,37,.25)}
+
+.pmd-quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pmd-quiz-item{display:flex;flex-direction:column;gap:8px;background:#fff;border-radius:14px;padding:16px;border:1px solid rgba(99,102,241,.12);box-shadow:0 2px 10px rgba(0,0,0,.03)}
+.pmd-quiz-q{font-size:13.5px;font-weight:800;color:#4338ca}
+
+.pmd-add-btn{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(168,85,247,.08));border:2px dashed rgba(99,102,241,.35);border-radius:14px;color:#6366f1;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;padding:16px;cursor:pointer;transition:all .2s;width:100%}
+.pmd-add-btn:hover{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(168,85,247,.14));border-style:solid;transform:translateY(-1px)}
+
+.pmd-media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.pmd-media-card{background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:14px;overflow:hidden;position:relative;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.pmd-media-card:hover{border-color:#6366f1;transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,.15)}
+.pmd-media-card img{width:100%;height:120px;object-fit:cover;display:block;cursor:pointer}
+.pmd-media-card-body{padding:10px 12px;display:flex;align-items:center;gap:6px}
+.pmd-media-label{flex:1;background:none;border:none;outline:none;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;min-width:0}
+.pmd-media-pct{width:52px;background:#f3f4fd;border:1px solid rgba(99,102,241,.2);border-radius:7px;color:#4338ca;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:800;padding:5px 6px;outline:none;text-align:center}
+.pmd-media-del{width:24px;height:24px;border-radius:7px;background:#fef2f2;border:none;color:#ef4444;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pmd-media-del:hover{background:#ef4444;color:#fff}
+.pmd-media-card.winner{border-color:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
+.pmd-media-winner-tag{position:absolute;top:8px;left:8px;background:#22c55e;color:#fff;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:6px;z-index:2;box-shadow:0 2px 8px rgba(34,197,94,.3)}
+
+.pmd-link-add-row{display:flex;gap:10px}
+.pmd-links-list{display:flex;flex-direction:column;gap:10px}
+.pmd-link-item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.pmd-link-ico{font-size:16px;flex-shrink:0}
+.pmd-link-label{font-size:13px;font-weight:800;color:#1a1a2e;min-width:100px}
+.pmd-link-url{flex:1;font-size:12px;color:#6366f1;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmd-link-url:hover{text-decoration:underline}
+.pmd-link-del{width:26px;height:26px;border-radius:7px;background:#fef2f2;border:none;color:#ef4444;font-size:14px;cursor:pointer;flex-shrink:0}
+.pmd-link-del:hover{background:#ef4444;color:#fff}
+
+/* RPM Calculator */
+.pmd-rpm-box{background:linear-gradient(135deg,#fff,#f5f6ff);border:1px solid rgba(99,102,241,.15);border-radius:18px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,.04)}
+.pmd-rpm-inputs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.pmd-rpm-field{display:flex;flex-direction:column;gap:6px}
+.pmd-rpm-label{font-size:11px;font-weight:700;color:#6366f1;letter-spacing:.04em}
+.pmd-rpm-input{background:#fff;border:2px solid rgba(99,102,241,.2);border-radius:12px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:20px;font-weight:800;padding:12px 16px;outline:none;transition:border-color .15s}
+.pmd-rpm-input:focus{border-color:#6366f1}
+.pmd-rpm-result{display:flex;align-items:center;justify-content:center;gap:20px;padding:24px;background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(99,102,241,.06));border-radius:16px;flex-wrap:wrap}
+.pmd-rpm-result-val{font-size:42px;font-weight:900;background:linear-gradient(135deg,#22c55e,#16a34a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.03em}
+.pmd-rpm-result-lbl{font-size:12px;color:rgba(22,22,37,.5);font-weight:600}
+.pmd-rpm-scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.pmd-rpm-scenario{background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:12px;padding:14px;text-align:center}
+.pmd-rpm-scenario-views{font-size:11px;color:rgba(22,22,37,.4);font-weight:600;margin-bottom:4px}
+.pmd-rpm-scenario-earn{font-size:18px;font-weight:800;color:#16a34a}
+
+/* Idées de titres */
+.pmd-titres-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.pmd-titre-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.03);transition:all .15s}
+.pmd-titre-item:hover{border-color:rgba(99,102,241,.35);transform:translateX(2px)}
+.pmd-titre-num{width:26px;height:26px;border-radius:8px;background:rgba(99,102,241,.12);color:#6366f1;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pmd-titre-text{flex:1;background:none;border:none;outline:none;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600}
+.pmd-titre-del{width:24px;height:24px;border-radius:7px;background:#fef2f2;border:none;color:#ef4444;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px}
+.pmd-titre-del:hover{background:#ef4444;color:#fff}
+.pmd-titre-add-row{display:flex;gap:10px;align-items:stretch}
+.pmd-titre-input{flex:1;background:#fff;border:2px solid rgba(99,102,241,.2);border-radius:12px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border-color .15s}
+.pmd-titre-input:focus{border-color:#6366f1;box-shadow:0 4px 16px rgba(99,102,241,.1)}
+.pmd-titre-input::placeholder{color:rgba(22,22,37,.25)}
+
+/* A/B Test Groups — YouTube Studio style */
+.pmd-abtest-group{background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.pmd-abtest-group-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.pmd-abtest-group-label{font-size:14px;font-weight:800;color:#4338ca;flex:1}
+.pmd-abtest-group-del{padding:5px 12px;background:#fef2f2;border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#ef4444;font-size:11px;font-weight:700;cursor:pointer}
+.pmd-abtest-group-del:hover{background:#ef4444;color:#fff}
+.pmd-abtest-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pmd-ab-slot{border:2px dashed rgba(99,102,241,.25);border-radius:14px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(168,85,247,.03))}
+.pmd-ab-slot:hover{border-color:#6366f1;background:rgba(99,102,241,.08);transform:translateY(-2px)}
+.pmd-ab-slot.has-img{border-style:solid;border-color:rgba(99,102,241,.2)}
+.pmd-ab-slot.has-img:hover{box-shadow:0 8px 24px rgba(99,102,241,.2)}
+.pmd-ab-slot.winner-slot{border-color:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.2)}
+.pmd-ab-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px}
+.pmd-ab-slot-letter{font-size:28px;font-weight:900;color:rgba(99,102,241,.3)}
+.pmd-ab-slot-label{font-size:11px;color:rgba(99,102,241,.5);margin-top:4px;font-weight:600}
+.pmd-ab-slot-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .2s;border-radius:12px}
+.pmd-ab-slot:hover .pmd-ab-slot-overlay{opacity:1}
+.pmd-ab-slot-actions{display:flex;gap:8px}
+.pmd-ab-slot-action{background:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.pmd-ab-slot-action:hover{transform:scale(1.05)}
+.pmd-ab-slot-winner-tag{position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:7px;box-shadow:0 3px 10px rgba(34,197,94,.4)}
+.pmd-ab-pct{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.75);color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:7px}
+
+/* Lightbox */
+#pmd-lightbox{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);align-items:center;justify-content:center;cursor:zoom-out}
+#pmd-lightbox.open{display:flex}
+#pmd-lightbox img{max-width:92vw;max-height:90vh;border-radius:16px;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+
+/* Canvas annotation editor */
+.pm-canvas-box{background:#0c0c12;border:1px solid rgba(255,255,255,.1);border-radius:18px;width:900px;max-width:96vw;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.7)}
+.pm-canvas-toolbar{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.pmc-tool{background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:8px;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;padding:7px 12px;cursor:pointer;transition:all .15s}
+.pmc-tool:hover{color:#fff;border-color:var(--bh)}
+.pmc-tool.on{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.4);color:var(--acc)}
+.pmc-colors{display:flex;gap:5px;padding:0 6px}
+.pmc-color{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.pmc-color.sel{border-color:#fff;transform:scale(1.15)}
+.pm-canvas-wrap{flex:1;overflow:auto;background:#000;display:flex;align-items:center;justify-content:center;padding:16px}
+#pmc-canvas{max-width:100%;cursor:crosshair;border-radius:4px}
+
+/* ══════════════════════════════════════ */
+/* Side drawer */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:8000}
+.drawer-overlay.open{display:block}
+.side-drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:#0c0c12;border-right:1px solid rgba(255,255,255,.1);z-index:8001;transform:translateX(-100%);transition:transform .25s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;padding:20px 14px;overflow-y:auto}
+.side-drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:0 6px 16px;margin-bottom:8px;border-bottom:1px solid var(--b)}
+.drawer-section-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.08em;padding:14px 10px 6px}
+.drawer-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:600;transition:all .15s}
+.drawer-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.drawer-link-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+
+.ws-tools{padding:0 40px 80px;position:relative;z-index:1}
+.ws-section-header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.ws-section-title{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.1em}
+.ws-section-line{flex:1;height:1px;background:var(--b)}
+
+.ws-tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:900px){.ws-tools-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.ws-tools-grid{grid-template-columns:1fr}}
+
+/* Tool card */
+.tool-card{background:var(--s1);border:1px solid var(--b);border-radius:18px;padding:28px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;min-height:220px}
+.tool-card:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;border-radius:18px}
+.tool-card:hover{transform:translateY(-4px);border-color:var(--bh)}
+.tool-card:hover::before{opacity:1}
+
+/* Loop Builder card */
+.tool-card.loop::before{background:radial-gradient(ellipse at top left,rgba(99,102,241,.12) 0%,transparent 60%)}
+.tool-card.loop:hover{border-color:rgba(99,102,241,.4);box-shadow:0 16px 48px rgba(99,102,241,.15)}
+.tool-card.loop .tool-icon-wrap{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)}
+
+/* Ideas card */
+.tool-card.ideas::before{background:radial-gradient(ellipse at top left,rgba(251,191,36,.08) 0%,transparent 60%)}
+.tool-card.ideas:hover{border-color:rgba(251,191,36,.3);box-shadow:0 16px 48px rgba(251,191,36,.1)}
+.tool-card.ideas .tool-icon-wrap{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2)}
+
+/* Calendar card */
+.tool-card.cal::before{background:radial-gradient(ellipse at top left,rgba(34,197,94,.1) 0%,transparent 60%)}
+.tool-card.cal:hover{border-color:rgba(34,197,94,.4);box-shadow:0 16px 48px rgba(34,197,94,.12)}
+.tool-card.cal .tool-icon-wrap{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
+.tool-card.cal .tool-card-action-lbl{color:var(--grn)}
+.tool-card.soon:hover{transform:none;border-color:var(--b);box-shadow:none}
+.tool-card.soon::before{display:none}
+.tool-card.soon .tool-icon-wrap{background:rgba(255,255,255,.05);border:1px solid var(--b)}
+
+.tool-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.tool-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;letter-spacing:.05em;width:fit-content}
+.tool-badge.live{background:rgba(34,197,94,.12);color:var(--grn)}
+.tool-badge.new{background:rgba(99,102,241,.15);color:var(--acc)}
+.tool-badge.soon{background:rgba(255,255,255,.06);color:var(--dim)}
+.tool-card-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.1}
+.tool-card-desc{font-size:13px;color:var(--sub);line-height:1.6;flex:1}
+.tool-card-action{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;border-top:1px solid var(--b)}
+.tool-card-action-lbl{font-size:12px;font-weight:600;color:var(--acc)}
+.tool-card.ideas .tool-card-action-lbl{color:var(--yel)}
+.tool-card.soon .tool-card-action-lbl{color:var(--dim)}
+.tool-arrow{font-size:18px;transition:transform .2s}
+.tool-card:not(.soon):hover .tool-arrow{transform:translateX(4px)}
+
+/* FOOTER */
+.ws-footer{padding:24px 40px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.ws-footer-left{font-size:11px;color:var(--dim)}
+.ws-footer-left strong{color:var(--sub)}
+.ws-footer-right{font-size:11px;color:var(--dim);display:flex;gap:16px}
+.ws-footer-right a{color:var(--dim);text-decoration:none}
+.ws-footer-right a:hover{color:var(--sub)}
+
+/* ══════════════════════════════════════
+   APP FRAME (quand on ouvre un outil)
+══════════════════════════════════════ */
+
+/* LOADING overlay */
+
+/* TICKER scroll animation */
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME ══ -->
+<div id="home">
+
+  <!-- App bar -->
+  <nav class="ws-nav">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="icon-btn" onclick="toggleDrawer()" title="Menu des outils" aria-label="Ouvrir le menu des outils">☰</button>
+      <div class="ws-nav-logo">
+        <div class="ws-nav-logo-dot"></div>
+        <span>Workspace</span>
+      </div>
+    </div>
+    <div class="ws-nav-right">
+      <div id="app-clock" style="font-size:13px;font-weight:700;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums;letter-spacing:.02em;margin-right:4px">—:—</div>
+      <button id="yt-edit-btn" onclick="toggleYTSetup()" class="icon-btn" title="Paramètres chaîne YouTube" aria-label="Paramètres chaîne YouTube">⚙</button>
+    </div>
+  </nav>
+
+  <!-- Side drawer — accessible from anywhere on this page -->
+  <div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div id="side-drawer" class="side-drawer">
+    <div class="drawer-header">
+      <div class="ws-nav-logo"><div class="ws-nav-logo-dot"></div><span>Workspace</span></div>
+      <button class="icon-btn" onclick="closeDrawer()" aria-label="Fermer le menu">×</button>
+    </div>
+    <div class="drawer-section-lbl">Navigation rapide</div>
+    <a class="drawer-link" href="index.html"><span class="drawer-link-ico">🏠</span> Accueil</a>
+    <a class="drawer-link" href="tools.html"><span class="drawer-link-ico">🧰</span> Tous les outils</a>
+    <div class="drawer-section-lbl">Outils</div>
+    <a class="drawer-link" href="loop-builder.html"><span class="drawer-link-ico">🔁</span> Loop Builder</a>
+    <a class="drawer-link" href="planning.html"><span class="drawer-link-ico">📅</span> Calendrier Éditorial</a>
+    <a class="drawer-link" href="school.html"><span class="drawer-link-ico">📚</span> Organisation Scolaire</a>
+    <div class="drawer-section-lbl">Cette page</div>
+    <a class="drawer-link" href="#" onclick="closeDrawer();document.getElementById('proj-mgr-section').scrollIntoView({behavior:'smooth'});return false;"><span class="drawer-link-ico">📋</span> Mes Projets</a>
+    <a class="drawer-link" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank"><span class="drawer-link-ico">💡</span> Proposer une idée</a>
+  </div>
+
+  <!-- YouTube setup — collapsible, off by default -->
+  <div id="yt-setup-zone" style="display:none">
+    <div class="yt-setup-inner">
+      <div class="yt-setup-label">Connecter ta chaîne YouTube</div>
+      <div class="yt-setup-row">
+        <input id="ws-api-key" type="password" placeholder="Clé API YouTube…" autocomplete="off" class="yt-setup-input">
+        <input id="ws-yt-handle" placeholder="@handle ou UCxxx…" class="yt-setup-input">
+        <button onclick="saveYTSetup()" class="btn-primary" style="padding:10px 20px">Connecter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="ws-hero">
+    <div class="ws-hero-badge">
+      <div class="ws-hero-badge-dot"></div>
+      Espace de travail — Actif
+    </div>
+    <div id="pressure-msg" class="app-pressure"></div>
+    <div class="ws-hero-title">
+      Bienvenue dans <span class="accent">Workspace</span><br>ton allié pour des vidéos qui cartonnent
+    </div>
+    <div class="ws-hero-sub">
+      Chaque grande chaîne commence par une décision simple : se montrer, encore et encore, mieux à chaque fois. Workspace existe pour retirer la friction — structurer tes idées, tenir tes deadlines, suivre tes progrès — pour qu'il ne te reste plus qu'à créer.
+    </div>
+    <div class="ws-hero-cta">
+      <a class="btn-primary" href="tools.html" style="text-decoration:none;display:inline-flex;align-items:center">Accéder aux outils →</a>
+      <a class="btn-ghost" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank">💡 Proposer une idée</a>
+    </div>
+  </div>
+
+  <!-- App home: live stats -->
+  <div class="app-home">
+    <!-- Live stats — the app's pulse -->
+    <div class="stat-strip" role="list" aria-label="Statistiques en direct">
+      <div class="stat-tile" role="listitem">
+        <div class="stat-tile-val" id="live-subs">—</div>
+        <div class="stat-tile-lbl">Abonnés</div>
+      </div>
+      <div class="stat-tile" role="listitem">
+        <div class="stat-tile-val" id="live-views">—</div>
+        <div class="stat-tile-lbl">Vues totales</div>
+      </div>
+      <div class="stat-tile" role="listitem">
+        <div class="stat-tile-val" id="live-videos">—</div>
+        <div class="stat-tile-lbl">Vidéos publiées</div>
+      </div>
+      <div class="stat-tile stat-tile-cd" role="listitem" aria-label="Prochaine vidéo">
+        <div class="stat-tile-val" id="live-cd-val" style="font-size:clamp(18px,2.6vw,26px)">—</div>
+        <div class="stat-tile-lbl" id="live-cd-lbl">Prochaine vidéo</div>
+        <div class="stat-tile-actions">
+          <button onclick="toggleStressMode()" class="mode-btn mode-btn-stress" aria-label="Activer le mode stress">STRESS</button>
+          <button onclick="toggleSoftMode()" class="mode-btn mode-btn-soft" aria-label="Activer le mode soft">SOFT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Last videos section -->
+  <div id="last-videos-section" style="display:none;padding:0 40px 8px;position:relative;z-index:1">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em">DERNIÈRES VIDÉOS</div>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <!-- Last long -->
+      <div id="ws-last-long" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;display:flex;align-items:stretch">
+        <div id="ws-thumb-long" style="width:140px;flex-shrink:0;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:28px;opacity:.2">🎬</div>
+        <div style="padding:14px 16px;flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:9px;font-weight:700;color:rgba(99,102,241,.7);letter-spacing:.08em">🎬 DERNIÈRE LONGUE</div>
+          <div id="ws-title-long" style="font-size:13px;font-weight:600;color:#fff;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">—</div>
+          <div style="display:flex;gap:12px;margin-top:auto">
+            <span id="ws-views-long" style="font-size:11px;color:rgba(255,255,255,.35)">👁 —</span>
+            <span id="ws-likes-long" style="font-size:11px;color:rgba(255,255,255,.35)">👍 —</span>
+            <span id="ws-comments-long" style="font-size:11px;color:rgba(255,255,255,.35)">💬 —</span>
+          </div>
+        </div>
+      </div>
+      <!-- Last short -->
+      <div id="ws-last-short" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;display:flex;align-items:stretch">
+        <div id="ws-thumb-short" style="width:90px;flex-shrink:0;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:28px;opacity:.2">⚡</div>
+        <div style="padding:14px 16px;flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:9px;font-weight:700;color:rgba(34,197,94,.7);letter-spacing:.08em">⚡ DERNIER SHORT</div>
+          <div id="ws-title-short" style="font-size:13px;font-weight:600;color:#fff;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">—</div>
+          <div style="display:flex;gap:12px;margin-top:auto">
+            <span id="ws-views-short" style="font-size:11px;color:rgba(255,255,255,.35)">👁 —</span>
+            <span id="ws-likes-short" style="font-size:11px;color:rgba(255,255,255,.35)">👍 —</span>
+            <span id="ws-comments-short" style="font-size:11px;color:rgba(255,255,255,.35)">💬 —</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tools section -->
+  <div class="ws-tools" id="tools-section">
+    <div class="ws-section-header">
+      <div class="ws-section-title">MES OUTILS</div>
+      <div class="ws-section-line"></div>
+    </div>
+
+    <div class="ws-tools-grid">
+
+      <!-- LOOP BUILDER -->
+      <div class="tool-card loop" onclick="openTool('loop-builder')" tabindex="0" role="button">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">🔁</div>
+          <div class="tool-badge live">● DISPONIBLE</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Loop Builder</div>
+          <div class="tool-card-desc">Structure ta vidéo boucle par boucle. Timeline interactive, courbe émotionnelle, stats YouTube en direct.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">Ouvrir Loop Builder</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- CALENDRIER ÉDITORIAL -->
+      <div class="tool-card cal" onclick="openTool('calendar')" tabindex="0" role="button">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">📅</div>
+          <div class="tool-badge live">● DISPONIBLE</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Calendrier Éditorial</div>
+          <div class="tool-card-desc">Planifie ta stratégie de contenu. Deadlines avec compte à rebours en direct, planning de tes longues et Shorts.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">Ouvrir le calendrier</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- SCHOOL -->
+      <div class="tool-card school" onclick="openTool('school')" tabindex="0" role="button">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">📚</div>
+          <div class="tool-badge live">● DISPONIBLE</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Organisation Scolaire</div>
+          <div class="tool-card-desc">Ton année organisée en un coup d'œil : DST à venir, moyenne calculée, et l'équilibre parfait entre l'école et YouTube.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl" style="color:#06b6d4">Ouvrir le dashboard</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- IDEAS -->
+      <div class="tool-card ideas" onclick="openIdeas()" tabindex="0" role="button">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">💡</div>
+          <div class="tool-badge new">NOUVEAU</div>
+        </div>
+        <div>
+          <div class="tool-card-title">Idées pour Workspace</div>
+          <div class="tool-card-desc">Tu as une idée d'outil, de fonctionnalité ou d'amélioration ? Dis-le directement. Chaque suggestion est lue.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl" style="color:var(--yel)">Soumettre une idée</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- COMING SOON -->
+      <div class="tool-card soon">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">📊</div>
+          <div class="tool-badge soon">BIENTÔT</div>
+        </div>
+        <div>
+          <div class="tool-card-title" style="color:var(--sub)">Analytics Pro</div>
+          <div class="tool-card-desc">Analyse de rétention, prédiction de performance, comparaison de tes vidéos. En développement.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">En développement…</span>
+          <span class="tool-arrow" style="color:var(--dim)">→</span>
+        </div>
+      </div>
+
+      <div class="tool-card soon">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">🎬</div>
+          <div class="tool-badge soon">BIENTÔT</div>
+        </div>
+        <div>
+          <div class="tool-card-title" style="color:var(--sub)">Script Writer</div>
+          <div class="tool-card-desc">Génère et structure tes scripts vidéo avec les techniques narratives qui fonctionnent.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">En développement…</span>
+          <span class="tool-arrow" style="color:var(--dim)">→</span>
+        </div>
+      </div>
+
+      <div class="tool-card soon">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div class="tool-icon-wrap">🖼️</div>
+          <div class="tool-badge soon">BIENTÔT</div>
+        </div>
+        <div>
+          <div class="tool-card-title" style="color:var(--sub)">Thumbnail Lab</div>
+          <div class="tool-card-desc">Teste et compare tes miniatures avant publication. Analyse l'impact visuel et le CTR potentiel.</div>
+        </div>
+        <div class="tool-card-action">
+          <span class="tool-card-action-lbl">En développement…</span>
+          <span class="tool-arrow" style="color:var(--dim)">→</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <!-- ══ MES PROJETS — gestionnaire de projets ══ -->
+  <div class="proj-mgr" id="proj-mgr-section">
+    <div class="ws-section-header">
+      <div class="ws-section-title">MES PROJETS</div>
+      <div class="pm-count-badge" id="pm-count-badge">0</div>
+      <div class="ws-section-line"></div>
+      <button class="btn-primary pm-new-btn" onclick="openNewProjectModal()"><span class="pm-new-plus">+</span> Nouveau projet</button>
+    </div>
+
+    <!-- Toolbar: search + filters -->
+    <div class="pm-toolbar" id="pm-toolbar" style="display:none">
+      <div class="pm-search-wrap">
+        <span class="pm-search-ico">⌕</span>
+        <input id="pm-search" class="pm-search" placeholder="Rechercher un projet…" oninput="pmRenderGrid()">
+      </div>
+      <div class="pm-filters">
+        <button class="pm-filter-chip sel" data-f="all" onclick="pmSetFilter('all',this)">Tous</button>
+        <button class="pm-filter-chip" data-f="urgent" onclick="pmSetFilter('urgent',this)">🔥 Urgents</button>
+        <button class="pm-filter-chip" data-f="unplanned" onclick="pmSetFilter('unplanned',this)">📅 Non planifiés</button>
+      </div>
+    </div>
+
+    <div id="proj-mgr-grid" class="proj-mgr-grid"></div>
+    <div id="proj-mgr-empty" class="proj-mgr-empty" style="display:none">
+      <div class="pm-empty-orb"></div>
+      <div style="font-size:16px;font-weight:700;color:#fff;margin-top:18px">Ton premier projet t'attend</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;max-width:320px;margin-left:auto;margin-right:auto">Miniature, deadline, boucles, calendrier — tout se relie automatiquement.</div>
+      <button class="btn-primary" style="padding:12px 26px;font-size:13px;margin-top:20px" onclick="openNewProjectModal()">Créer mon premier projet →</button>
+    </div>
+  </div>
+
+
+  <div class="ws-footer">
+    <div class="ws-footer-left">© 2026 <strong>Workspace</strong> — Créé par <strong>Loan</strong></div>
+    <div class="ws-footer-right">
+      <a href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank">💡 Proposer une idée</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function fmtNum(n){
+  if(!n||isNaN(n))return '—';
+  n=+n;
+  if(n>=1e9)return(n/1e9).toFixed(1)+'G';
+  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
+  if(n>=1e3)return Math.round(n/1e3)+'k';
+  return n.toLocaleString('fr-FR');
+}
+
+function pad(n){return String(n).padStart(2,'0');}
+
+// ═══════════════════════════════════════
+// LIVE STATS (from localStorage cache via Loop Builder)
+// ═══════════════════════════════════════
+function loadStats(){
+  try{
+    const d=JSON.parse(localStorage.getItem('loopbuilder_ch')||'{}');
+    if(d.subs!=null)document.getElementById('live-subs').textContent=d.subs.toLocaleString('fr-FR');
+    if(d.views)document.getElementById('live-views').textContent=fmtNum(d.views);
+    if(d.videos)document.getElementById('live-videos').textContent=fmtNum(d.videos);
+    // Load last videos
+    const vids=JSON.parse(localStorage.getItem('loopbuilder_last_videos')||'{}');
+    if(vids.long||vids.short){
+      document.getElementById('last-videos-section').style.display='block';
+      if(vids.long)renderWsVideo('long',vids.long);
+      if(vids.short)renderWsVideo('short',vids.short);
+    }
+  }catch(e){}
+}
+
+function renderWsVideo(type,v){
+  const thumb=document.getElementById('ws-thumb-'+type);
+  const title=document.getElementById('ws-title-'+type);
+  const views=document.getElementById('ws-views-'+type);
+  const likes=document.getElementById('ws-likes-'+type);
+  const comments=document.getElementById('ws-comments-'+type);
+  if(!thumb)return;
+  if(v.thumb){
+    thumb.style.backgroundImage=`url(${v.thumb})`;
+    thumb.style.backgroundSize='cover';
+    thumb.style.backgroundPosition='center';
+    thumb.textContent='';
+    thumb.style.opacity='1';
+  }
+  if(title)title.textContent=v.title||'—';
+  if(views)views.textContent='👁 '+fmtNum(v.views||0);
+  if(likes)likes.textContent='👍 '+fmtNum(v.likes||0);
+  if(comments)comments.textContent='💬 '+fmtNum(v.comments||0);
+}
+
+async function fetchLastVideos(channelId,key){
+  try{
+    const r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=10&order=date&type=video&key=${key}`);
+    const d=await r.json();if(!d.items)return;
+    const ids=d.items.map(i=>i.id.videoId).join(',');
+    const r2=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${ids}&key=${key}`);
+    const d2=await r2.json();if(!d2.items)return;
+    function parseDur(s){const m=s.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);return m?(+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0):0;}
+    let lastLong=null,lastShort=null;
+    d2.items.forEach(v=>{
+      const isShort=parseDur(v.contentDetails.duration)<70;
+      if(isShort&&!lastShort)lastShort=v;
+      else if(!isShort&&!lastLong)lastLong=v;
+    });
+    const cache={};
+    if(lastLong){
+      const st=lastLong.statistics;
+      cache.long={title:lastLong.snippet.title,thumb:lastLong.snippet.thumbnails?.high?.url||lastLong.snippet.thumbnails?.medium?.url,views:+st.viewCount||0,likes:+st.likeCount||0,comments:+st.commentCount||0};
+      renderWsVideo('long',cache.long);
+    }
+    if(lastShort){
+      const st=lastShort.statistics;
+      cache.short={title:lastShort.snippet.title,thumb:lastShort.snippet.thumbnails?.high?.url||lastShort.snippet.thumbnails?.medium?.url,views:+st.viewCount||0,likes:+st.likeCount||0,comments:+st.commentCount||0};
+      renderWsVideo('short',cache.short);
+    }
+    if(lastLong||lastShort){
+      document.getElementById('last-videos-section').style.display='block';
+      try{localStorage.setItem('loopbuilder_last_videos',JSON.stringify(cache));}catch(e){}
+    }
+  }catch(e){console.warn('fetchLastVideos',e);}
+}
+
+// ═══════════════════════════════════════
+// COUNTDOWN — Prochaine vidéo planifiée
+// ═══════════════════════════════════════
+function tickCountdown(){
+  try{
+    const events=JSON.parse(localStorage.getItem('loopbuilder_plan')||'{}');
+    const now=Date.now();
+    const next=Object.entries(events)
+      .filter(([k,v])=>{
+        const dt=v.datetime?new Date(v.datetime):new Date(k+'T18:00:00');
+        return dt>now&&v.type!=='idea';
+      })
+      .sort(([,a],[,b])=>{
+        return new Date(a.datetime||a.date+'T18:00:00')-new Date(b.datetime||b.date+'T18:00:00');
+      })[0];
+
+    const valEl=document.getElementById('live-cd-val');
+    const lblEl=document.getElementById('live-cd-lbl');
+
+    if(!next){
+      if(valEl)valEl.textContent='—';
+      if(lblEl){lblEl.textContent='Aucune planifiée';lblEl.style.background='rgba(255,255,255,.06)';lblEl.style.color='var(--dim)';}
+      return;
+    }
+    const [dateKey,ev]=next;
+    const target=new Date(ev.datetime||dateKey+'T18:00:00');
+    const diff=target-Date.now();
+    if(diff<=0){
+      if(valEl)valEl.textContent="C'est l'heure !";
+      if(lblEl){lblEl.textContent=ev.title||'';lblEl.style.color='var(--grn)';}
+      return;
+    }
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    if(valEl)valEl.textContent=d>0?`${d}j ${pad(h)}h ${pad(m)}m`:`${pad(h)}:${pad(m)}:${pad(s)}`;
+    if(lblEl){
+      const title=ev.title?ev.title.slice(0,22)+(ev.title.length>22?'…':''):'Prochaine vidéo';
+      lblEl.textContent=title;
+      lblEl.style.background='rgba(99,102,241,.15)';
+      lblEl.style.color='var(--acc)';
+    }
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+// TOOL NAVIGATION
+// ═══════════════════════════════════════
+const TOOL_URLS={
+  'loop-builder':'loop-builder.html',
+  'calendar':'planning.html',
+  'school':'school.html',
+};
+const TOOL_LABELS={
+  'loop-builder':'Loop Builder',
+  'calendar':'Calendrier Éditorial',
+  'school':'Bac & Scolarité',
+};
+
+function openTool(id){
+  const url=TOOL_URLS[id];
+  if(!url)return;
+  // Navigate directly — no iframe, no stacking back buttons
+  window.location.href=url;
+}
+
+function openIdeas(){
+  window.open('https://forms.gle/7ujaNXwwpGVXtPDC7','_blank');
+}
+
+
+function scrollToTools(){
+  document.getElementById('tools-section').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+// YOUTUBE SETUP
+// ═══════════════════════════════════════
+function getApiKey(){try{return localStorage.getItem('loopbuilder_apikey')||'';}catch(e){return '';}}
+
+function toggleYTSetup(){
+  const zone=document.getElementById('yt-setup-zone');
+  zone.style.display=zone.style.display==='none'?'block':'none';
+}
+
+function loadYTSetup(){
+  const key=getApiKey();
+  const handle=localStorage.getItem('loopbuilder_yt')||'';
+  if(key&&handle){
+    document.getElementById('yt-setup-zone').style.display='none';
+    document.getElementById('ws-api-key').value='•'.repeat(20);
+    document.getElementById('ws-yt-handle').value=handle;
+  } else {
+    document.getElementById('yt-setup-zone').style.display='block';
+  }
+}
+
+async function saveYTSetup(){
+  const key=document.getElementById('ws-api-key').value.trim();
+  const handle=document.getElementById('ws-yt-handle').value.trim();
+  if(!key||key.includes('•')){alert('Entre ta clé API YouTube (AIza…)');return;}
+  if(!handle){alert('Entre ton @handle ou ID de chaîne');return;}
+  try{localStorage.setItem('loopbuilder_apikey',key);}catch(e){}
+  try{localStorage.setItem('loopbuilder_yt',handle);}catch(e){}
+  // Fetch channel data
+  try{
+    const h=handle.startsWith('@')?handle.slice(1):handle;
+    let channelId='';
+    if(handle.startsWith('UC')&&handle.length>20){channelId=handle;}
+    else{
+      const r1=await fetch('https://www.googleapis.com/youtube/v3/channels?part=id&forHandle='+encodeURIComponent(h)+'&key='+key);
+      const d1=await r1.json();
+      if(d1.error){alert('Erreur API: '+d1.error.message);return;}
+      if(d1.items&&d1.items.length)channelId=d1.items[0].id;
+      else{
+        const r2=await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q='+encodeURIComponent(h)+'&maxResults=1&key='+key);
+        const d2=await r2.json();
+        if(d2.items&&d2.items.length)channelId=d2.items[0].snippet.channelId||d2.items[0].id.channelId;
+      }
+    }
+    if(!channelId){alert('Chaîne introuvable');return;}
+    const r3=await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id='+channelId+'&key='+key);
+    const d3=await r3.json();
+    if(!d3.items||!d3.items.length){alert('Données introuvables');return;}
+    const sn=d3.items[0].snippet,st=d3.items[0].statistics;
+    const subs=+st.subscriberCount||0,views=+st.viewCount||0,videos=+st.videoCount||0,avg=videos>0?Math.round(views/videos):0;
+    const avatarUrl=sn.thumbnails?.high?.url||sn.thumbnails?.medium?.url||'';
+    const customUrl=sn.customUrl||handle;
+    try{localStorage.setItem('loopbuilder_ch',JSON.stringify({channelId,name:sn.title,avatarUrl,customUrl,subs,views,videos,avgViews:avg,ts:Date.now()}));}catch(e){}
+    loadStats();
+    fetchLastVideos(channelId,key);
+    document.getElementById('yt-setup-zone').style.display='none';
+  }catch(err){console.error(err);alert('Erreur réseau — vérifie ta clé API');}
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+loadYTSetup();
+document.querySelectorAll('.tool-card[role="button"]').forEach(card=>{
+  card.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}
+  });
+});
+function tickAppClock(){
+  const el=document.getElementById('app-clock');
+  if(!el)return;
+  const n=new Date();
+  el.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+tickAppClock();
+setInterval(tickAppClock,10000);
+loadStats();
+tickCountdown();
+setInterval(tickCountdown,1000);
+
+// ── Live subs refresh toutes les 60s ──
+async function refreshSubs(){
+  try{
+    const key=localStorage.getItem('loopbuilder_apikey')||'';
+    const ch=JSON.parse(localStorage.getItem('loopbuilder_ch')||'{}');
+    if(!key||!ch.channelId)return;
+    const r=await fetch('https://www.googleapis.com/youtube/v3/channels?part=statistics&id='+ch.channelId+'&key='+key);
+    const d=await r.json();
+    if(!d.items||!d.items.length)return;
+    const subs=+d.items[0].statistics.subscriberCount||0;
+    const views=+d.items[0].statistics.viewCount||0;
+    const videos=+d.items[0].statistics.videoCount||0;
+    ch.subs=subs;ch.views=views;ch.videos=videos;ch.ts=Date.now();
+    localStorage.setItem('loopbuilder_ch',JSON.stringify(ch));
+    const el=document.getElementById('live-subs');
+    if(el)el.textContent=subs.toLocaleString('fr-FR');
+    const ev=document.getElementById('live-views');
+    if(ev)ev.textContent=fmtNum(views);
+    const evid=document.getElementById('live-videos');
+    if(evid)evid.textContent=fmtNum(videos);
+  }catch(e){}
+}
+refreshSubs();
+setInterval(refreshSubs,60000);
+// Refresh videos in background if channel connected
+try{
+  const ch=JSON.parse(localStorage.getItem('loopbuilder_ch')||'{}');
+  const key=localStorage.getItem('loopbuilder_apikey')||'';
+  if(ch.channelId&&key&&Date.now()-ch.ts>600000)fetchLastVideos(ch.channelId,key);
+}catch(e){}
+// Register service worker (PWA)
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+
+<!-- SOFT MODE OVERLAY -->
+<div id="soft-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:linear-gradient(135deg,#0a0a1a 0%,#0d0d0d 100%);flex-direction:column;align-items:center;justify-content:center;overflow:hidden">
+  <div id="soft-confetti" style="position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden"></div>
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:40px">
+    <div id="soft-title" style="font-size:clamp(12px,1.4vw,17px);font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.16em;text-transform:uppercase;font-family:'Inter',sans-serif;margin-bottom:8px"></div>
+    <div style="display:flex;align-items:flex-end;gap:12px;line-height:1">
+      <div id="soft-timer" style="font-size:clamp(72px,17vw,200px);font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em;font-family:'Inter',sans-serif;color:#fff"></div>
+      <div id="soft-sec" style="font-size:clamp(32px,6vw,72px);font-weight:900;font-variant-numeric:tabular-nums;font-family:'Inter',sans-serif;color:rgba(255,255,255,.3);padding-bottom:clamp(8px,2vw,24px)"></div>
+    </div>
+    <div id="soft-label" style="font-size:clamp(13px,1.3vw,17px);color:rgba(255,255,255,.2);font-family:'Inter',sans-serif;font-weight:500;letter-spacing:.04em"></div>
+    <div id="soft-done-msg" style="display:none;font-size:clamp(24px,4vw,48px);font-weight:900;color:#22c55e;font-family:'Inter',sans-serif;letter-spacing:-.02em;margin-top:12px">C'est l'heure 🎉</div>
+  </div>
+  <div onclick="closeSoftMode()" style="position:absolute;bottom:18px;font-size:11px;color:rgba(255,255,255,.1);font-family:'Inter',sans-serif;cursor:pointer;z-index:3">Échap pour fermer</div>
+</div>
+
+<!-- DOG JUMPSCARE -->
+<div id="dog-scare" style="display:none;position:fixed;inset:0;z-index:99999;background:#000;align-items:center;justify-content:center" onclick="hideDog()">
+  <img src="dog.png" id="dog-img" style="max-width:100vw;max-height:100vh;object-fit:contain">
+</div>
+
+<!-- STRESS OVERLAY -->
+<div id="stress-overlay" style="display:none;position:fixed;inset:0;z-index:9999;flex-direction:column;align-items:center;justify-content:center;overflow:hidden">
+  <div id="stress-bg" style="position:absolute;inset:0;background:#000;z-index:0"></div>
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 20%,rgba(0,0,0,.92) 100%);z-index:1;pointer-events:none"></div>
+  <div id="stress-content" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:40px;width:100%">
+    <div id="stress-title" style="font-size:clamp(11px,1.3vw,15px);font-weight:700;color:rgba(255,255,255,.22);letter-spacing:.18em;text-transform:uppercase;font-family:'Inter',sans-serif;margin-bottom:6px"></div>
+    <div style="display:flex;align-items:flex-end;gap:14px;line-height:1">
+      <div id="stress-timer" style="font-size:clamp(72px,17vw,200px);font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em;font-family:'Inter',sans-serif;color:#fff"></div>
+      <div id="stress-sec" style="font-size:clamp(32px,6vw,72px);font-weight:900;font-variant-numeric:tabular-nums;font-family:'Inter',sans-serif;color:rgba(255,255,255,.32);padding-bottom:clamp(8px,2vw,24px)"></div>
+    </div>
+    <div id="stress-voice-txt" style="font-size:clamp(16px,2.2vw,26px);font-weight:700;color:#ef4444;font-family:'Inter',sans-serif;min-height:36px;opacity:0;transition:opacity .12s;font-style:italic;letter-spacing:-.01em"></div>
+    <div id="stress-sub" style="font-size:clamp(10px,1vw,13px);color:rgba(255,255,255,.16);font-family:'Inter',sans-serif;margin-top:2px;letter-spacing:.06em;text-transform:uppercase"></div>
+  </div>
+  <div onclick="toggleStressMode()" style="position:absolute;bottom:18px;font-size:11px;color:rgba(255,255,255,.07);font-family:'Inter',sans-serif;z-index:3;cursor:pointer">Échap pour fermer</div>
+</div>
+
+<!-- ZERO MODAL — step 1 : réussi ou pas ? -->
+<div id="zero-modal" style="display:none;position:fixed;inset:0;z-index:88888;background:rgba(0,0,0,.96);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;gap:32px;padding:40px;text-align:center">
+  <div style="font-size:clamp(26px,4.5vw,52px);font-weight:900;color:#fff;letter-spacing:-.03em;font-family:'Inter',sans-serif;line-height:1.15">
+    C'est l'heure.<br><span id="zero-video-title" style="color:rgba(255,255,255,.35);font-size:.7em"></span>
+  </div>
+  <div style="font-size:clamp(18px,2.5vw,28px);font-weight:700;color:rgba(255,255,255,.6);font-family:'Inter',sans-serif">Tu as fini la vidéo ?</div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+    <button onclick="zeroAnswer(true)" style="padding:22px 56px;background:#22c55e;border:none;border-radius:14px;color:#000;font-family:'Inter',sans-serif;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:-.01em;transition:transform .1s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+      ✅ OUI — elle est uploadée
+    </button>
+    <button onclick="zeroAnswer(false)" style="padding:22px 56px;background:#ef4444;border:none;border-radius:14px;color:#fff;font-family:'Inter',sans-serif;font-size:20px;font-weight:900;cursor:pointer;letter-spacing:-.01em;transition:transform .1s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+      ❌ Non, pas terminée
+    </button>
+  </div>
+</div>
+
+<!-- FAIL QUESTIONNAIRE — step 2 si échec -->
+<div id="fail-modal" style="display:none;position:fixed;inset:0;z-index:88889;background:rgba(8,0,0,.97);backdrop-filter:blur(10px);flex-direction:column;align-items:center;justify-content:center;padding:40px;overflow-y:auto">
+  <div style="width:100%;max-width:620px;display:flex;flex-direction:column;gap:22px">
+    <div style="font-size:clamp(22px,3.5vw,38px);font-weight:900;color:#ef4444;font-family:'Inter',sans-serif;letter-spacing:-.02em;text-align:center">Analyse post-mortem</div>
+    <div style="font-size:14px;color:rgba(255,80,80,.45);font-family:'Inter',sans-serif;text-align:center;margin-top:-10px">Réponds honnêtement. C'est pour toi.</div>
+
+    <!-- Q1 -->
+    <div class="fq-block">
+      <div class="fq-label">Où ça a bloqué ?</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="fq-block">
+        <button class="fq-chip" onclick="toggleChip(this)">Script pas prêt</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Tournage trop long</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Montage sous-estimé</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Procrastination</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Problème technique</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Manque de motivation</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Mauvaise estimation du temps</button>
+        <button class="fq-chip" onclick="toggleChip(this)">Autre chose</button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="fq-block">
+      <div class="fq-label">Tu en étais à quelle étape ?</div>
+      <select id="fq-step" class="fq-select">
+        <option value="">— Choisis —</option>
+        <option>Idée seulement</option>
+        <option>Script écrit</option>
+        <option>Tournage fait</option>
+        <option>Montage en cours</option>
+        <option>Montage terminé, pas uploadé</option>
+      </select>
+    </div>
+
+    <!-- Q3 -->
+    <div class="fq-block">
+      <div class="fq-label">Combien d'heures tu as bossé dessus ?</div>
+      <input id="fq-hours" type="number" min="0" max="200" placeholder="ex: 4" class="fq-input">
+    </div>
+
+    <!-- Q4 -->
+    <div class="fq-block">
+      <div class="fq-label">Ce que tu ferais différemment la prochaine fois :</div>
+      <textarea id="fq-lesson" rows="3" placeholder="Écris librement..." class="fq-textarea"></textarea>
+    </div>
+
+    <!-- Q5 -->
+    <div class="fq-block">
+      <div class="fq-label">Notes libres (doutes, blocages, idées...) :</div>
+      <textarea id="fq-notes" rows="3" placeholder="Tout ce qui passe par la tête..." class="fq-textarea"></textarea>
+    </div>
+
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+      <button onclick="saveBilan()" style="padding:15px 36px;background:linear-gradient(135deg,#6366f1,#a855f7);border:none;border-radius:12px;color:#fff;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:-.01em">
+        💾 Enregistrer dans mes notes
+      </button>
+      <button onclick="downloadBilan(false)" style="padding:15px 28px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);border-radius:12px;color:#ef4444;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer">
+        📥 Télécharger le bilan
+      </button>
+      <button onclick="closeScreens()" style="padding:15px 22px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(255,255,255,.35);font-family:'Inter',sans-serif;font-size:14px;cursor:pointer">
+        Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES SAVED TOAST -->
+<div id="notes-toast" style="display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:99999;background:#22c55e;color:#000;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;padding:14px 28px;border-radius:12px;box-shadow:0 8px 32px rgba(34,197,94,.4)">
+  ✅ Bilan enregistré dans tes notes
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div id="success-screen" style="display:none;position:fixed;inset:0;z-index:88889;background:#000;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:40px">
+  <div style="font-size:80px;line-height:1">🏆</div>
+  <div style="font-size:clamp(28px,5vw,56px);font-weight:900;color:#22c55e;font-family:'Inter',sans-serif;letter-spacing:-.03em">Elle est dehors.</div>
+  <div style="font-size:17px;color:rgba(255,255,255,.35);font-family:'Inter',sans-serif;max-width:480px;line-height:1.6">Bien joué. Repose-toi 10 minutes, puis planifie la prochaine dans le calendrier.</div>
+  <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center">
+    <button onclick="downloadBilan(true)" style="padding:13px 28px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:10px;color:#22c55e;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer">📥 Télécharger le bilan</button>
+    <button onclick="closeScreens()" style="padding:13px 28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Retour au Workspace</button>
+  </div>
+</div>
+
+<style>
+.fq-block{display:flex;flex-direction:column;gap:8px}
+.fq-label{font-size:13px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.04em;text-transform:uppercase}
+.fq-chip{padding:8px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:left}
+.fq-chip.on{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.5);color:#ef4444}
+.fq-select,.fq-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;outline:none}
+.fq-select option{background:#111}
+.fq-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;outline:none;resize:vertical;min-height:80px}
+.fq-select:focus,.fq-input:focus,.fq-textarea:focus{border-color:#6366f1}
+</style>
+
+
+<style>
+@keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,3px)}75%{transform:translate(5px,-3px)}}
+@keyframes megashake{0%,100%{transform:translate(0,0) rotate(0)}12%{transform:translate(-11px,7px) rotate(-2deg)}30%{transform:translate(14px,-8px) rotate(2.5deg)}48%{transform:translate(-13px,6px) rotate(-2deg)}65%{transform:translate(10px,9px) rotate(1.5deg)}82%{transform:translate(-9px,-6px) rotate(-2.5deg)}}
+@keyframes dogPop{0%{transform:scale(.6) rotate(-4deg);opacity:0}40%{transform:scale(1.08) rotate(1.5deg)}70%{transform:scale(.98) rotate(-1deg)}100%{transform:scale(1.04) rotate(0);opacity:1}}
+</style>
+
+<script>
+// ══════════════════════════════════════
+// PRESSURE MESSAGES — change 1x/24h
+// ══════════════════════════════════════
+const allPressureMsgs=[
+  // MrBeast — interviews YouTube, podcasts
+  {q:"If you want to be successful on YouTube, you have to be obsessed with it.", a:"MrBeast"},
+  {q:"I've been making videos since I was 13. I've just never stopped.", a:"MrBeast"},
+  {q:"Most people give up right before they're about to make it.", a:"MrBeast"},
+  {q:"The only way to get better at making videos is to make more videos.", a:"MrBeast"},
+  {q:"Posting is better than perfect. Post it, learn, get better.", a:"MrBeast"},
+  {q:"Every video I make, my only goal is to make it better than the last one.", a:"MrBeast"},
+
+  // Steve Jobs — discours Stanford 2005, interviews
+  {q:"Stay hungry, stay foolish.", a:"Steve Jobs"},
+  {q:"The people who are crazy enough to think they can change the world are the ones who do.", a:"Steve Jobs"},
+  {q:"Quality is more important than quantity. One home run is much better than two doubles.", a:"Steve Jobs"},
+  {q:"Your work is going to fill a large part of your life. The only way to be truly satisfied is to do great work.", a:"Steve Jobs"},
+  {q:"Real artists ship.", a:"Steve Jobs"},
+  {q:"If you haven't found it yet, keep looking. Don't settle.", a:"Steve Jobs"},
+
+  // Elon Musk — interviews, Twitter
+  {q:"When something is important enough, you do it even if the odds are not in your favor.", a:"Elon Musk"},
+  {q:"Persistence is very important. You should not give up unless you are forced to give up.", a:"Elon Musk"},
+  {q:"Work like hell. Put in 80 to 100 hour weeks every week.", a:"Elon Musk"},
+  {q:"If you need inspiring words, don't do it.", a:"Elon Musk"},
+
+  // Gary Vee — discours, interviews
+  {q:"Stop counting the days. Make the days count.", a:"Gary Vaynerchuk"},
+  {q:"Skills are cheap. Passion is priceless.", a:"Gary Vaynerchuk"},
+  {q:"You don't need permission to hustle.", a:"Gary Vaynerchuk"},
+  {q:"Macro patience, micro speed.", a:"Gary Vaynerchuk"},
+  {q:"Legacy is greater than currency.", a:"Gary Vaynerchuk"},
+  {q:"Without hustle, talent will only carry you so far.", a:"Gary Vaynerchuk"},
+
+  // Bill Gates — interviews, livres
+  {q:"It's fine to celebrate success, but it is more important to heed the lessons of failure.", a:"Bill Gates"},
+  {q:"Success is a lousy teacher. It seduces smart people into thinking they can't lose.", a:"Bill Gates"},
+  {q:"Most people overestimate what they can do in one year and underestimate what they can do in ten years.", a:"Bill Gates"},
+  {q:"I choose a lazy person to do a hard job, because a lazy person will find an easy way to do it.", a:"Bill Gates"},
+
+  // Warren Buffett
+  {q:"Someone is sitting in the shade today because someone planted a tree a long time ago.", a:"Warren Buffett"},
+  {q:"The best investment you can make is in yourself.", a:"Warren Buffett"},
+  {q:"It takes 20 years to build a reputation and five minutes to ruin it.", a:"Warren Buffett"},
+
+  // Jeff Bezos — lettres aux actionnaires, interviews
+  {q:"I knew that if I failed I wouldn't regret that. But I knew the one thing I might regret is not trying.", a:"Jeff Bezos"},
+  {q:"Work hard, have fun, make history.", a:"Jeff Bezos"},
+  {q:"We are stubborn on vision. We are flexible on details.", a:"Jeff Bezos"},
+
+  // Naval Ravikant — tweetstorms, podcasts
+  {q:"Arm yourself with specific knowledge, accountability, and leverage.", a:"Naval Ravikant"},
+  {q:"A creator with a great product can reach millions with zero marginal cost.", a:"Naval Ravikant"},
+  {q:"Play long-term games with long-term people.", a:"Naval Ravikant"},
+  {q:"The internet has massively broadened the possible space of careers.", a:"Naval Ravikant"},
+
+  // Kobe Bryant
+  {q:"Everything negative — pressure, challenges — is all an opportunity for me to rise.", a:"Kobe Bryant"},
+  {q:"The most important thing is to try and inspire people so that they can be great in whatever they want to do.", a:"Kobe Bryant"},
+  {q:"Great things come from hard work and perseverance. No excuses.", a:"Kobe Bryant"},
+
+  // Ali Abdaal — YouTube, podcasts
+  {q:"Consistency beats talent when talent doesn't show up consistently.", a:"Ali Abdaal"},
+  {q:"Every video you post is a lottery ticket. You can't win if you don't play.", a:"Ali Abdaal"},
+  {q:"Perfectionism is just procrastination in disguise.", a:"Ali Abdaal"},
+
+  // KSI
+  {q:"Work in silence. Let success make the noise.", a:"KSI"},
+  {q:"I just kept going. That's literally it.", a:"KSI"},
+];
+
+function getPressureMsg(){
+  try{
+    const today=new Date().toDateString();
+    const stored=JSON.parse(localStorage.getItem('ws_pressure')||'{}');
+    // stored.q means it's the new object format AND it's today
+    if(stored.day===today&&stored.q&&stored.a)return {q:stored.q,a:stored.a};
+    // Otherwise pick a new one
+    const idx=Math.floor(Math.random()*allPressureMsgs.length);
+    const msg=allPressureMsgs[idx];
+    localStorage.setItem('ws_pressure',JSON.stringify({day:today,q:msg.q,a:msg.a}));
+    return msg;
+  }catch(e){return allPressureMsgs[0];}
+}
+
+setTimeout(()=>{
+  const el=document.getElementById('pressure-msg');
+  const pm=getPressureMsg();
+  if(el&&pm){el.innerHTML='"'+pm.q+'"<br><span style="font-size:clamp(10px,1.2vw,13px);font-weight:600;color:rgba(255,255,255,.25);font-style:normal;letter-spacing:.06em">— '+pm.a+'</span>';el.style.opacity='1';}
+},800);
+
+// ══════════════════════════════════════
+// DOG JUMPSCARE
+// ══════════════════════════════════════
+let dogTimer=null;
+// Dog scare — tracks independently of tick
+let dogScheduled=false;
+let currentLevel=0;
+function scheduleDog(level){
+  if(dogScheduled)return;
+  if(level===0)return;
+  dogScheduled=true;
+  const delay=level===2?10000:30000; // 10s if critical, 30s if urgent
+  dogTimer=setTimeout(()=>{
+    if(stressMode)showDog();
+    dogScheduled=false;
+    // re-arm after dog hides
+    setTimeout(()=>{if(stressMode)scheduleDog(currentLevel);},2500);
+  }, delay);
+}
+function showDog(){
+  const d=document.getElementById('dog-scare');
+  const img=document.getElementById('dog-img');
+  d.style.display='flex';
+  img.style.animation='none';
+  void img.offsetWidth;
+  img.style.animation='dogPop .35s cubic-bezier(.34,1.56,.64,1) forwards';
+  try{
+    const ctx=getAC(),now=ctx.currentTime;
+    [50,75,110].forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sawtooth';o.frequency.setValueAtTime(f,now);
+      g.gain.setValueAtTime(2.8,now+i*.02);g.gain.exponentialRampToValueAtTime(.0001,now+.7);
+      o.connect(g);g.connect(ctx.destination);o.start(now+i*.02);o.stop(now+.9);
+    });
+    const o2=ctx.createOscillator(),g2=ctx.createGain();
+    o2.type='sawtooth';o2.frequency.setValueAtTime(2200,now+.05);
+    o2.frequency.exponentialRampToValueAtTime(700,now+.28);
+    g2.gain.setValueAtTime(2.5,now+.05);g2.gain.exponentialRampToValueAtTime(.0001,now+.3);
+    o2.connect(g2);g2.connect(ctx.destination);o2.start(now+.05);o2.stop(now+.35);
+  }catch(e){}
+  setTimeout(hideDog,2000);
+}
+function hideDog(){document.getElementById('dog-scare').style.display='none';}
+
+// ══════════════════════════════════════
+// ZERO MODAL + BILAN
+// ══════════════════════════════════════
+let zeroShown=false;
+let currentVideoTitle='';
+let deadlineTs=0;
+
+function showZeroModal(){
+  if(zeroShown)return;zeroShown=true;
+  if(stressMode)toggleStressMode();
+  if(softMode)closeSoftMode();
+  const el=document.getElementById('zero-video-title');
+  if(el&&currentVideoTitle)el.textContent='"'+currentVideoTitle+'"';
+  document.getElementById('zero-modal').style.display='flex';
+}
+
+function zeroAnswer(success){
+  document.getElementById('zero-modal').style.display='none';
+  if(success){
+    document.getElementById('success-screen').style.display='flex';
+    try{
+      const ctx=getAC(),now=ctx.currentTime;
+      [523,659,784,1047,1319].forEach((f,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.type='sine';o.frequency.setValueAtTime(f,now+i*.13);
+        g.gain.setValueAtTime(.7,now+i*.13);g.gain.exponentialRampToValueAtTime(.0001,now+.55+i*.13);
+        o.connect(g);g.connect(ctx.destination);o.start(now+i*.13);o.stop(now+.75+i*.13);
+      });
+    }catch(e){}
+  } else {
+    // Show questionnaire
+    document.getElementById('fail-modal').style.display='flex';
+    // Reset form
+    document.querySelectorAll('.fq-chip').forEach(c=>c.classList.remove('on'));
+    const s=document.getElementById('fq-step');if(s)s.value='';
+    const h=document.getElementById('fq-hours');if(h)h.value='';
+    const l=document.getElementById('fq-lesson');if(l)l.value='';
+    const n=document.getElementById('fq-notes');if(n)n.value='';
+  }
+}
+
+function toggleChip(btn){btn.classList.toggle('on');}
+
+function getBilanData(success){
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const deadline=deadlineTs?new Date(deadlineTs).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}):'inconnue';
+  if(success){
+    return {
+      date:dateStr, video:currentVideoTitle||'(sans titre)', deadline,
+      success:true, status:'SUCCÈS — Vidéo uploadée',
+      bloquants:[], etape:'Terminée et uploadée', heures:'', lecon:'', notes:''
+    };
+  }
+  const chips=[...document.querySelectorAll('.fq-chip.on')].map(c=>c.textContent);
+  const etape=document.getElementById('fq-step')?.value||'Non renseignée';
+  const heures=document.getElementById('fq-hours')?.value||'?';
+  const lecon=document.getElementById('fq-lesson')?.value||'';
+  const notes=document.getElementById('fq-notes')?.value||'';
+  return {date:dateStr,video:currentVideoTitle||'(sans titre)',deadline,success:false,status:'ÉCHEC — Vidéo non terminée',bloquants:chips,etape,heures,lecon,notes};
+}
+
+function saveBilan(){
+  const data=getBilanData(false);
+  try{
+    const key='ws_notes';
+    const existing=JSON.parse(localStorage.getItem(key)||'[]');
+    existing.unshift({ts:Date.now(),...data});
+    if(existing.length>50)existing.pop(); // max 50 entrées
+    localStorage.setItem(key,JSON.stringify(existing));
+    // Show toast
+    const toast=document.getElementById('notes-toast');
+    toast.style.display='block';
+    setTimeout(()=>toast.style.display='none',3000);
+  }catch(e){alert('Erreur lors de la sauvegarde.');}
+}
+
+function downloadBilan(success){
+  const d=getBilanData(success);
+  const lines=[
+    'BILAN VIDÉO — WORKSPACE',
+    '═══════════════════════════════════',
+    'Date     : '+d.date,
+    'Vidéo    : '+d.video,
+    'Deadline : '+d.deadline,
+    'Résultat : '+d.status,
+    '',
+  ];
+  if(!success){
+    if(d.bloquants.length)lines.push('Points de blocage : '+d.bloquants.join(', '),'');
+    lines.push('Étape atteinte : '+d.etape,'Temps passé : '+(d.heures||'?')+' heures','');
+    if(d.lecon)lines.push('Ce que je ferais différemment :',d.lecon,'');
+    if(d.notes)lines.push('Notes libres :',d.notes,'');
+    lines.push('───────────────────────────────────','Prochaines étapes :','  → Identifie le point de blocage principal','  → Donne-toi une deadline interne 3 jours avant','  → Bloque 2× plus de temps pour le montage','  → Pose la deadline de la prochaine maintenant');
+  } else {
+    lines.push('Bien joué. Elle est dehors.','','───────────────────────────────────','Prochaines étapes :','  → Analyse les stats dans 48h','  → Planifie la prochaine vidéo','  → Note ce qui a bien marché');
+  }
+  lines.push('','Généré par Workspace — by Loan');
+  const joined=lines.join('\n');const blob=new Blob([joined],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='bilan-'+new Date().toISOString().slice(0,10)+'.txt';
+  a.click();
+}
+
+function closeScreens(){
+  ['zero-modal','fail-modal','success-screen'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  zeroShown=false;
+}
+
+
+// ══════════════════════════════════════
+// AUDIO ENGINE
+// ══════════════════════════════════════
+let stressMode=false,stressTick=null;
+let audioCtx=null,lastSec=-1;
+let voiceEnabled=false; // only when < 1 min
+let coupeShown=false;
+
+function getAC(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+const TICK_SOUND_B64='data:audio/mp3;base64,SUQzBAAAAAAAdVRJVDIAAAAtAAADQmVlcHMsIFRpbWVyLCBDYXNpbyBBMTY4V0UgV3Jpc3QgV2F0Y2ggQmVlcABUQ09QAAAAEAAAA0VwaWRlbWljIFNvdW5kAFRYWFgAAAAQAAADY29tbWVudABObyBURE0AAAAAAAAAAAAAAP/7VMAAAAAAAAAAAAAAAAAAAAAAAFhpbmcAAAAPAAAACwAAEIAAOjo6Ojo6Ojo6YmJiYmJiYmJihYWFhYWFhYWFnZ2dnZ2dnZ2durq6urq6urq60dHR0dHR0dHR5eXl5eXl5eXl7u7u7u7u7u7u9PT09PT09PT0+vr6+vr6+vr6////////////AAAAAExhdmYgbGFtZQAAAAAAAAAAAAAAACQGbgAAAAAAABCAXpG/mQAAAAAAAAAAAAAAAAAAAP/71MQAAAAAAf4UAAAlc8gmvzGkQAv0vlr1llhElIwIDQEAgCP9BAYjKPADP2wFRgDOYblcXVnLvEgwHN324BQQYxo2QVEvJccgMKGEFN6YsGq2HrE5muVnBAZZosRDPOvnnmwd74LYOGE3AGQhpmRrBQVAf///pUQcGCHDtBwtA0HB1ZUtgUMM0g///++phIV6SRXDdhkeEJHLcyVu+sGOhv////9AeEB3wgRrDPUc0fzTFDpmxEEX6iwXjL2GBMf//////LoorEkgutaqxgcIWI7h2Ph6kwEIChUFLzFgwQQTJNkcGC/////////2EzHHfyLSF35uX2JPZh80YkgCioASCBgAEi1CzqvxpMhQ+jd49//////////////////////T2pZKKKX1ZU/EOY51aOWSySv269S9LMc7dSxOZ//+wZSCAMtooqr9X6XjIwAJNi/NWDcNkERaa1ctoIhxlAzut6/cMSqMsTRohu/L6frv7t/JgESAEAAhlEICBFDFGWXi4/XQTzc/gna51RXY5LP3ZWEU2h6U3t8/+/c/8u/lrL+3GVDpUbgBhgS5NiXUv9ypq3d0uW8ccbkabJfmDGy8ICX5luoadp/qXGtTU2dK7MVlU27rsvlEmVAkaMdPUfk1rVeW/qVU1nLLLv9/LWLSkvjBxgwXwEoFTzKn5iTtP9D09Vhl/ZddjMZpalR/pdQIZISzm2pxFBoetVbVWlpaXHUqjVmtTWt0rsuizAUOwVdF0otfq4/lzWWX/vHH987Wt0giVEym1eXta1lurS5bxx//yy/46w0GGZhIwklFrudLS2cf/LL///1QU1NclRg4+GCLuy38ssfy7//////+8ar6jQXjz//94/i+Y3e/t7agWbAHAAxaQX3SgIQ8KBqvZxBaeSygJ2bSTruM/WNPxpw7XcBYLFgmN3ewBvD8exq/zeGr9LT40MFKzlW6MIS1oSuip5HOU9jPDKzbv2KfC3KGBlUBrF9zaMkBUbFI3RNxUoWmpeySRROUSv/7xMTHACPqNTn8/YAM1kamPb7X3OHVhoBvMHSMLVmBQBOOkQYMiGa6loDg8WEhn/zxyvTk/Yr1Lu5iZkL5sQL/mCAPGY8yHIQaGD4AhwGIUIphQDJPQUOH0s5I5RNxxO+egRy4btggAjvZjSYQHfimOG6Okr1qsunZHI6K+ibGpbAoCQcJQF3qAOJhcZOG5o7G5ug/9S1GJeDoQMknkFASPwZeLqS1f1qRSPGpsXRlgBBuBpoGBxpWNEFqQ9mfrLpo5wT2BggvgNBMihmguz//6xPABAALqX8piBrv7t3tkF4AAAAohoMcUAMkAlPGIC9SaCXQ5IRggrBwk8frkseZF8cIVBK1GmlURBYhbRbhgp6FLAhvHNwaYOcVYxbExVcNnMgsEjIEh1SmSWTbT8UXVQUXWQvteC+GBsoZ2xBk7FGbqQRZMhPgM1IosOcF9oBlUqq1qtq9asz0ikMKflxmIoSjAjEywfMACU7FksKaq0Ru7wOm+7sOW4jjuo57mtSYMoKX+BgKBR4LNpzC+IyQhEyULEAEX/QQIZomJDqCJhq7V4t9cKvleopF/QuABUMEBGIXI62SMjGzBAYtGgoler9cC3lerWWqupdrDlzMBXkvlR5VNMgZJMoQ4FwSsHFqQam3sDQ7Go1KZqhqU9JPzk7FoddppKbxUVOZEVEU6TtXYztrjjuo87yPY90Cv07rvOy4TgshYUomh4Ksn5eDgFdtMhEKisalMqmaCbm5RL5ZPyafisDOUraQjAJ5mL4ROUSunpLdi/ZtWcsqta7cr1KduiQr2Ud7vO87nejVvAMDO397evHj4wMgStF6FsxYGZEwJTExoBtUEXom6L1dhdUZX2wEsD6rIXWS0dSmLPV6+YKwYvhQ2KN9YekCFf/7tMTiADDqOTPn7zmK7DAmfYfiPFmPpzliPtvZG2Sz7P9t6swNBhGNEfwGVqhwYm5K/sWodJW/NemGThclJVzt4d13HWVXm+TPKueX6nBRqcM3GLl+z3e89TMzMbw/Lt6VU1PKBo1eL3rdXeruG8t1M98yx7LYaiNPaaFKJFjuzTZ1qbeP/lV1cu8iol61fhz/5aqauJi4pV+dNBr94litRUXMhe3UgI/rSaOKT0mZ41SHYdn0bqc6SRPHCifhxcKzLNPiNitUjelXj0c4E0JY6nybtjT9+8h5hSf/Pv0WZoGEda6YsqIuyHJ2sqGtDahr1fboqicmNkhnQRkZMxc1ZezJ9WkaouXiDCbxCpDC+TRmk5xJ3ptJ0c4gxEyeG4LlGYBvKDQA3cJ/KheMicLrHSqfMUlpGqSLXl0ho7TR20qlba3W7+aP+r1Bv///64eXh5dzT040hJ+yC2uJPQBS56EDl1gnEcaRjpIkB5qspXcfKED0yRZTpFHZenRKTcrvYLg4oi+IFsE5IhQerJpniQcyODY+j/zv/u3Kr4VYlFG5/b/PzO1KWckb+yqRuxZo5PGZXVRKA3AnSMPnkk0NprZnNm3WmXhqEMKLpLQSRZJ2ZJkUjVjNAomQs0LMk6khRRTXap2WykUXdVAeVM1lLf7dFXWbIK/a/+vYwNw7T7uNO1iGhohzTwYSWP2FnykwTrvImjXNhiovDrRIRtLJwrZI0M1Eu56cjANyIpi4t6J1umJdofE/jPsva1ci3v/7lMTWABeBiyPsPjHCz7ejvPxHiHOd86wrma6mne//51SiNG8qXL2huMW5qlrS2rarR3DGJxOrSULgMiAkDNIHszli9PU2FiapJ+tVpLtzTryiOw0r5QRl8Vf6Mw1SWa0Sd63Xm5nOk3Ty7kzLWlDyU1P50l2tymzlWGu28JffxnzOmjk/M18tdEHTXFtH+6EjL2PTdVLPyyKVRzmAO7Ztbbrm5DCiQalSKutRwrUAv+JtnbNGVRso9XkqCHqe2BETzcmPQyi+vmJbcS6OVdSWYj6e+LGYHZ5zYSza2sbtWQm5bjy2+cfTZbB/hRjwcm+IUS0aFwvk6WCsbGBxJzZjUghASiGPAdCfHs1daaaClIHTyJqkkdUTSUdAD3FtK5OOakyanmWZrTo1bss+WQxSRVnup0rKVqrzNeBRiOq3udKfqtn0gJib7vUb+Hr84Y+NGWorAAVdvZZuSrbars9WIUWzY7TLixC8pfCQtrxbNZrjLG6i1Ir73cwsQdCsUf/7pMTTgBjlixvn5N7C7jeidPkP2B/ivhkbXa+9RbjjeI0Bie5vEh2Pt69c3FyVLJpvU8GjzXzrH3EbmMHqqWvTJ9NE5ZLLV+bmezFimjEMUnLdtOwOldk9rUopNU8vlljOvT5XIhGJE/jqQ5ShYrB+xaN5yObsSyxjdop3pPZxJhRQkQAYRDK7bZdc2sogzrqZU/OFYq4VDZtz3DR5JqjEx36Wl1BTvrqthd7kOX0TWwbYxw2tuCU4Ku4PqCqQ6TKSydSUwBSYBES3ZjDYCJ0xYOSTlVOqbHLGHB+PPTOOFITaxnwgGcRW5CbPCws2hxuffm7sENWHmKBv69sOTK6irOJVTPlWyvW6Dfyp7dB9GS9lXLjEhHM+jyMzddtcVK6VzC9hKI3ksRUWsJ/V7qLi2/iNCVLjM+bomLiNG8tTsKGvp3r2DaFuNWNu1SC0Sq36Oeixarvp31W7Bz1pTLYVgbphbJEDxz0xIPnVpnekmnIRlAK8UcuDAGYlLWVp89r5wbEonHJVLZyQDj2Xaph+aWvmyx86guljXrJ13L6/KatMiMVyepq9LRQzvGaw5fl1+Rw1TQNI5qtfgpK/F/p3KjxpeatV+zursWl9SxEwQM5PakOm21d37O9t7QMvuP/7lMT3gBfNWxOn4T6CuqlidMw/gIWjqe9JQhLjCjG33W6mJFmzz1w6uy83NColtjpdNO637CwwGWpI5IiRtC/SefW1mZrNvmR9jW2KR0DEgDgOMCZE2weGI4qGaVaolYSvHxODceFw6F46iXu/vqjpzsw8VmhHsyN4p5WLb1TMS1CeMyVXSlcWU6WjLxlw/dE4EXO7CO62TX2vjtjfgzN8bxffPb5T797sUHDxsuBjiAyGc5Ye/6vYvlWJS9WnNaOuQEK/+pQhHpiF/lcLNMKbxcD0dS/Sp8jmx8jTdaOq2n/qpJImjTV1UlF3vZcee9udkDqLLt0vXNrudFanKndF12ajjgwACFoGJgYRCgCEQNGlljwoHaLH9Tw0dDVlVGNJKWz0v+Y69v+kHbxUCL4W3AiYWHRLaH8sPaFSJ//aW1PJOWh1Mshp0adU/11MQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7hMT2gBRhQwumYXyCLyUhdMebiFVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7NMT8gg0YxwcgsW1Ai4ZhJBAc2FVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7FMTaA8AAAf4AAAAgAAA/wAAABFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7FMTaA8AAAf4AAAAgAAA0gAAABFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7FMTaA8AAAaQAAAAgAAA0gAAABFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==';
+let tickAudioPool=[];
+function getTickAudio(){
+  // Pool of audio elements so overlapping ticks don't cut each other off
+  const a=new Audio(TICK_SOUND_B64);
+  return a;
+}
+function playTick(level){
+  try{
+    const vols=[0.5,0.85,1.0];
+    const rates=[1,1.15,1.35];
+    const a=getTickAudio();
+    a.volume=vols[level];
+    a.playbackRate=rates[level];
+    a.play().catch(()=>{});
+    if(level===2){
+      // Double-hit for urgency on critical level
+      setTimeout(()=>{const a2=getTickAudio();a2.volume=0.6;a2.playbackRate=1.4;a2.play().catch(()=>{});},90);
+    }
+  }catch(e){}
+}
+// ── Voice (only < 1 min) ──
+function speak(text){
+  try{
+    if(!window.speechSynthesis)return;
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='fr-FR';u.rate=1.5;u.pitch=0.3;u.volume=1;
+    const voices=window.speechSynthesis.getVoices();
+    const male=voices.find(v=>v.lang.startsWith('fr')&&(v.name.match(/Thomas|Nicolas|Male|male|homme/i)));
+    if(male)u.voice=male;
+    window.speechSynthesis.speak(u);
+    const el=document.getElementById('stress-voice-txt');
+    if(el){el.textContent='"'+text+'"';el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',2500);}
+  }catch(e){}
+}
+
+const lastMinuteLines=["Dépêche-toi","UPLOAD","C'est maintenant","Vas-y","T'as plus le temps","Grouille","GO GO GO","MAINTENANT","Finis-la","UPLOAD MAINTENANT"];
+
+// ══════════════════════════════════════
+// TOGGLE + RUN
+// ══════════════════════════════════════
+function toggleStressMode(){
+  stressMode=!stressMode;
+  const ov=document.getElementById('stress-overlay');
+  if(stressMode){
+    ov.style.display='flex';
+    document.body.style.overflow='hidden';
+    lastSec=-1;voiceEnabled=false;coupeShown=false;
+    dogScheduled=false;currentLevel=0;zeroShown=false;
+    runStress();
+  } else {
+    ov.style.display='none';
+    document.body.style.overflow='';
+    if(stressTick)clearInterval(stressTick);
+    if(dogTimer)clearTimeout(dogTimer);
+    dogScheduled=false;
+    try{window.speechSynthesis.cancel();}catch(e){}
+    document.getElementById('stress-voice-txt').style.opacity='0';
+  }
+}
+
+function runStress(){
+  if(stressTick)clearInterval(stressTick);
+  let lastVoiceSec=99999;
+  let trackedKey=null; // track which event we're counting down to
+
+  function tick(){
+    try{
+      const events=JSON.parse(localStorage.getItem('loopbuilder_plan')||'{}');
+      const nw=Date.now();
+
+      // Get ALL future events sorted
+      const allNext=Object.entries(events)
+        .filter(([k,v])=>v.type!=='idea')
+        .sort(([,a],[,b])=>new Date(a.datetime||a.date+'T18:00:00')-new Date(b.datetime||b.date+'T18:00:00'));
+
+      // Find the one we should track: the nearest one whose deadline hasn't passed by more than 5min
+      const next=allNext.find(([k,v])=>{
+        const dt=v.datetime?new Date(v.datetime):new Date(k+'T18:00:00');
+        return dt-nw>-300000; // not more than 5min past
+      });
+
+      const timerEl=document.getElementById('stress-timer');
+      const secEl=document.getElementById('stress-sec');
+      const titleEl=document.getElementById('stress-title');
+      const subEl=document.getElementById('stress-sub');
+      const bg=document.getElementById('stress-bg');
+      const content=document.getElementById('stress-content');
+
+      if(!next){
+        timerEl.textContent='--';secEl.textContent='';
+        titleEl.textContent='AUCUNE VIDÉO PLANIFIÉE';
+        subEl.textContent='Va dans le Calendrier';
+        return;
+      }
+
+      const [dateKey,ev]=next;
+      currentVideoTitle=ev.title||'';
+      const target=ev.datetime?new Date(ev.datetime):new Date(dateKey+'T18:00:00');
+      deadlineTs=target.getTime();
+      const diff=target-Date.now();
+
+      // ZERO — show popup
+      if(diff<=0){
+        if(!zeroShown){
+          timerEl.textContent='00:00';secEl.textContent='00';
+          titleEl.textContent=(ev.title||'ta vidéo').toUpperCase();
+          subEl.textContent='';
+          showZeroModal();
+        }
+        return;
+      }
+
+      const totalSec=Math.floor(diff/1000);
+      const d=Math.floor(diff/86400000);
+      const h=Math.floor((diff%86400000)/3600000);
+      const m=Math.floor((diff%3600000)/60000);
+      const s=Math.floor((diff%60000)/1000);
+      const pad=n=>String(n).padStart(2,'0');
+
+      // Levels: 0=calm(>1j), 1=urgent(last day), 2=panic(<30min)
+      const level2=d===0&&h===0&&m<30;
+      const level1=d===0&&h<24;
+      const level=level2?2:level1?1:0;
+
+      titleEl.textContent=(ev.title||'ta vidéo').toUpperCase();
+      if(d>0)timerEl.textContent=d+'j '+pad(h)+'h '+pad(m)+'m';
+      else timerEl.textContent=pad(h)+':'+pad(m);
+      secEl.textContent=pad(s);
+
+      // Colors & bg
+      if(level2){
+        subEl.textContent='MOINS DE 30 MINUTES';
+        const r=155+Math.floor(Math.random()*100);
+        timerEl.style.color=Math.random()>.08?`rgb(${r},0,0)`:'#fff';
+        secEl.style.color='rgba(255,50,50,.55)';
+        bg.style.background=`rgb(${10+Math.floor(Math.random()*16)},0,0)`;
+      } else if(level1){
+        subEl.textContent='DERNIER JOUR';
+        timerEl.style.color='#f59e0b';secEl.style.color='rgba(245,158,11,.48)';
+        bg.style.background='rgb(12,6,0)';
+      } else {
+        subEl.textContent='';timerEl.style.color='#fff';secEl.style.color='rgba(255,255,255,.28)';
+        bg.style.background='#000';
+      }
+
+      // On new second
+      if(totalSec!==lastSec){
+        lastSec=totalSec;
+        playTick(level);
+
+        // Shake
+        if(level2){
+          content.style.animation='megashake .28s ease-in-out';
+          setTimeout(()=>content.style.animation='none',320);
+        } else if(level1&&totalSec%7===0){
+          content.style.animation='shake .2s ease-in-out';
+          setTimeout(()=>content.style.animation='none',240);
+        }
+
+        // Voice: ONLY under 60 seconds
+        const under60=d===0&&h===0&&m===0;
+        if(under60){
+          voiceEnabled=true;
+          if(totalSec===30&&!coupeShown){
+            coupeShown=true;
+            speak("Coupe ta merde.");
+          } else if(totalSec!==30&&totalSec<lastVoiceSec-8){
+            lastVoiceSec=totalSec;
+            speak(lastMinuteLines[Math.floor(Math.random()*lastMinuteLines.length)]);
+          }
+        }
+
+        // Dog — update level and arm once
+        if(level!==currentLevel){currentLevel=level;dogScheduled=false;}
+        scheduleDog(level);
+      }
+    }catch(e){}
+  }
+
+  tick();
+  stressTick=setInterval(tick,80);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&stressMode)toggleStressMode();});
+
+// ══════════════════════════════════════
+// MODE SOFT — timer zen + confettis
+// ══════════════════════════════════════
+let softMode=false, softTick=null, confettiTimer=null, softDone=false;
+
+function toggleSoftMode(){
+  softMode=!softMode;
+  const ov=document.getElementById('soft-overlay');
+  if(softMode){
+    ov.style.display='flex';
+    document.body.style.overflow='hidden';
+    softDone=false;
+    document.getElementById('soft-done-msg').style.display='none';
+    document.getElementById('soft-confetti').innerHTML='';
+    runSoft();
+  } else {
+    closeSoftMode();
+  }
+}
+
+function closeSoftMode(){
+  softMode=false;
+  document.getElementById('soft-overlay').style.display='none';
+  document.body.style.overflow='';
+  if(softTick)clearInterval(softTick);
+  if(confettiTimer)clearInterval(confettiTimer);
+  document.getElementById('soft-confetti').innerHTML='';
+  stopSoftMusic();
+}
+
+function runSoft(){
+  if(softTick)clearInterval(softTick);
+
+  function tick(){
+    try{
+      const events=JSON.parse(localStorage.getItem('loopbuilder_plan')||'{}');
+      const now=Date.now();
+      const next=Object.entries(events)
+        .filter(([k,v])=>{const dt=v.datetime?new Date(v.datetime):new Date(k+'T18:00:00');return dt>now&&v.type!=='idea';})
+        .sort(([,a],[,b])=>new Date(a.datetime||a.date+'T18:00:00')-new Date(b.datetime||b.date+'T18:00:00'))[0];
+
+      const timerEl=document.getElementById('soft-timer');
+      const secEl=document.getElementById('soft-sec');
+      const titleEl=document.getElementById('soft-title');
+      const labelEl=document.getElementById('soft-label');
+
+      if(!next){
+        timerEl.textContent='--';secEl.textContent='';
+        titleEl.textContent='AUCUNE VIDÉO PLANIFIÉE';
+        labelEl.textContent='Ajoute une vidéo dans le Calendrier';
+        return;
+      }
+
+      const [dateKey,ev]=next;
+      const target=ev.datetime?new Date(ev.datetime):new Date(dateKey+'T18:00:00');
+      const diff=target-Date.now();
+
+      if(diff<=0&&!softDone){
+        softDone=true;
+        timerEl.textContent='00:00';secEl.textContent='00';
+        titleEl.textContent=(ev.title||'Ta vidéo').toUpperCase();
+        labelEl.textContent='';
+        document.getElementById('soft-done-msg').style.display='block';
+        startConfetti();
+        return;
+      }
+      if(softDone)return;
+
+      const d=Math.floor(diff/86400000);
+      const h=Math.floor((diff%86400000)/3600000);
+      const m=Math.floor((diff%3600000)/60000);
+      const s=Math.floor((diff%60000)/1000);
+      const pad=n=>String(n).padStart(2,'0');
+
+      titleEl.textContent=(ev.title||'Ta vidéo').toUpperCase();
+      if(d>0){
+        timerEl.textContent=d+'j '+pad(h)+'h '+pad(m)+'m';
+        labelEl.textContent=new Date(target).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+      } else {
+        timerEl.textContent=pad(h)+':'+pad(m);
+        labelEl.textContent=d===0&&h<1?"Moins d'une heure":"Aujourd'hui à "+pad(h)+"h"+pad(m);
+      }
+      secEl.textContent=pad(s);
+    }catch(e){}
+  }
+
+  tick();
+  softTick=setInterval(tick,200);
+  startSoftMusic();
+}
+
+let softMusicCtx=null, softMusicNodes=[], softMusicRunning=false;
+function startSoftMusic(){
+  if(softMusicRunning)return;
+  softMusicRunning=true;
+  try{
+    softMusicCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const ac=softMusicCtx;
+    // Master gain
+    const master=ac.createGain();
+    master.gain.setValueAtTime(0,ac.currentTime);
+    master.gain.linearRampToValueAtTime(0.22,ac.currentTime+3);
+    master.connect(ac.destination);
+    softMusicNodes.push(master);
+
+    // Reverb convolver (simple impulse)
+    const revLen=ac.sampleRate*2.5;
+    const revBuf=ac.createBuffer(2,revLen,ac.sampleRate);
+    for(let ch=0;ch<2;ch++){const d=revBuf.getChannelData(ch);for(let i=0;i<revLen;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/revLen,2.2);}
+    const rev=ac.createConvolver();rev.buffer=revBuf;
+    const revGain=ac.createGain();revGain.gain.value=0.45;
+    rev.connect(revGain);revGain.connect(ac.destination);
+    softMusicNodes.push(rev,revGain);
+
+    // Low pad — slow sine sweep
+    const padFreqs=[130.8,164.8,196,261.6];
+    padFreqs.forEach((f,i)=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      const lfo=ac.createOscillator();
+      const lfoG=ac.createGain();
+      o.type='sine';o.frequency.value=f;
+      lfo.type='sine';lfo.frequency.value=0.04+i*0.01;
+      lfoG.gain.value=f*0.005;
+      lfo.connect(lfoG);lfoG.connect(o.frequency);
+      g.gain.value=0.06-i*0.01;
+      o.connect(g);g.connect(master);g.connect(rev);
+      o.start();lfo.start();
+      softMusicNodes.push(o,g,lfo,lfoG);
+    });
+
+    // Soft high tones — gentle bell-like
+    function schedBell(){
+      if(!softMusicRunning)return;
+      try{
+        const bellFreqs=[523,659,784,1047];
+        const f=bellFreqs[Math.floor(Math.random()*bellFreqs.length)];
+        const o=ac.createOscillator(),g=ac.createGain();
+        o.type='sine';o.frequency.value=f;
+        const t=ac.currentTime;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(0.07,t+0.4);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+4);
+        o.connect(g);g.connect(master);g.connect(rev);
+        o.start(t);o.stop(t+4.5);
+        setTimeout(schedBell,3000+Math.random()*5000);
+      }catch(e){}
+    }
+    setTimeout(schedBell,2000);
+  }catch(e){}
+}
+function stopSoftMusic(){
+  softMusicRunning=false;
+  try{softMusicNodes.forEach(n=>{try{n.disconnect();}catch(e){}});softMusicNodes=[];}catch(e){}
+  try{if(softMusicCtx)softMusicCtx.close();}catch(e){}
+  softMusicCtx=null;
+}
+
+// ── Confettis ──
+const confettiColors=['#6366f1','#a855f7','#22c55e','#f59e0b','#ef4444','#3b82f6','#ec4899','#fff','#fbbf24'];
+
+function spawnConfetto(){
+  const c=document.getElementById('soft-confetti');
+  const el=document.createElement('div');
+  const size=6+Math.random()*10;
+  const color=confettiColors[Math.floor(Math.random()*confettiColors.length)];
+  const left=Math.random()*100;
+  const dur=2+Math.random()*3;
+  const delay=Math.random()*.5;
+  const isRect=Math.random()>.5;
+  el.style.cssText=`position:absolute;left:${left}%;top:-20px;width:${size}px;height:${isRect?size*.4:size}px;background:${color};border-radius:${isRect?'2px':'50%'};opacity:0;animation:confettiFall ${dur}s ${delay}s ease-in forwards;transform:rotate(${Math.random()*360}deg)`;
+  c.appendChild(el);
+  setTimeout(()=>el.remove(),(dur+delay)*1000+100);
+}
+
+function startConfetti(){
+  if(confettiTimer)clearInterval(confettiTimer);
+  // Burst first
+  for(let i=0;i<80;i++)setTimeout(spawnConfetto,i*18);
+  // Then continuous shower for 8s
+  confettiTimer=setInterval(spawnConfetto,40);
+  setTimeout(()=>{clearInterval(confettiTimer);},8000);
+}
+
+// Inject confetti keyframe
+const cStyle=document.createElement('style');
+cStyle.textContent='@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg) scale(1)}100%{opacity:0;transform:translateY(110vh) rotate(720deg) scale(.5)}}';
+document.head.appendChild(cStyle);
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&softMode)closeSoftMode();});
+
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}
+</script>
+<div id="pmd-lightbox" onclick="this.classList.remove('open')"><img id="pmd-lightbox-img" src="" alt=""></div>
+
+<!-- New project modal -->
+<div class="pm-modal-bg" id="pm-new-modal">
+  <div class="pm-modal">
+    <div class="pm-modal-title">Nouveau projet</div>
+    <div class="pm-field">
+      <div class="pm-label">TITRE DE LA VIDÉO</div>
+      <input class="pm-input" id="pm-new-name" placeholder="Ex: J'ai vécu 100H en VR…" maxlength="80">
+    </div>
+    <div class="pm-field">
+      <div class="pm-label">DATE DE SORTIE (optionnel)</div>
+      <input class="pm-input" id="pm-new-deadline" type="date">
+    </div>
+    <div class="pm-modal-btns">
+      <button class="pm-modal-save" onclick="createProjectFromIndex()">Créer le projet →</button>
+      <button class="pm-modal-cancel" onclick="closePmModal('pm-new-modal')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROJECT DETAIL MODAL — le cœur du gestionnaire ══ -->
+<div class="pm-modal-bg" id="pm-detail-modal">
+  <div class="pm-detail-box">
+    <!-- Header -->
+    <div class="pm-detail-header">
+      <div class="pm-detail-thumb-wrap" onclick="pmDetailTriggerThumb()">
+        <img id="pmd-thumb-img" src="" style="display:none">
+        <div id="pmd-thumb-placeholder" class="pm-thumb-placeholder" style="font-size:24px">🎬</div>
+        <input type="file" accept="image/*" id="pmd-thumb-input" style="display:none" onchange="pmDetailThumbChange(this)">
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+        <input class="pmd-title-input" id="pmd-title" placeholder="Titre du projet…" onchange="pmDetailSaveField('name',this.value)">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select class="pmd-status-select" id="pmd-status" onchange="pmDetailSaveField('status',this.value)">
+            <option value="idea">💡 Idée</option>
+            <option value="progress">🔧 En cours</option>
+            <option value="published">✅ Publiée</option>
+          </select>
+          <input class="pmd-mini-input" id="pmd-deadline" type="date" onchange="pmDetailSaveField('deadline',this.value)" title="Deadline">
+          <span id="pmd-loops-badge" class="pm-badge loops">🔁 0</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+        <button class="pm-detail-close" onclick="closePmDetail()">×</button>
+        <button class="pmd-save-btn" onclick="pmManualSave()">💾 Enregistrer</button>
+        <span class="pmd-save-status" id="pmd-save-status">✓ Enregistré</span>
+      </div>
+    </div>
+
+    <!-- Video URL row -->
+    <div class="pmd-video-row">
+      <span class="pmd-video-ico">🎥</span>
+      <input class="pmd-video-input" id="pmd-video-url" placeholder="Lien YouTube de la vidéo (si publiée)…" onchange="pmDetailSaveField('videoUrl',this.value)">
+      <span id="pmd-video-status" class="pm-badge deadline-none">En cours</span>
+      <a id="pmd-video-watch" href="#" target="_blank" class="pmd-watch-link" style="display:none">▶ Regarder</a>
+      <span class="pmd-deadline-sync-note">📅 La deadline se synchronise avec le calendrier</span>
+    </div>
+
+    <!-- Internal tabs -->
+    <div class="pmd-tabs">
+      <button class="pmd-tab on" onclick="pmDetailTab('notes',this)">📝 Notes</button>
+      <button class="pmd-tab" onclick="pmDetailTab('feedback',this)">💬 Feedback viewers</button>
+      <button class="pmd-tab" onclick="pmDetailTab('quiz',this)">🧠 Post-mortem</button>
+      <button class="pmd-tab" onclick="pmDetailTab('captures',this)">📊 Captures annotées</button>
+      <button class="pmd-tab" onclick="pmDetailTab('titres',this)">💡 Idées de titres</button>
+      <button class="pmd-tab" onclick="pmDetailTab('abtests',this)">🧪 Tests A/B</button>
+      <button class="pmd-tab" onclick="pmDetailTab('rpm',this)">💰 Calculateur RPM</button>
+      <button class="pmd-tab" onclick="pmDetailTab('links',this)">🔗 Liens</button>
+    </div>
+
+    <!-- Tab contents -->
+    <div class="pmd-body">
+
+      <!-- NOTES -->
+      <div class="pmd-panel on" id="pmd-panel-notes">
+        <div class="pmd-panel-hint">Note tout ce qui concerne la vidéo : problèmes identifiés, idées de montage, ce qu'il faut améliorer.</div>
+        <textarea class="pmd-textarea" id="pmd-notes" placeholder="Ex: Trop peu de temps sur l'élément principal, caméra qui tremble, améliorer la satisfaction viewer…" onchange="pmDetailSaveField('notes',this.value)"></textarea>
+      </div>
+
+      <!-- FEEDBACK -->
+      <div class="pmd-panel" id="pmd-panel-feedback">
+        <div class="pmd-panel-hint">Colle ici les retours des viewers (commentaires, DMs, retours de la communauté) — séparé de tes propres notes.</div>
+        <textarea class="pmd-textarea" id="pmd-feedback" placeholder="Ex: Plusieurs commentaires disent que l'intro est trop longue…" onchange="pmDetailSaveField('feedback',this.value)"></textarea>
+      </div>
+
+      <!-- QUIZ / POST-MORTEM -->
+      <div class="pmd-panel" id="pmd-panel-quiz">
+        <div class="pmd-panel-hint">Réponds à ces 4 questions après chaque vidéo publiée — c'est ce qui te fait progresser le plus vite.</div>
+        <div class="pmd-quiz-grid">
+          <div class="pmd-quiz-item">
+            <div class="pmd-quiz-q">🐢 Où as-tu été trop lent ?</div>
+            <textarea class="pmd-textarea pmd-textarea-sm" id="pmd-quiz-slow" onchange="pmDetailSaveQuiz('slow',this.value)" placeholder="Ex: L'intro prend 45 secondes avant le premier hook…"></textarea>
+          </div>
+          <div class="pmd-quiz-item">
+            <div class="pmd-quiz-q">⚡ Où as-tu été rapide / efficace ?</div>
+            <textarea class="pmd-textarea pmd-textarea-sm" id="pmd-quiz-fast" onchange="pmDetailSaveQuiz('fast',this.value)" placeholder="Ex: Le twist arrive au bon moment, ça relance bien…"></textarea>
+          </div>
+          <div class="pmd-quiz-item">
+            <div class="pmd-quiz-q">🎯 Qu'est-ce que t'aurais dû faire mieux ?</div>
+            <textarea class="pmd-textarea pmd-textarea-sm" id="pmd-quiz-improve" onchange="pmDetailSaveQuiz('improve',this.value)" placeholder="Ex: Le titre ne matche pas assez avec la miniature…"></textarea>
+          </div>
+          <div class="pmd-quiz-item">
+            <div class="pmd-quiz-q">🚀 Comment rendre la prochaine vidéo meilleure ?</div>
+            <textarea class="pmd-textarea pmd-textarea-sm" id="pmd-quiz-next" onchange="pmDetailSaveQuiz('next',this.value)" placeholder="Ex: Couper l'intro à 15 secondes max, tester un nouveau format de hook…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAPTURES ANNOTÉES -->
+      <div class="pmd-panel" id="pmd-panel-captures">
+        <div class="pmd-panel-hint">Ajoute une capture (graphique de rétention, commentaire, miniature…) et dessine ou écris dessus pour noter les problèmes.</div>
+        <button class="pmd-add-btn" onclick="pmOpenCaptureUpload()">+ Ajouter une capture à annoter</button>
+        <input type="file" accept="image/*" id="pmd-capture-input" style="display:none" onchange="pmCaptureFileChosen(this)">
+        <div id="pmd-captures-grid" class="pmd-media-grid"></div>
+      </div>
+
+      <!-- IDÉES DE TITRES -->
+      <div class="pmd-panel" id="pmd-panel-titres">
+        <div class="pmd-panel-hint">Note toutes tes idées de titres ici. Pas de filtre — brains en mode ouvert. Tu choisiras le meilleur ensuite.</div>
+        <div id="pmd-titres-list" class="pmd-titres-list"></div>
+        <div class="pmd-titre-add-row">
+          <input class="pmd-titre-input" id="pmd-titre-inp" placeholder="Ex: J'ai volé une voiture pendant 24h…" onkeydown="if(event.key==='Enter')pmAddTitre()">
+          <button class="pmd-add-btn" style="width:auto;padding:11px 18px" onclick="pmAddTitre()">+ Ajouter</button>
+        </div>
+      </div>
+
+            <!-- TESTS A/B -->
+      <div class="pmd-panel" id="pmd-panel-abtests">
+        <div class="pmd-panel-hint">Crée des groupes de 3 miniatures comme YouTube Studio. Drag & drop ou clique pour uploader. Clique sur une image pour l'agrandir.</div>
+
+        <!-- Groupes A/B -->
+        <div id="pmd-abtest-groups"></div>
+
+        <button class="pmd-add-btn" onclick="pmAddAbGroup()">+ Nouveau groupe de 3 miniatures</button>
+
+        <!-- Résultats : screenshots des tests terminés -->
+        <div style="margin-top:24px">
+          <div style="font-size:13px;font-weight:800;color:#4338ca;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            🏆 Résultats des tests
+            <button class="pmd-add-btn" style="width:auto;padding:7px 14px;font-size:11.5px" onclick="document.getElementById('pmd-results-input').click()">+ Ajouter un résultat</button>
+          </div>
+          <div class="pmd-panel-hint" style="margin-bottom:12px">Mets ici tes screenshots de tests terminés depuis YouTube Studio.</div>
+          <input type="file" accept="image/*" multiple id="pmd-results-input" style="display:none" onchange="pmResultFilesChosen(this)">
+          <div id="pmd-results-grid" class="pmd-media-grid"></div>
+        </div>
+      </div>
+
+      <!-- RPM CALCULATOR -->
+      <div class="pmd-panel" id="pmd-panel-rpm">
+        <div class="pmd-panel-hint">Estime tes revenus potentiels. Le RPM (revenu pour 1000 vues) varie selon ta niche — vérifie le tien dans YouTube Studio → Analyse → Revenus.</div>
+        <div class="pmd-rpm-box">
+          <div class="pmd-rpm-inputs">
+            <div class="pmd-rpm-field">
+              <div class="pmd-rpm-label">RPM (€ pour 1000 vues)</div>
+              <input class="pmd-rpm-input" id="pmd-rpm-rate" type="number" min="0" step="0.1" placeholder="Ex: 2.5" oninput="pmCalcRpm()">
+            </div>
+            <div class="pmd-rpm-field">
+              <div class="pmd-rpm-label">Nombre de vues visé</div>
+              <input class="pmd-rpm-input" id="pmd-rpm-views" type="number" min="0" step="1000" placeholder="Ex: 100000" oninput="pmCalcRpm()">
+            </div>
+          </div>
+          <div class="pmd-rpm-result">
+            <div>
+              <div class="pmd-rpm-result-val" id="pmd-rpm-result">0 €</div>
+              <div class="pmd-rpm-result-lbl">Revenu estimé pour cette vidéo</div>
+            </div>
+          </div>
+          <div class="pmd-rpm-scenarios" id="pmd-rpm-scenarios"></div>
+        </div>
+      </div>
+
+      <!-- LIENS -->
+      <div class="pmd-panel" id="pmd-panel-links">
+        <div class="pmd-panel-hint">Lie des docs, scripts Google Docs, tableurs, ou toute autre page utile à ce projet.</div>
+        <div class="pmd-link-add-row">
+          <input class="pm-input" id="pmd-link-label" placeholder="Nom (ex: Script)" style="flex:1">
+          <input class="pm-input" id="pmd-link-url" placeholder="https://…" style="flex:2">
+          <button class="pmd-add-btn" style="width:auto;padding:10px 16px" onclick="pmAddLink()">+ Ajouter</button>
+        </div>
+        <div id="pmd-links-list" class="pmd-links-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Canvas annotation editor (used by captures) -->
+<div class="pm-modal-bg" id="pm-canvas-modal">
+  <div class="pm-canvas-box">
+    <div class="pm-canvas-toolbar">
+      <button class="pmc-tool on" id="pmc-tool-pen" onclick="pmSetCanvasTool('pen')">✏ Dessiner</button>
+      <button class="pmc-tool" id="pmc-tool-text" onclick="pmSetCanvasTool('text')">🔤 Texte</button>
+      <div class="pmc-colors">
+        <button class="pmc-color sel" style="background:#ef4444" onclick="pmSetCanvasColor('#ef4444',this)"></button>
+        <button class="pmc-color" style="background:#fbbf24" onclick="pmSetCanvasColor('#fbbf24',this)"></button>
+        <button class="pmc-color" style="background:#22c55e" onclick="pmSetCanvasColor('#22c55e',this)"></button>
+        <button class="pmc-color" style="background:#fff" onclick="pmSetCanvasColor('#ffffff',this)"></button>
+      </div>
+      <button class="pmc-tool" onclick="pmClearCanvasDrawing()">🗑 Effacer dessin</button>
+      <div style="flex:1"></div>
+      <input class="pm-input" id="pmc-label" placeholder="Titre de la capture…" style="max-width:200px">
+      <button class="pmd-add-btn" style="width:auto;padding:9px 18px" onclick="pmSaveCanvasCapture()">Enregistrer</button>
+      <button class="pm-modal-cancel" onclick="closePmModal('pm-canvas-modal')">Annuler</button>
+    </div>
+    <div class="pm-canvas-wrap">
+      <canvas id="pmc-canvas"></canvas>
+    </div>
+  </div>
+</div>
+
+
+<div class="pm-modal-bg" id="pm-plan-modal">
+  <div class="pm-modal">
+    <div class="pm-modal-title">Planifier <span id="pm-plan-name" style="color:var(--acc)"></span></div>
+    <div class="pm-field">
+      <div class="pm-label">DATE DE PUBLICATION</div>
+      <input class="pm-input" id="pm-plan-date" type="date">
+    </div>
+    <div class="pm-field">
+      <div class="pm-label">HEURE</div>
+      <input class="pm-input" id="pm-plan-time" type="time" value="18:00">
+    </div>
+    <div class="pm-field">
+      <div class="pm-label">TYPE</div>
+      <div style="display:flex;gap:8px">
+        <button class="chip-type sel" data-type="long" onclick="pmSelectType(this)" style="flex:1;padding:9px;border-radius:8px;border:1px solid rgba(99,102,241,.4);background:rgba(99,102,241,.15);color:var(--acc);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">🎬 Longue</button>
+        <button class="chip-type" data-type="short" onclick="pmSelectType(this)" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--b);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">⚡ Short</button>
+      </div>
+    </div>
+    <div class="pm-modal-btns">
+      <button class="pm-modal-save" onclick="savePmPlan()">Ajouter au calendrier →</button>
+      <button class="pm-modal-cancel" onclick="closePmModal('pm-plan-modal')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// PROJECT MANAGER — relie Loop Builder + Calendrier
+// ══════════════════════════════════════
+const PM_STORE_KEY='loopbuilder_projects_v1';
+const PM_PLAN_KEY='loopbuilder_plan';
+let pmPlanType='long';
+let pmPlanningProjectId=null;
+
+function pmGetProjects(){try{return JSON.parse(localStorage.getItem(PM_STORE_KEY)||'[]');}catch(e){return [];}}
+function pmSaveProjects(list){try{localStorage.setItem(PM_STORE_KEY,JSON.stringify(list));}catch(e){}}
+function pmGetPlanEvents(){try{return JSON.parse(localStorage.getItem(PM_PLAN_KEY)||'{}');}catch(e){return {};}}
+function pmSavePlanEvents(ev){try{localStorage.setItem(PM_PLAN_KEY,JSON.stringify(ev));}catch(e){}}
+const pmUid=()=>Math.random().toString(36).slice(2,10);
+
+function pmFindLinkedEvent(projectName){
+  const events=pmGetPlanEvents();
+  const norm=s=>(s||'').trim().toLowerCase();
+  for(const [dateKey,ev] of Object.entries(events)){
+    if(norm(ev.title)===norm(projectName)) return {dateKey,...ev};
+  }
+  return null;
+}
+
+let pmFilter='all';
+let pmSearchQuery='';
+
+function pmSetFilter(f,btn){
+  pmFilter=f;
+  document.querySelectorAll('.pm-filter-chip').forEach(c=>c.classList.toggle('sel',c===btn));
+  pmRenderGrid();
+}
+
+function pmUrgencyLevel(p){
+  if(!p.deadline)return null;
+  const dl=new Date(p.deadline+'T12:00:00'); const now=new Date(); now.setHours(0,0,0,0);
+  return Math.round((dl-now)/86400000);
+}
+
+function pmRenderGrid(){
+  const grid=document.getElementById('proj-mgr-grid');
+  const empty=document.getElementById('proj-mgr-empty');
+  const toolbar=document.getElementById('pm-toolbar');
+  const countBadge=document.getElementById('pm-count-badge');
+  let projects=pmGetProjects().sort((a,b)=>(b.updated||0)-(a.updated||0));
+
+  countBadge.textContent=projects.length;
+
+  if(!projects.length){
+    grid.innerHTML='';
+    empty.style.display='block';
+    toolbar.style.display='none';
+    return;
+  }
+  empty.style.display='none';
+  toolbar.style.display=projects.length>2?'flex':'none';
+
+  // Apply search
+  const q=(document.getElementById('pm-search')?.value||'').toLowerCase().trim();
+  if(q) projects=projects.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.notes||'').toLowerCase().includes(q));
+
+  // Apply filter
+  if(pmFilter==='urgent'){
+    projects=projects.filter(p=>{const u=pmUrgencyLevel(p);return u!==null&&u<=3;});
+  } else if(pmFilter==='unplanned'){
+    projects=projects.filter(p=>!pmFindLinkedEvent(p.name));
+  }
+
+  if(!projects.length){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,.3);font-size:13px">Aucun projet ne correspond à ta recherche.</div>';
+    return;
+  }
+
+  grid.innerHTML=projects.map((p,idx)=>{
+    const loops=p.state?.arcs?.length||0;
+    const thumbStyle=p.thumb?`<img src="${p.thumb}" alt="">`:'<div class="pm-thumb-placeholder">🎬</div>';
+    const progressPct=Math.min(100,Math.round((loops/5)*100));
+
+    // Status badge
+    const status=p.status||'progress';
+    const statusMap={idea:{lbl:'💡 Idée',cls:'status-idea'},progress:{lbl:'🔧 En cours',cls:'status-progress'},published:{lbl:'✅ Publiée',cls:'status-published'}};
+    const stInfo=statusMap[status]||statusMap.progress;
+
+    // Deadline badge + urgency
+    let deadlineBadge='';
+    let urgentDot='';
+    let cardUrgentClass='';
+    const u=pmUrgencyLevel(p);
+    if(u!==null&&status!=='published'){
+      const cls=u<0?'deadline-urgent':u<=10?'deadline-urgent':u<=14?'deadline-soon':'deadline-ok';
+      const txt=u<0?'En retard':u===0?"Aujourd'hui":u===1?'Demain':'Dans '+u+'j';
+      deadlineBadge=`<span class="pm-badge ${cls}">⏱ ${txt}</span>`;
+      if(u<=1){
+        cardUrgentClass='urgent-card';
+        urgentDot=`<div class="pm-urgent-dot"><span class="pm-urgent-pulse"></span>${u<0?'RETARD':u===0?"AUJOURD'HUI":'DEMAIN'}</div>`;
+      }
+    }
+
+    // Linked calendar badge
+    const linked=pmFindLinkedEvent(p.name);
+    let linkBadge='';
+    if(linked){
+      const d=new Date(linked.dateKey+'T12:00:00');
+      const dstr=d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+      linkBadge=`<span class="pm-badge linked" title="Planifié dans le calendrier">📅 ${dstr}</span>`;
+    } else {
+      linkBadge=`<span class="pm-badge unlinked" onclick="event.stopPropagation();openPmPlanModal('${p.id}')" title="Planifier cette vidéo">📅 Planifier</span>`;
+    }
+
+    const abCount=(p.abTests||[]).length;
+    const abBadge=abCount?`<span class="pm-badge loops" title="Tests A/B">🧪 ${abCount}</span>`:'';
+
+    return `<div class="pm-card ${cardUrgentClass}" data-id="${p.id}" style="animation-delay:${Math.min(idx*40,320)}ms" onclick="openPmDetail('${p.id}')">
+      <div class="pm-thumb" onclick="event.stopPropagation();pmTriggerThumb('${p.id}')">
+        ${thumbStyle}
+        ${urgentDot}
+        <button class="pm-thumb-edit" onclick="event.stopPropagation();pmTriggerThumb('${p.id}')" title="Changer la miniature">✏</button>
+        <button class="pm-del" onclick="event.stopPropagation();pmDeleteProject('${p.id}')" title="Supprimer">×</button>
+        <input type="file" accept="image/*" style="display:none" id="pm-thumb-input-${p.id}" onchange="pmThumbChange('${p.id}',this)">
+      </div>
+      <div class="pm-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div class="pm-title-display">${(p.name||'Sans titre')}</div>
+          <span class="pm-status-badge ${stInfo.cls}">${stInfo.lbl}</span>
+        </div>
+        <div class="pm-meta-row">
+          ${deadlineBadge}
+          <span class="pm-badge loops">🔁 ${loops}</span>
+          ${abBadge}
+          ${linkBadge}
+        </div>
+        <div class="pm-progress-wrap" title="${loops} boucle${loops!==1?'s':''} construite${loops!==1?'s':''}">
+          <div class="pm-progress-bar"><div class="pm-progress-fill" style="width:${progressPct}%"></div></div>
+          <div class="pm-progress-txt">${progressPct}%</div>
+        </div>
+        <div class="pm-footer">
+          <button class="pm-open-btn" onclick="event.stopPropagation();openPmDetail('${p.id}')">📋 Détails</button>
+          <a class="pm-open-btn pm-open-btn-alt" onclick="event.stopPropagation()" href="loop-builder.html?p=${p.id}">🔁 Loop Builder</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function pmTimeAgo(ts){
+  if(!ts)return 'jamais';
+  const diff=Date.now()-ts;
+  const mins=Math.floor(diff/60000), hrs=Math.floor(diff/3600000), days=Math.floor(diff/86400000);
+  if(mins<1)return "à l'instant";
+  if(mins<60)return 'il y a '+mins+'min';
+  if(hrs<24)return 'il y a '+hrs+'h';
+  if(days===1)return 'hier';
+  return 'il y a '+days+'j';
+}
+
+function pmTriggerThumb(id){document.getElementById('pm-thumb-input-'+id).click();}
+function pmThumbChange(id,input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const list=pmGetProjects();
+    const i=list.findIndex(p=>p.id===id);
+    if(i>=0){list[i].thumb=e.target.result;list[i].updated=Date.now();pmSaveProjects(list);pmRenderGrid();}
+  };
+  reader.readAsDataURL(file);
+}
+function pmRenameProject(id,val){
+  const name=val.trim()||'Sans titre';
+  const list=pmGetProjects();
+  const i=list.findIndex(p=>p.id===id);
+  if(i>=0){list[i].name=name;list[i].updated=Date.now();pmSaveProjects(list);pmRenderGrid();}
+}
+function pmSaveNotes(id,val){
+  const list=pmGetProjects();
+  const i=list.findIndex(p=>p.id===id);
+  if(i>=0){list[i].notes=val;list[i].updated=Date.now();pmSaveProjects(list);}
+}
+function pmDeleteProject(id){
+  if(!confirm('Supprimer ce projet ? Cette action est irréversible.'))return;
+  let list=pmGetProjects().filter(p=>p.id!==id);
+  pmSaveProjects(list);
+  pmRenderGrid();
+  if(pmActiveDetailId===id)closePmDetail();
+}
+
+// ══════════════════════════════════════
+// PROJECT DETAIL MODAL — le cœur du système
+// ══════════════════════════════════════
+let pmActiveDetailId=null;
+
+function pmGetActiveProject(){
+  return pmGetProjects().find(p=>p.id===pmActiveDetailId)||null;
+}
+function pmUpdateActiveProject(mutator){
+  const list=pmGetProjects();
+  const i=list.findIndex(p=>p.id===pmActiveDetailId);
+  if(i<0)return;
+  mutator(list[i]);
+  list[i].updated=Date.now();
+  pmSaveProjects(list);
+}
+
+function openPmDetail(id){
+  pmActiveDetailId=id;
+  const p=pmGetProjects().find(x=>x.id===id);
+  if(!p)return;
+
+  document.getElementById('pmd-title').value=p.name||'';
+  document.getElementById('pmd-status').value=p.status||'progress';
+  document.getElementById('pmd-deadline').value=p.deadline||'';
+  const loops=p.state?.arcs?.length||0;
+  document.getElementById('pmd-loops-badge').textContent='🔁 '+loops;
+
+  const thumbImg=document.getElementById('pmd-thumb-img');
+  const thumbPh=document.getElementById('pmd-thumb-placeholder');
+  if(p.thumb){thumbImg.src=p.thumb;thumbImg.style.display='block';thumbPh.style.display='none';}
+  else{thumbImg.style.display='none';thumbPh.style.display='flex';}
+
+  document.getElementById('pmd-video-url').value=p.videoUrl||'';
+  const statusBadge=document.getElementById('pmd-video-status');
+  const watchLink=document.getElementById('pmd-video-watch');
+  if(p.videoUrl){
+    statusBadge.textContent='Publiée';
+    statusBadge.className='pm-badge deadline-ok';
+    watchLink.href=p.videoUrl;
+    watchLink.style.display='inline-block';
+  } else {
+    statusBadge.textContent='En cours';
+    statusBadge.className='pm-badge deadline-none';
+    watchLink.style.display='none';
+  }
+
+  document.getElementById('pmd-notes').value=p.notes||'';
+  document.getElementById('pmd-feedback').value=p.feedback||'';
+  const quiz=p.quiz||{};
+  document.getElementById('pmd-quiz-slow').value=quiz.slow||'';
+  document.getElementById('pmd-quiz-fast').value=quiz.fast||'';
+  document.getElementById('pmd-quiz-improve').value=quiz.improve||'';
+  document.getElementById('pmd-quiz-next').value=quiz.next||'';
+
+  document.getElementById('pmd-rpm-rate').value=p.rpmRate||'';
+  document.getElementById('pmd-rpm-views').value=p.rpmViews||'';
+  pmCalcRpm();
+
+  pmRenderCaptures();
+  pmRenderAbGroups();
+  pmRenderTitres();
+  pmRenderResults();
+  pmRenderLinks();
+
+  // Reset to first tab
+  document.querySelectorAll('.pmd-tab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  document.querySelectorAll('.pmd-panel').forEach((t,i)=>t.classList.toggle('on',i===0));
+
+  document.getElementById('pm-detail-modal').classList.add('open');
+}
+function closePmDetail(){
+  document.getElementById('pm-detail-modal').classList.remove('open');
+  pmActiveDetailId=null;
+  pmRenderGrid();
+}
+function pmDetailTab(name,btn){
+  document.querySelectorAll('.pmd-tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.pmd-panel').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pmd-panel-'+name).classList.add('on');
+}
+function pmDetailSaveField(field,value){
+  pmUpdateActiveProject(p=>{p[field]=value;});
+  if(field==='videoUrl'){
+    const statusBadge=document.getElementById('pmd-video-status');
+    const watchLink=document.getElementById('pmd-video-watch');
+    if(value){statusBadge.textContent='Publiée';statusBadge.className='pm-badge deadline-ok';watchLink.href=value;watchLink.style.display='inline-block';}
+    else{statusBadge.textContent='En cours';statusBadge.className='pm-badge deadline-none';watchLink.style.display='none';}
+  }
+  if(field==='deadline'||field==='name'){
+    pmSyncDeadlineToCalendar();
+  }
+  pmFlashSaved();
+}
+function pmDetailSaveQuiz(key,value){
+  pmUpdateActiveProject(p=>{p.quiz=p.quiz||{};p.quiz[key]=value;});
+  pmFlashSaved();
+}
+
+// ── Sync project deadline directly into the editorial calendar ──
+function pmSyncDeadlineToCalendar(){
+  const p=pmGetActiveProject(); if(!p||!p.deadline)return;
+  const events=pmGetPlanEvents();
+  // Remove any previous entry that pointed to this project (by matching old linked date if title changed)
+  Object.keys(events).forEach(k=>{
+    if(events[k]._pmProjectId===p.id && k!==p.deadline) delete events[k];
+  });
+  const existing=events[p.deadline];
+  events[p.deadline]={
+    title:p.name||'Sans titre',
+    type:existing?.type||'long',
+    time:existing?.time||'18:00',
+    datetime:p.deadline+'T'+(existing?.time||'18:00')+':00',
+    date:p.deadline,
+    _pmProjectId:p.id
+  };
+  pmSavePlanEvents(events);
+}
+
+// ── Manual save button with visible confirmation ──
+function pmFlashSaved(){
+  const el=document.getElementById('pmd-save-status');
+  if(!el)return;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),1800);
+}
+function pmManualSave(){
+  // All fields already autosave on change; this gives explicit confirmation + syncs calendar
+  pmSyncDeadlineToCalendar();
+  pmFlashSaved();
+  const btn=document.querySelector('.pmd-save-btn');
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent='✓ Enregistré !';
+    setTimeout(()=>{btn.textContent=original;},1500);
+  }
+}
+
+// ── RPM Calculator ──
+function pmCalcRpm(){
+  const rate=+document.getElementById('pmd-rpm-rate').value||0;
+  const views=+document.getElementById('pmd-rpm-views').value||0;
+  const earnings=(rate*views)/1000;
+  document.getElementById('pmd-rpm-result').textContent=earnings.toLocaleString('fr-FR',{maximumFractionDigits:2})+' €';
+
+  // Save to project
+  if(pmActiveDetailId){
+    pmUpdateActiveProject(p=>{p.rpmRate=rate||null;p.rpmViews=views||null;});
+  }
+
+  // Scenario projections
+  const scenarios=document.getElementById('pmd-rpm-scenarios');
+  if(rate>0){
+    const mults=[0.5,1,2];
+    scenarios.innerHTML=mults.map(m=>{
+      const v=Math.round(views*m);
+      const e=(rate*v)/1000;
+      return `<div class="pmd-rpm-scenario">
+        <div class="pmd-rpm-scenario-views">${v.toLocaleString('fr-FR')} vues</div>
+        <div class="pmd-rpm-scenario-earn">${e.toLocaleString('fr-FR',{maximumFractionDigits:0})} €</div>
+      </div>`;
+    }).join('');
+  } else {
+    scenarios.innerHTML='';
+  }
+}
+function pmDetailTriggerThumb(){document.getElementById('pmd-thumb-input').click();}
+function pmDetailThumbChange(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pmUpdateActiveProject(p=>{p.thumb=e.target.result;});
+    const p=pmGetActiveProject();
+    document.getElementById('pmd-thumb-img').src=p.thumb;
+    document.getElementById('pmd-thumb-img').style.display='block';
+    document.getElementById('pmd-thumb-placeholder').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── CAPTURES (annotated screenshots) ──
+function pmOpenCaptureUpload(){document.getElementById('pmd-capture-input').click();}
+let pmCanvasImg=null;
+function pmCaptureFileChosen(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      pmCanvasImg=img;
+      pmOpenCanvasEditor(img);
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+let pmCanvasTool='pen',pmCanvasColor='#ef4444',pmDrawing=false,pmLastX=0,pmLastY=0;
+function pmOpenCanvasEditor(img){
+  const canvas=document.getElementById('pmc-canvas');
+  const maxW=800;
+  const scale=Math.min(1,maxW/img.width);
+  canvas.width=img.width*scale;
+  canvas.height=img.height*scale;
+  const ctx=canvas.getContext('2d');
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  document.getElementById('pmc-label').value='';
+  document.getElementById('pm-canvas-modal').classList.add('open');
+  pmSetCanvasTool('pen');
+  pmSetupCanvasEvents();
+}
+function pmSetCanvasTool(tool){
+  pmCanvasTool=tool;
+  document.getElementById('pmc-tool-pen').classList.toggle('on',tool==='pen');
+  document.getElementById('pmc-tool-text').classList.toggle('on',tool==='text');
+}
+function pmSetCanvasColor(color,btn){
+  pmCanvasColor=color;
+  document.querySelectorAll('.pmc-color').forEach(c=>c.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function pmClearCanvasDrawing(){
+  if(!pmCanvasImg)return;
+  const canvas=document.getElementById('pmc-canvas');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(pmCanvasImg,0,0,canvas.width,canvas.height);
+}
+let pmCanvasEventsSetup=false;
+function pmSetupCanvasEvents(){
+  if(pmCanvasEventsSetup)return;
+  pmCanvasEventsSetup=true;
+  const canvas=document.getElementById('pmc-canvas');
+  function getPos(e){
+    const rect=canvas.getBoundingClientRect();
+    const cx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    const cy=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+    return {x:cx*(canvas.width/rect.width),y:cy*(canvas.height/rect.height)};
+  }
+  canvas.addEventListener('mousedown',e=>{
+    const pos=getPos(e);
+    if(pmCanvasTool==='text'){
+      const text=prompt('Texte à ajouter :');
+      if(text){
+        const ctx=canvas.getContext('2d');
+        ctx.font='bold 20px Inter, sans-serif';
+        ctx.fillStyle=pmCanvasColor;
+        ctx.strokeStyle='rgba(0,0,0,.6)';
+        ctx.lineWidth=3;
+        ctx.strokeText(text,pos.x,pos.y);
+        ctx.fillText(text,pos.x,pos.y);
+      }
+      return;
+    }
+    pmDrawing=true;pmLastX=pos.x;pmLastY=pos.y;
+  });
+  canvas.addEventListener('mousemove',e=>{
+    if(!pmDrawing||pmCanvasTool!=='pen')return;
+    const pos=getPos(e);
+    const ctx=canvas.getContext('2d');
+    ctx.strokeStyle=pmCanvasColor;
+    ctx.lineWidth=4;
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    ctx.beginPath();
+    ctx.moveTo(pmLastX,pmLastY);
+    ctx.lineTo(pos.x,pos.y);
+    ctx.stroke();
+    pmLastX=pos.x;pmLastY=pos.y;
+  });
+  canvas.addEventListener('mouseup',()=>{pmDrawing=false;});
+  canvas.addEventListener('mouseleave',()=>{pmDrawing=false;});
+}
+function pmSaveCanvasCapture(){
+  const canvas=document.getElementById('pmc-canvas');
+  const dataUrl=canvas.toDataURL('image/png');
+  const label=document.getElementById('pmc-label').value.trim()||'Capture';
+  pmUpdateActiveProject(p=>{
+    p.captures=p.captures||[];
+    p.captures.push({id:pmUid(),img:dataUrl,label});
+  });
+  closePmModal('pm-canvas-modal');
+  pmRenderCaptures();
+}
+function pmRenderCaptures(){
+  const p=pmGetActiveProject(); if(!p)return;
+  const grid=document.getElementById('pmd-captures-grid');
+  const captures=p.captures||[];
+  if(!captures.length){grid.innerHTML='<div style="grid-column:1/-1;color:rgba(255,255,255,.25);font-size:12px;padding:16px;text-align:center">Aucune capture pour l\'instant</div>';return;}
+  grid.innerHTML=captures.map(c=>`
+    <div class="pmd-media-card">
+      <img src="${c.img}" onclick="pmViewCapture('${c.id}')">
+      <div class="pmd-media-card-body">
+        <input class="pmd-media-label" value="${(c.label||'').replace(/"/g,'&quot;')}" onchange="pmUpdateCaptureLabel('${c.id}',this.value)">
+        <button class="pmd-media-del" onclick="pmDeleteCapture('${c.id}')">×</button>
+      </div>
+    </div>`).join('');
+}
+function pmViewCapture(id){
+  const p=pmGetActiveProject(); if(!p)return;
+  const c=(p.captures||[]).find(x=>x.id===id); if(!c)return;
+  window.open(c.img,'_blank');
+}
+function pmUpdateCaptureLabel(id,val){
+  pmUpdateActiveProject(p=>{const c=(p.captures||[]).find(x=>x.id===id);if(c)c.label=val;});
+}
+function pmDeleteCapture(id){
+  pmUpdateActiveProject(p=>{p.captures=(p.captures||[]).filter(x=>x.id!==id);});
+  pmRenderCaptures();
+}
+
+// ── TESTS A/B ──
+function pmAbTestFilesChosen(input){
+  const files=[...input.files]; if(!files.length)return;
+  let remaining=files.length;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      pmUpdateActiveProject(p=>{
+        p.abTests=p.abTests||[];
+        p.abTests.push({id:pmUid(),img:e.target.result,label:'Variante '+(p.abTests.length+1),pct:''});
+      });
+      remaining--;
+      if(remaining===0)pmRenderAbTests();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
+}
+function pmRenderAbTests(){
+  const p=pmGetActiveProject(); if(!p)return;
+  const grid=document.getElementById('pmd-abtests-grid');
+  const tests=p.abTests||[];
+  if(!tests.length){grid.innerHTML='<div style="grid-column:1/-1;color:rgba(255,255,255,.25);font-size:12px;padding:16px;text-align:center">Aucun test A/B pour l\'instant</div>';return;}
+  const maxPct=Math.max(...tests.map(t=>+t.pct||0));
+  grid.innerHTML=tests.map(t=>{
+    const isWinner=t.pct&&+t.pct===maxPct&&maxPct>0;
+    return `<div class="pmd-media-card ${isWinner?'winner':''}">
+      ${isWinner?'<div class="pmd-media-winner-tag">GAGNANT</div>':''}
+      <img src="${t.img}" onclick="window.open('${t.img}','_blank')">
+      <div class="pmd-media-card-body">
+        <input class="pmd-media-label" value="${(t.label||'').replace(/"/g,'&quot;')}" onchange="pmUpdateAbField('${t.id}','label',this.value)">
+        <input class="pmd-media-pct" value="${t.pct||''}" placeholder="%" onchange="pmUpdateAbField('${t.id}','pct',this.value)">
+        <button class="pmd-media-del" onclick="pmDeleteAbTest('${t.id}')">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function pmUpdateAbField(id,field,val){
+  pmUpdateActiveProject(p=>{const t=(p.abTests||[]).find(x=>x.id===id);if(t)t[field]=val;});
+  pmRenderAbTests();
+}
+function pmDeleteAbTest(id){
+  pmUpdateActiveProject(p=>{p.abTests=(p.abTests||[]).filter(x=>x.id!==id);});
+  pmRenderAbTests();
+}
+
+// ── LIENS ──
+// ── IDÉES DE TITRES ──
+function pmAddTitre(){
+  const inp=document.getElementById('pmd-titre-inp');
+  const text=inp.value.trim();if(!text)return;
+  pmUpdateActiveProject(p=>{p.titres=p.titres||[];p.titres.push({id:pmUid(),text});});
+  inp.value='';
+  pmRenderTitres();
+}
+function pmRenderTitres(){
+  const p=pmGetActiveProject();if(!p)return;
+  const list=document.getElementById('pmd-titres-list');
+  const titres=p.titres||[];
+  if(!titres.length){list.innerHTML='<div style="color:rgba(22,22,37,.3);font-size:13px;padding:16px;text-align:center">Aucune idée de titre pour l\'instant — lance-toi !</div>';return;}
+  list.innerHTML=titres.map((t,i)=>`
+    <div class="pmd-titre-item">
+      <div class="pmd-titre-num">${i+1}</div>
+      <input class="pmd-titre-text" value="${(t.text||'').replace(/"/g,'&quot;')}" onchange="pmUpdateTitreText('${t.id}',this.value)" placeholder="Idée de titre…">
+      <button class="pmd-titre-del" onclick="pmDeleteTitre('${t.id}')">×</button>
+    </div>`).join('');
+}
+function pmUpdateTitreText(id,val){
+  pmUpdateActiveProject(p=>{const t=(p.titres||[]).find(x=>x.id===id);if(t)t.text=val;});
+}
+function pmDeleteTitre(id){
+  pmUpdateActiveProject(p=>{p.titres=(p.titres||[]).filter(x=>x.id!==id);});
+  pmRenderTitres();
+}
+
+// ── A/B TEST GROUPS (YouTube Studio style — 3 slots per group) ──
+const AB_LETTERS=['A','B','C'];
+
+function pmAddAbGroup(){
+  pmUpdateActiveProject(p=>{
+    p.abGroups=p.abGroups||[];
+    p.abGroups.push({id:pmUid(),slots:[{id:pmUid(),img:null,pct:''},{id:pmUid(),img:null,pct:''},{id:pmUid(),img:null,pct:''}]});
+  });
+  pmRenderAbGroups();
+}
+function pmDeleteAbGroup(gid){
+  pmUpdateActiveProject(p=>{p.abGroups=(p.abGroups||[]).filter(g=>g.id!==gid);});
+  pmRenderAbGroups();
+}
+function pmRenderAbGroups(){
+  const p=pmGetActiveProject();if(!p)return;
+  const wrap=document.getElementById('pmd-abtest-groups');
+  const groups=p.abGroups||[];
+  if(!groups.length){wrap.innerHTML='<div style="color:rgba(22,22,37,.3);font-size:13px;padding:20px;text-align:center">Clique "+ Nouveau groupe de 3 miniatures" pour commencer un test</div>';return;}
+  wrap.innerHTML=groups.map((g,gi)=>{
+    const maxPct=Math.max(...g.slots.map(s=>+s.pct||0));
+    return `<div class="pmd-abtest-group">
+      <div class="pmd-abtest-group-head">
+        <div class="pmd-abtest-group-label">Test ${gi+1}</div>
+        <button class="pmd-abtest-group-del" onclick="pmDeleteAbGroup('${g.id}')">Supprimer</button>
+      </div>
+      <div class="pmd-abtest-slots">
+        ${g.slots.map((slot,si)=>{
+          const isWinner=slot.pct&&+slot.pct===maxPct&&maxPct>0;
+          return `<div class="pmd-ab-slot ${slot.img?'has-img':''} ${isWinner?'winner-slot':''}" id="ab-slot-${slot.id}">
+            ${slot.img?`<img src="${slot.img}" onclick="pmOpenLightbox('${slot.img}')" style="cursor:zoom-in">`:
+            `<div class="pmd-ab-slot-letter">${AB_LETTERS[si]}</div>
+             <div class="pmd-ab-slot-label">Clique ou glisse une image</div>`}
+            ${isWinner?'<div class="pmd-ab-slot-winner-tag">🏆 GAGNANT</div>':''}
+            ${slot.pct?`<div class="pmd-ab-pct">${slot.pct}%</div>`:''}
+            <div class="pmd-ab-slot-overlay">
+              <div class="pmd-ab-slot-actions">
+                <button class="pmd-ab-slot-action" onclick="pmAbTriggerUpload('${g.id}','${slot.id}')">📷 Changer</button>
+                <button class="pmd-ab-slot-action" onclick="pmOpenLightbox('${slot.img||''}')" ${!slot.img?'disabled':''}>🔍 Voir</button>
+              </div>
+              <input type="number" min="0" max="100" placeholder="%" value="${slot.pct||''}"
+                style="width:70px;background:#fff;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;font-weight:800;padding:6px 10px;outline:none;text-align:center;color:#4338ca"
+                onchange="pmUpdateAbSlotPct('${g.id}','${slot.id}',this.value)"
+                onclick="event.stopPropagation()">
+            </div>
+            <input type="file" accept="image/*" style="display:none" id="ab-file-${slot.id}" onchange="pmAbSlotFileChosen('${g.id}','${slot.id}',this)">
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Setup drag & drop on all slots
+  wrap.querySelectorAll('.pmd-ab-slot').forEach(slot=>{
+    slot.addEventListener('dragover',e=>{e.preventDefault();slot.style.borderColor='#6366f1';});
+    slot.addEventListener('dragleave',()=>{slot.style.borderColor='';});
+    slot.addEventListener('drop',e=>{
+      e.preventDefault();slot.style.borderColor='';
+      const file=e.dataTransfer.files[0];if(!file||!file.type.startsWith('image/'))return;
+      const [gid,sid]=slot.id.replace('ab-slot-','').split('-').length>2
+        ?[null,null] // fallback
+        :[null,null];
+      // Get IDs from the file input within this slot
+      const fi=slot.querySelector('input[type="file"]');
+      if(!fi)return;
+      const bits=fi.id.replace('ab-file-','');
+      pmAbReadFile(file,bits.split('-').slice(0,-2).join('-'),bits);
+    });
+    slot.addEventListener('click',()=>{
+      const fi=slot.querySelector('input[type="file"]');if(fi)fi.click();
+    });
+  });
+}
+function pmAbTriggerUpload(gid,sid){
+  document.getElementById('ab-file-'+sid).click();
+}
+function pmAbSlotFileChosen(gid,sid,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pmUpdateActiveProject(p=>{
+      const g=(p.abGroups||[]).find(x=>x.id===gid);
+      if(g){const s=g.slots.find(x=>x.id===sid);if(s)s.img=e.target.result;}
+    });
+    pmRenderAbGroups();
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function pmAbReadFile(file,gid,sid){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pmUpdateActiveProject(p=>{
+      const g=(p.abGroups||[]).find(x=>x.id===gid);
+      if(g){const s=g.slots.find(x=>x.id===sid);if(s)s.img=e.target.result;}
+    });
+    pmRenderAbGroups();
+  };
+  reader.readAsDataURL(file);
+}
+function pmUpdateAbSlotPct(gid,sid,val){
+  pmUpdateActiveProject(p=>{
+    const g=(p.abGroups||[]).find(x=>x.id===gid);
+    if(g){const s=g.slots.find(x=>x.id===sid);if(s)s.pct=val;}
+  });
+  setTimeout(pmRenderAbGroups,50);
+}
+
+// ── LIGHTBOX ──
+function pmOpenLightbox(src){
+  if(!src)return;
+  const lb=document.getElementById('pmd-lightbox');
+  document.getElementById('pmd-lightbox-img').src=src;
+  lb.classList.add('open');
+}
+
+// ── RESULTS ──
+function pmResultFilesChosen(input){
+  const files=[...input.files];if(!files.length)return;
+  let done=0;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      pmUpdateActiveProject(p=>{p.results=p.results||[];p.results.push({id:pmUid(),img:e.target.result,label:'Résultat'});});
+      done++;if(done===files.length)pmRenderResults();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
+}
+function pmRenderResults(){
+  const p=pmGetActiveProject();if(!p)return;
+  const grid=document.getElementById('pmd-results-grid');
+  const results=p.results||[];
+  if(!results.length){grid.innerHTML='<div style="color:rgba(22,22,37,.3);font-size:12px;padding:16px;text-align:center">Aucun résultat pour l\'instant</div>';return;}
+  grid.innerHTML=results.map(r=>`
+    <div class="pmd-media-card">
+      <img src="${r.img}" onclick="pmOpenLightbox('${r.img}')" style="cursor:zoom-in">
+      <div class="pmd-media-card-body">
+        <input class="pmd-media-label" value="${(r.label||'').replace(/"/g,'&quot;')}" onchange="pmUpdateResultLabel('${r.id}',this.value)">
+        <button class="pmd-media-del" onclick="pmDeleteResult('${r.id}')">×</button>
+      </div>
+    </div>`).join('');
+}
+function pmUpdateResultLabel(id,val){
+  pmUpdateActiveProject(p=>{const r=(p.results||[]).find(x=>x.id===id);if(r)r.label=val;});
+}
+function pmDeleteResult(id){
+  pmUpdateActiveProject(p=>{p.results=(p.results||[]).filter(x=>x.id!==id);});
+  pmRenderResults();
+}
+
+function pmAddLink(){
+  const label=document.getElementById('pmd-link-label').value.trim();
+  const url=document.getElementById('pmd-link-url').value.trim();
+  if(!label||!url){alert('Nom et URL requis');return;}
+  pmUpdateActiveProject(p=>{
+    p.links=p.links||[];
+    p.links.push({id:pmUid(),label,url});
+  });
+  document.getElementById('pmd-link-label').value='';
+  document.getElementById('pmd-link-url').value='';
+  pmRenderLinks();
+}
+function pmRenderLinks(){
+  const p=pmGetActiveProject(); if(!p)return;
+  const list=document.getElementById('pmd-links-list');
+  const links=p.links||[];
+  if(!links.length){list.innerHTML='<div style="color:rgba(255,255,255,.25);font-size:12px;padding:16px;text-align:center">Aucun lien pour l\'instant</div>';return;}
+  list.innerHTML=links.map(l=>`
+    <div class="pmd-link-item">
+      <span class="pmd-link-ico">🔗</span>
+      <span class="pmd-link-label">${l.label}</span>
+      <a class="pmd-link-url" href="${l.url}" target="_blank">${l.url}</a>
+      <button class="pmd-link-del" onclick="pmDeleteLink('${l.id}')">×</button>
+    </div>`).join('');
+}
+function pmDeleteLink(id){
+  pmUpdateActiveProject(p=>{p.links=(p.links||[]).filter(x=>x.id!==id);});
+  pmRenderLinks();
+}
+
+// New project modal
+function openNewProjectModal(){
+  document.getElementById('pm-new-name').value='';
+  document.getElementById('pm-new-deadline').value='';
+  document.getElementById('pm-new-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pm-new-name').focus(),50);
+}
+function closePmModal(id){document.getElementById(id).classList.remove('open');}
+function createProjectFromIndex(){
+  const name=document.getElementById('pm-new-name').value.trim()||'Nouveau projet';
+  const deadline=document.getElementById('pm-new-deadline').value||null;
+  const proj={id:pmUid(),name,deadline,created:Date.now(),updated:Date.now(),state:null,thumb:null,notes:''};
+  const list=pmGetProjects();
+  list.push(proj);
+  pmSaveProjects(list);
+  if(deadline){
+    const events=pmGetPlanEvents();
+    events[deadline]={title:name,type:'long',time:'18:00',datetime:deadline+'T18:00:00',date:deadline,_pmProjectId:proj.id};
+    pmSavePlanEvents(events);
+  }
+  closePmModal('pm-new-modal');
+  pmRenderGrid();
+}
+
+// Planify modal — links project to calendar
+function openPmPlanModal(projectId){
+  const list=pmGetProjects();
+  const p=list.find(x=>x.id===projectId);
+  if(!p)return;
+  pmPlanningProjectId=projectId;
+  document.getElementById('pm-plan-name').textContent='"'+p.name+'"';
+  document.getElementById('pm-plan-date').value=p.deadline||'';
+  document.getElementById('pm-plan-time').value='18:00';
+  pmPlanType='long';
+  document.querySelectorAll('#pm-plan-modal .chip-type').forEach(c=>{
+    const sel=c.dataset.type==='long';
+    c.classList.toggle('sel',sel);
+    c.style.background=sel?'rgba(99,102,241,.15)':'rgba(255,255,255,.04)';
+    c.style.borderColor=sel?'rgba(99,102,241,.4)':'var(--b)';
+    c.style.color=sel?'var(--acc)':'rgba(255,255,255,.5)';
+  });
+  document.getElementById('pm-plan-modal').classList.add('open');
+}
+function pmSelectType(btn){
+  pmPlanType=btn.dataset.type;
+  document.querySelectorAll('#pm-plan-modal .chip-type').forEach(c=>{
+    const sel=c===btn;
+    c.classList.toggle('sel',sel);
+    c.style.background=sel?'rgba(99,102,241,.15)':'rgba(255,255,255,.04)';
+    c.style.borderColor=sel?'rgba(99,102,241,.4)':'var(--b)';
+    c.style.color=sel?'var(--acc)':'rgba(255,255,255,.5)';
+  });
+}
+function savePmPlan(){
+  const date=document.getElementById('pm-plan-date').value;
+  const time=document.getElementById('pm-plan-time').value||'18:00';
+  if(!date){alert('Choisis une date');return;}
+  const list=pmGetProjects();
+  const p=list.find(x=>x.id===pmPlanningProjectId);
+  if(!p)return;
+  const events=pmGetPlanEvents();
+  events[date]={title:p.name,type:pmPlanType,time,datetime:date+'T'+time+':00',date};
+  pmSavePlanEvents(events);
+  closePmModal('pm-plan-modal');
+  pmRenderGrid();
+}
+
+// Keyboard shortcuts for modals
+document.getElementById('pm-new-name')?.addEventListener('keydown',e=>{if(e.key==='Enter')createProjectFromIndex();});
+document.querySelectorAll('.pm-modal-bg').forEach(bg=>{
+  bg.addEventListener('click',e=>{
+    if(e.target!==bg)return;
+    if(bg.id==='pm-detail-modal')closePmDetail();
+    else if(bg.id!=='pm-canvas-modal')bg.classList.remove('open'); // canvas modal: don't close on backdrop click (avoid losing drawing by accident)
+  });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  const canvasOpen=document.getElementById('pm-canvas-modal').classList.contains('open');
+  if(canvasOpen){closePmModal('pm-canvas-modal');return;}
+  const detailOpen=document.getElementById('pm-detail-modal').classList.contains('open');
+  if(detailOpen){closePmDetail();return;}
+  document.querySelectorAll('.pm-modal-bg.open').forEach(m=>m.classList.remove('open'));
+});
+
+// ══════════════════════════════════════
+// SIDE DRAWER
+// ══════════════════════════════════════
+function toggleDrawer(){
+  const d=document.getElementById('side-drawer');
+  const o=document.getElementById('drawer-overlay');
+  const open=!d.classList.contains('open');
+  d.classList.toggle('open',open);
+  o.classList.toggle('open',open);
+}
+function closeDrawer(){
+  document.getElementById('side-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+// Init + refresh when returning to tab (in case Loop Builder changed something)
+pmRenderGrid();
+window.addEventListener('focus',pmRenderGrid);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pmRenderGrid();});
+</script>
+</body>
