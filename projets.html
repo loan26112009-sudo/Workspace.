@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
+<title>Mes Projets — Workspace</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080808">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070a;--s1:#0f0f14;--s2:#15151c;--s3:#1c1c26;
+  --b:rgba(255,255,255,.08);--bh:rgba(255,255,255,.16);
+  --text:#f0f0f8;--sub:rgba(255,255,255,.45);--dim:rgba(255,255,255,.2);
+  --acc:#6366f1;--acc2:#818cf8;--grn:#34d399;--red:#f87171;--yel:#fbbf24;--pink:#f472b6;
+  --r:16px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+
+/* ── TOPBAR ── */
+.tb{height:60px;display:flex;align-items:center;gap:0;border-bottom:1px solid var(--b);background:rgba(7,7,10,.92);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200}
+.tb-back{display:flex;align-items:center;gap:8px;padding:0 22px;height:100%;color:var(--sub);font-size:13px;font-weight:600;text-decoration:none;border-right:1px solid var(--b);transition:all .15s;flex-shrink:0}
+.tb-back:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tb-add{margin:0 12px 0 auto;padding:10px 20px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tb-add:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.4)}
+.tb-add:active{transform:translateY(0)}
+
+/* ── HERO ── */
+.hero{padding:40px 24px 28px;background:linear-gradient(180deg,rgba(99,102,241,.06) 0%,transparent 100%)}
+.hero-label{font-size:11px;font-weight:700;color:rgba(99,102,241,.6);letter-spacing:.12em;margin-bottom:8px}
+.hero-title{font-size:clamp(26px,5vw,48px);font-weight:900;letter-spacing:-.03em;line-height:1.05;margin-bottom:10px}
+.hero-title .name{background:linear-gradient(90deg,var(--acc2),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:14px;color:var(--sub);line-height:1.6;max-width:500px}
+
+/* ── FILTERS ── */
+.filters-wrap{padding:0 20px 16px;display:flex;flex-direction:column;gap:12px}
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{padding:9px 18px;border-radius:50px;border:1px solid var(--b);background:rgba(255,255,255,.04);color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.filter-chip:hover{border-color:var(--bh);color:var(--text)}
+.filter-chip.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 14px rgba(99,102,241,.35)}
+.filter-chip.on-idea{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.35);color:var(--yel)}
+.filter-chip.on-progress{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.4);color:var(--acc)}
+.filter-chip.on-published{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3);color:var(--grn)}
+.search-wrap{position:relative}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:15px;pointer-events:none}
+.search-inp{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:11px 16px 11px 40px;outline:none;transition:border-color .15s}
+.search-inp:focus{border-color:rgba(99,102,241,.5);background:rgba(255,255,255,.08)}
+.search-inp::placeholder{color:var(--dim)}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px;padding:0 20px 100px}
+@media(max-width:480px){.grid{grid-template-columns:1fr;gap:14px;padding:0 14px 100px}}
+
+/* ── PROJECT CARD ── */
+.p-card{background:var(--s1);border:1px solid var(--b);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);position:relative}
+.p-card::after{content:'';position:absolute;inset:0;border-radius:20px;padding:1px;background:linear-gradient(135deg,transparent,transparent);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;transition:background .25s;z-index:1}
+.p-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.p-card:hover::after{background:linear-gradient(135deg,rgba(99,102,241,.7),rgba(168,85,247,.5))}
+.p-card:active{transform:translateY(-1px)}
+
+.p-thumb{width:100%;aspect-ratio:16/9;min-height:190px;background:linear-gradient(135deg,#1a1a2e,#16213e);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.p-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.p-card:hover .p-thumb img{transform:scale(1.06)}
+.p-thumb-placeholder{font-size:48px;opacity:.1}
+.p-thumb-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.65) 100%);opacity:0;transition:opacity .2s}
+.p-card:hover .p-thumb-overlay{opacity:1}
+.p-thumb-open{position:absolute;bottom:10px;right:10px;background:rgba(255,255,255,.95);color:#1a1a2e;font-size:11px;font-weight:800;padding:6px 14px;border-radius:20px;opacity:0;transform:translateY(6px);transition:all .2s;z-index:2}
+.p-card:hover .p-thumb-open{opacity:1;transform:translateY(0)}
+
+.p-urgent-dot{position:absolute;top:10px;left:10px;background:rgba(248,113,113,.95);backdrop-filter:blur(4px);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.02em;z-index:3;animation:urgPulse 2s infinite}
+@keyframes urgPulse{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.4)}50%{box-shadow:0 0 0 6px rgba(248,113,113,0)}}
+
+.p-body{padding:16px 18px 18px}
+.p-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.p-name{font-size:18px;font-weight:900;color:var(--text);line-height:1.25;flex:1;letter-spacing:-.01em}
+.p-status{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.p-status.idea{background:rgba(251,191,36,.13);color:var(--yel)}
+.p-status.progress{background:rgba(99,102,241,.13);color:var(--acc2)}
+.p-status.published{background:rgba(52,211,153,.13);color:var(--grn)}
+.p-meta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.p-badge{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:8px}
+.p-badge.dl-ok{background:rgba(52,211,153,.12);color:var(--grn)}
+.p-badge.dl-soon{background:rgba(251,191,36,.13);color:var(--yel)}
+.p-badge.dl-urg{background:rgba(248,113,113,.13);color:var(--red)}
+.p-badge.loops{background:rgba(99,102,241,.1);color:var(--acc2)}
+.p-badge.cal{background:rgba(52,211,153,.1);color:var(--grn)}
+.p-badge.plan{background:rgba(255,255,255,.06);color:var(--dim);border:1px dashed rgba(255,255,255,.15);cursor:pointer}
+.p-badge.plan:hover{color:var(--text);border-color:rgba(255,255,255,.3)}
+
+.p-progress{height:4px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.p-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
+.p-footer{display:flex;gap:8px}
+.p-btn{flex:1;padding:9px;border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px}
+.p-btn-main{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:var(--acc2)}
+.p-btn-main:hover{background:var(--acc);color:#fff}
+.p-btn-loop{background:rgba(255,255,255,.05);border:1px solid var(--b);color:var(--sub)}
+.p-btn-loop:hover{border-color:var(--bh);color:var(--text)}
+.p-btn-del{width:36px;height:36px;border-radius:10px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.1);color:rgba(248,113,113,.6);flex-shrink:0;flex:0}
+.p-btn-del:hover{background:rgba(248,113,113,.16);color:var(--red);border-color:rgba(248,113,113,.3)}
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;padding:80px 24px;gap:16px;text-align:center;grid-column:1/-1}
+.empty-orb{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--pink));opacity:.7;filter:blur(3px);animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.empty-title{font-size:20px;font-weight:800;color:var(--text)}
+.empty-sub{font-size:14px;color:var(--sub);max-width:320px;line-height:1.6}
+.empty-btn{padding:14px 28px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.empty-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,.4)}
+
+/* ── DETAIL MODAL — plein écran clair ── */
+.det-bg{display:none;position:fixed;inset:0;z-index:999;overflow-y:auto;background:linear-gradient(160deg,#f7f8fc 0%,#eef0fa 40%,#e8ecfb 100%)}
+.det-bg.open{display:block}
+.det-nav{height:60px;display:flex;align-items:center;gap:0;background:rgba(247,248,252,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(99,102,241,.1);position:sticky;top:0;z-index:10}
+.det-back{display:flex;align-items:center;gap:8px;padding:0 20px;height:100%;color:#6366f1;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;border-right:1px solid rgba(99,102,241,.1);background:none;border-top:none;border-bottom:none;border-left:none;font-family:'Inter',sans-serif;transition:background .15s}
+.det-back:hover{background:rgba(99,102,241,.06)}
+.det-save{margin:0 14px 0 auto;padding:10px 22px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s}
+.det-save:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(34,197,94,.35)}
+.det-save-lbl{font-size:11px;color:#16a34a;font-weight:700;margin-right:8px;opacity:0;transition:opacity .3s}
+.det-save-lbl.show{opacity:1}
+.det-del-btn{padding:10px 16px;background:#fef2f2;border:1px solid rgba(239,68,68,.2);border-radius:10px;color:#ef4444;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-right:8px}
+.det-del-btn:hover{background:#ef4444;color:#fff}
+
+.det-header{padding:28px 28px 20px;border-bottom:1px solid rgba(99,102,241,.1);background:rgba(255,255,255,.4)}
+.det-header-top{display:flex;align-items:flex-start;gap:18px}
+.det-thumb{width:96px;height:54px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#6366f1,#a855f7);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;position:relative}
+.det-thumb img{width:100%;height:100%;object-fit:cover}
+.det-thumb-edit{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;font-size:18px}
+.det-thumb:hover .det-thumb-edit{opacity:1}
+.det-title-inp{background:none;border:none;outline:none;color:#161625;font-family:'Inter',sans-serif;font-size:clamp(18px,3vw,26px);font-weight:900;letter-spacing:-.03em;width:100%;padding:4px 0;border-bottom:2px solid transparent;transition:border-color .15s}
+.det-title-inp:focus{border-bottom-color:#6366f1}
+.det-title-inp::placeholder{color:rgba(22,22,37,.25)}
+.det-metas{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.det-sel{background:#fff;border:1px solid rgba(99,102,241,.22);border-radius:9px;color:#4338ca;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;padding:7px 12px;outline:none;cursor:pointer}
+.det-date-inp{background:#fff;border:1px solid rgba(99,102,241,.18);border-radius:9px;color:#4338ca;font-family:'Inter',sans-serif;font-size:12.5px;padding:7px 12px;outline:none}
+.det-sync-note{font-size:11px;color:#6366f1;font-weight:600;display:flex;align-items:center;gap:4px}
+.det-video-row{display:flex;align-items:center;gap:10px;padding:14px 28px;border-bottom:1px solid rgba(99,102,241,.08);background:rgba(255,255,255,.25);flex-wrap:wrap;gap:10px}
+.det-video-inp{flex:1;min-width:200px;background:#fff;border:1px solid rgba(99,102,241,.18);border-radius:10px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:13px;padding:9px 13px;outline:none}
+.det-video-inp:focus{border-color:#6366f1}
+.det-video-inp::placeholder{color:rgba(22,22,37,.28)}
+.det-watch{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:9px;text-decoration:none;white-space:nowrap;display:none}
+
+/* tabs */
+.det-tabs{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid rgba(99,102,241,.1);background:rgba(255,255,255,.2);-webkit-overflow-scrolling:touch}
+.det-tabs::-webkit-scrollbar{display:none}
+.det-tab{padding:14px 18px;background:none;border:none;border-bottom:3px solid transparent;color:rgba(22,22,37,.4);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.det-tab:hover{color:#4338ca}
+.det-tab.on{color:#6366f1;border-bottom-color:#6366f1}
+
+/* panel body */
+.det-body{padding:24px 28px 80px;max-width:900px;margin:0 auto}
+.det-panel{display:none;flex-direction:column;gap:16px;animation:fadeUp .3s ease-out}
+.det-panel.on{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.det-hint{font-size:13px;color:rgba(22,22,37,.5);line-height:1.6;background:rgba(99,102,241,.06);border-left:3px solid #6366f1;padding:12px 16px;border-radius:0 10px 10px 0}
+.det-ta{width:100%;background:#fff;border:1px solid rgba(99,102,241,.18);border-radius:14px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:14px;line-height:1.75;padding:16px 18px;outline:none;resize:vertical;min-height:240px;transition:border-color .15s;box-shadow:0 2px 8px rgba(0,0,0,.02)}
+.det-ta:focus{border-color:#6366f1;box-shadow:0 4px 16px rgba(99,102,241,.08)}
+.det-ta::placeholder{color:rgba(22,22,37,.22)}
+.det-ta-sm{min-height:110px}
+
+/* Feedback attach row */
+.fb-attach-row{display:flex;gap:10px;flex-wrap:wrap}
+.fb-attach-btn{padding:10px 18px;background:rgba(99,102,241,.08);border:1px dashed rgba(99,102,241,.3);border-radius:10px;color:#6366f1;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.fb-attach-btn:hover{background:rgba(99,102,241,.15);border-style:solid}
+.fb-media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:4px}
+.fb-media-item{background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:10px;overflow:hidden;position:relative}
+.fb-media-item img{width:100%;height:90px;object-fit:cover;cursor:pointer;display:block}
+.fb-media-del{position:absolute;top:5px;right:5px;width:22px;height:22px;background:#ef4444;border:none;border-radius:6px;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Titres */
+.titre-list{display:flex;flex-direction:column;gap:8px}
+.titre-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(99,102,241,.14);border-radius:12px;padding:12px 14px;transition:all .15s}
+.titre-item:hover{border-color:rgba(99,102,241,.35);transform:translateX(2px)}
+.titre-num{width:26px;height:26px;border-radius:8px;background:rgba(99,102,241,.1);color:#6366f1;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.titre-inp{flex:1;background:none;border:none;outline:none;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:14px;font-weight:600}
+.titre-del{width:24px;height:24px;border-radius:7px;background:#fef2f2;border:none;color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.titre-del:hover{background:#ef4444;color:#fff}
+.titre-add-row{display:flex;gap:10px}
+.titre-add-inp{flex:1;background:#fff;border:2px solid rgba(99,102,241,.2);border-radius:12px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border-color .15s}
+.titre-add-inp:focus{border-color:#6366f1}
+.titre-add-inp::placeholder{color:rgba(22,22,37,.25)}
+
+/* AB tests */
+.ab-group{background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.ab-group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ab-group-lbl{font-size:14px;font-weight:800;color:#4338ca;flex:1}
+.ab-group-rank{font-size:12px;font-weight:700;padding:5px 12px;background:#f3f4fd;border:1px solid rgba(99,102,241,.18);border-radius:8px;color:#4338ca;cursor:pointer}
+.ab-group-rank.winner-rank{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#16a34a}
+.ab-group-done{font-size:12px;font-weight:700;padding:5px 12px;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(168,85,247,.08));border:1px solid rgba(99,102,241,.2);border-radius:8px;color:#6366f1;cursor:pointer}
+.ab-group-done:hover{background:rgba(99,102,241,.18)}
+.ab-group-del{font-size:12px;padding:5px 12px;background:#fef2f2;border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#ef4444;cursor:pointer}
+.ab-group-del:hover{background:#ef4444;color:#fff}
+.ab-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:500px){.ab-slots{grid-template-columns:1fr}}
+.ab-slot{border:2px dashed rgba(99,102,241,.25);border-radius:12px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(168,85,247,.03))}
+.ab-slot:hover{border-color:#6366f1;background:rgba(99,102,241,.08)}
+.ab-slot.filled{border-style:solid;border-color:rgba(99,102,241,.2)}
+.ab-slot.winner{border-color:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.2)}
+.ab-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px}
+.ab-slot-letter{font-size:24px;font-weight:900;color:rgba(99,102,241,.25)}
+.ab-slot-hint{font-size:11px;color:rgba(99,102,241,.4);margin-top:4px;font-weight:600}
+.ab-slot-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .2s;border-radius:10px}
+.ab-slot:hover .ab-slot-overlay{opacity:1}
+.ab-slot-actions{display:flex;gap:7px}
+.ab-slot-act{background:#fff;border:none;border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.ab-pct-inp{width:64px;background:rgba(255,255,255,.95);border:none;border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;padding:5px 8px;outline:none;text-align:center;color:#4338ca}
+.ab-winner-tag{position:absolute;top:7px;left:7px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:6px;box-shadow:0 3px 10px rgba(34,197,94,.4);z-index:3}
+.ab-pct-display{position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,.7);color:#fff;font-size:12px;font-weight:800;padding:4px 9px;border-radius:6px;z-index:3}
+
+/* Résultats AB */
+.results-section{background:#fff;border:1px solid rgba(99,102,241,.15);border-radius:18px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.results-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.results-lbl{font-size:14px;font-weight:800;color:#4338ca;flex:1}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.res-card{background:#f3f4fd;border:1px solid rgba(99,102,241,.12);border-radius:12px;overflow:hidden}
+.res-card img{width:100%;height:100px;object-fit:cover;cursor:pointer;display:block;transition:transform .2s}
+.res-card:hover img{transform:scale(1.05)}
+.res-card-body{padding:8px 10px;display:flex;align-items:center;gap:6px}
+.res-card-lbl{flex:1;font-size:12px;font-weight:600;color:#1a1a2e;background:none;border:none;outline:none;font-family:'Inter',sans-serif}
+.res-card-del{width:22px;height:22px;border-radius:6px;background:#fef2f2;border:none;color:#ef4444;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+
+/* Quiz post-mortem */
+.quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.quiz-grid{grid-template-columns:1fr}}
+.quiz-item{background:#fff;border:1px solid rgba(99,102,241,.12);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.quiz-q{font-size:13.5px;font-weight:800;color:#4338ca}
+
+/* RPM */
+.rpm-box{background:linear-gradient(135deg,#fff,#f5f6ff);border:1px solid rgba(99,102,241,.15);border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.03)}
+.rpm-inputs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:480px){.rpm-inputs{grid-template-columns:1fr}}
+.rpm-label{font-size:11px;font-weight:700;color:#6366f1;letter-spacing:.04em;margin-bottom:5px}
+.rpm-inp{background:#fff;border:2px solid rgba(99,102,241,.2);border-radius:12px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:20px;font-weight:800;padding:12px 16px;outline:none;width:100%;transition:border-color .15s}
+.rpm-inp:focus{border-color:#6366f1}
+.rpm-result{display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,rgba(34,197,94,.07),rgba(99,102,241,.05));border-radius:14px}
+.rpm-val{font-size:40px;font-weight:900;background:linear-gradient(135deg,#22c55e,#16a34a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.03em}
+.rpm-scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+@media(max-width:480px){.rpm-scenarios{grid-template-columns:1fr}}
+.rpm-scenario{background:#fff;border:1px solid rgba(99,102,241,.12);border-radius:12px;padding:14px;text-align:center}
+.rpm-scenario-views{font-size:11px;color:rgba(22,22,37,.4);font-weight:600;margin-bottom:4px}
+.rpm-scenario-earn{font-size:18px;font-weight:800;color:#16a34a}
+
+/* Links */
+.link-add-row{display:flex;gap:8px;flex-wrap:wrap}
+.link-inp{flex:1;min-width:100px;background:#fff;border:1px solid rgba(99,102,241,.18);border-radius:10px;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:13px;padding:10px 13px;outline:none}
+.link-inp:focus{border-color:#6366f1}
+.links-list{display:flex;flex-direction:column;gap:8px}
+.link-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(99,102,241,.12);border-radius:12px;padding:12px 14px}
+.link-lbl{font-size:13px;font-weight:800;color:#1a1a2e;min-width:80px}
+.link-url{flex:1;font-size:12px;color:#6366f1;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-url:hover{text-decoration:underline}
+.link-del{width:24px;height:24px;border-radius:7px;background:#fef2f2;border:none;color:#ef4444;cursor:pointer}
+
+/* Add btn */
+.add-btn{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(168,85,247,.07));border:2px dashed rgba(99,102,241,.3);border-radius:14px;color:#6366f1;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;padding:14px;cursor:pointer;transition:all .2s;width:100%}
+.add-btn:hover{background:rgba(99,102,241,.16);border-style:solid;transform:translateY(-1px)}
+.add-btn-sm{padding:10px 16px;width:auto;border-radius:10px;font-size:12px}
+
+/* Lightbox */
+#lb{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.93);align-items:center;justify-content:center;cursor:zoom-out}
+#lb.open{display:flex}
+#lb img{max-width:94vw;max-height:92vh;border-radius:14px;object-fit:contain}
+
+/* Mobile planifié popup */
+.plan-pop-bg{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.7);align-items:flex-end;justify-content:center}
+.plan-pop-bg.open{display:flex}
+.plan-pop{background:#0e0e16;border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px}
+.pop-title{font-size:16px;font-weight:800;color:#fff}
+.pop-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.07em;margin-bottom:5px}
+.pop-inp{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;padding:10px 13px;outline:none}
+.pop-inp:focus{border-color:#6366f1}
+.pop-btns{display:flex;gap:10px}
+.pop-save{flex:1;padding:12px;background:linear-gradient(135deg,#6366f1,#818cf8);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.pop-cancel{padding:12px 18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* New project popup */
+.new-pop-bg{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.new-pop-bg.open{display:flex}
+.new-pop{background:#0e0e16;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:26px;width:440px;max-width:95vw;display:flex;flex-direction:column;gap:14px}
+
+/* ── RANK OVERLAY ── */
+.rank-overlay{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.rank-overlay.open{display:flex}
+.rank-box{background:#0e0e16;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:26px;width:380px;max-width:95vw;display:flex;flex-direction:column;gap:14px}
+
+@media(max-width:480px){
+  .hero{padding:28px 16px 20px}
+  .filters-wrap{padding:0 14px 14px}
+  .det-body{padding:20px 16px 80px}
+  .det-header{padding:20px 16px 16px}
+  .det-video-row{padding:12px 16px}
+  .det-tabs .det-tab{padding:12px 14px;font-size:12px}
+  .ab-group{padding:14px}
+  .rpm-box{padding:18px}
+}
+
+/* ── MOBILE CRITICAL ── */
+@media (max-width:480px){
+  .tb{height:56px}
+  .tb-add{padding:10px 16px;font-size:12px}
+  .hero{padding:22px 14px 18px}
+  .hero-title{font-size:clamp(22px,7vw,32px)}
+  .filters-wrap{padding:0 12px 12px}
+  .grid{grid-template-columns:1fr;gap:12px;padding:0 12px 120px}
+  .p-card{border-radius:16px}
+  .p-name{font-size:16px}
+  .p-thumb{min-height:160px}
+  .p-btn{padding:10px;font-size:12px;min-height:44px}
+  .p-btn-del{min-width:44px;min-height:44px}
+  .filter-chip{padding:10px 16px;font-size:13px;min-height:44px}
+  .search-inp{font-size:16px;padding:12px 16px 12px 40px;min-height:48px} /* 16px prevents iOS zoom */
+  
+  /* Detail page mobile */
+  .det-nav{height:54px}
+  .det-back{padding:0 16px;font-size:13px}
+  .det-save{padding:9px 16px;font-size:12px;margin-right:10px}
+  .det-del-btn{padding:9px 12px;font-size:12px}
+  .det-header{padding:16px 14px 14px}
+  .det-title-inp{font-size:20px}
+  .det-metas{gap:8px}
+  .det-sel,.det-date-inp{font-size:16px;padding:8px 10px} /* 16px prevents iOS zoom */
+  .det-video-row{padding:12px 14px;gap:8px;flex-wrap:wrap}
+  .det-video-inp{font-size:16px;min-height:44px}
+  .det-tabs .det-tab{padding:12px 12px;font-size:12px}
+  .det-body{padding:16px 14px 100px}
+  .det-ta{font-size:16px;padding:14px;min-height:200px} /* 16px prevents iOS zoom */
+  .det-ta-sm{min-height:90px}
+  .quiz-grid{grid-template-columns:1fr}
+  .ab-slots{grid-template-columns:repeat(3,1fr);gap:8px}
+  .ab-slot{aspect-ratio:16/9;border-radius:8px}
+  .rpm-inputs{grid-template-columns:1fr}
+  .rpm-inp{font-size:18px;min-height:52px}
+  .rpm-scenarios{grid-template-columns:repeat(3,1fr)}
+  .titre-item{padding:10px 12px}
+  .titre-inp{font-size:16px}
+  .titre-add-inp{font-size:16px;padding:12px 14px;min-height:48px}
+  .link-add-row{flex-direction:column}
+  .link-inp{font-size:16px;min-height:44px}
+  .add-btn{padding:14px;font-size:13px;min-height:48px}
+  
+  /* New project popup becomes bottom sheet on mobile */
+  .new-pop-bg{align-items:flex-end}
+  .new-pop{border-radius:24px 24px 0 0;border-bottom:none;padding:22px 20px calc(env(safe-area-inset-bottom)+22px)}
+  .pop-inp{font-size:16px;min-height:48px} /* 16px prevents iOS zoom */
+  .pop-save,.pop-cancel{min-height:48px;font-size:14px}
+  
+  .results-grid{grid-template-columns:repeat(2,1fr)}
+  .fb-media-grid{grid-template-columns:repeat(2,1fr)}
+}
+/* Safe area for iPhones */
+@supports(padding:env(safe-area-inset-bottom)){
+  .grid{padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+  .new-pop{padding-bottom:calc(env(safe-area-inset-bottom)+22px)}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="tb">
+  <a href="index.html" class="tb-back">← Workspace</a>
+  <button class="tb-add" onclick="openNewPop()">+ Nouveau projet</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">WORKSPACE</div>
+  <div class="hero-title">Gestionnaire de projets<br><span class="name" id="hero-channel">de ta chaîne</span></div>
+  <div class="hero-sub">Tous tes projets vidéo au même endroit. Miniature, deadline, boucles, A/B tests — tout connecté.</div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-wrap">
+  <div class="filter-row">
+    <button class="filter-chip on" data-f="all" onclick="setFilter('all',this)">Tous</button>
+    <button class="filter-chip" data-f="idea" onclick="setFilter('idea',this)">💡 Idées</button>
+    <button class="filter-chip" data-f="progress" onclick="setFilter('progress',this)">🔧 En cours</button>
+    <button class="filter-chip" data-f="published" onclick="setFilter('published',this)">✅ Publiées</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-ico">⌕</span>
+    <input class="search-inp" id="search-inp" placeholder="Rechercher un projet…" oninput="render()">
+  </div>
+</div>
+
+<!-- PROJECTS GRID -->
+<div class="grid" id="projects-grid"></div>
+
+<!-- DETAIL PAGE (full-screen overlay) -->
+<div class="det-bg" id="det-bg">
+  <div class="det-nav">
+    <button class="det-back" onclick="closeDet()">← Mes projets</button>
+    <span class="det-save-lbl" id="det-save-lbl">✓ Enregistré</span>
+    <button class="det-save" onclick="manualSave()">💾 Enregistrer</button>
+    <button class="det-del-btn" onclick="deleteActiveDet()">Supprimer</button>
+  </div>
+
+  <div class="det-header">
+    <div class="det-header-top">
+      <div class="det-thumb" id="det-thumb" onclick="triggerThumbUpload()">
+        <div class="det-thumb-edit">✏</div>
+        <input type="file" accept="image/*" id="det-thumb-inp" style="display:none" onchange="thumbChosen(this)">
+      </div>
+      <div style="flex:1">
+        <input class="det-title-inp" id="det-title" placeholder="Titre du projet…" onchange="saveField('name',this.value)">
+        <div class="det-metas">
+          <select class="det-sel" id="det-status" onchange="saveField('status',this.value)">
+            <option value="idea">💡 Idée</option>
+            <option value="progress">🔧 En cours</option>
+            <option value="published">✅ Publiée</option>
+          </select>
+          <input class="det-date-inp" id="det-deadline" type="date" onchange="saveField('deadline',this.value);syncCalendar()">
+          <span class="det-sync-note">📅 Synchronisé avec le calendrier</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="det-video-row">
+    <span style="font-size:16px;flex-shrink:0">🎥</span>
+    <input class="det-video-inp" id="det-video-url" placeholder="Lien YouTube (si publiée)…" onchange="saveField('videoUrl',this.value);updateVideoStatus()">
+    <span id="det-video-status" style="font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;background:rgba(22,22,37,.08);color:rgba(22,22,37,.4)">En cours</span>
+    <a id="det-watch" href="#" target="_blank" class="det-watch">▶ Regarder</a>
+  </div>
+
+  <div class="det-tabs">
+    <button class="det-tab on" onclick="showTab('notes',this)">📝 Notes</button>
+    <button class="det-tab" onclick="showTab('feedback',this)">💬 Feedback</button>
+    <button class="det-tab" onclick="showTab('titres',this)">💡 Titres</button>
+    <button class="det-tab" onclick="showTab('quiz',this)">🧠 Post-mortem</button>
+    <button class="det-tab" onclick="showTab('captures',this)">📊 Captures</button>
+    <button class="det-tab" onclick="showTab('abtests',this)">🧪 Tests A/B</button>
+    <button class="det-tab" onclick="showTab('rpm',this)">💰 RPM</button>
+    <button class="det-tab" onclick="showTab('links',this)">🔗 Liens</button>
+  </div>
+
+  <div class="det-body">
+
+    <!-- NOTES -->
+    <div class="det-panel on" id="panel-notes">
+      <div class="det-hint">Tes notes perso sur cette vidéo — problèmes, idées de montage, retours de rétention.</div>
+      <textarea class="det-ta" id="ta-notes" placeholder="Ex: Intro trop longue, revoir le hook à 0:15…" onchange="saveField('notes',this.value)"></textarea>
+    </div>
+
+    <!-- FEEDBACK VIEWERS -->
+    <div class="det-panel" id="panel-feedback">
+      <div class="det-hint">Colle ici les retours des viewers — commentaires, DMs. Tu peux aussi joindre des captures.</div>
+      <textarea class="det-ta" id="ta-feedback" placeholder="Colle ici les messages de tes viewers, commentaires, DMs…" onchange="saveField('feedback',this.value)"></textarea>
+      <div class="fb-attach-row">
+        <button class="fb-attach-btn" onclick="document.getElementById('fb-img-inp').click()">📎 Joindre une image</button>
+        <input type="file" accept="image/*" multiple id="fb-img-inp" style="display:none" onchange="fbImgChosen(this)">
+      </div>
+      <div class="fb-media-grid" id="fb-img-grid"></div>
+    </div>
+
+    <!-- IDÉES DE TITRES -->
+    <div class="det-panel" id="panel-titres">
+      <div class="det-hint">Note toutes tes idées de titres ici. Brains-en mode ouvert — tu filtreras le meilleur ensuite.</div>
+      <div class="titre-list" id="titres-list"></div>
+      <div class="titre-add-row">
+        <input class="titre-add-inp" id="titre-inp" placeholder="Ex: J'ai volé une Tesla pendant 24h…" onkeydown="if(event.key==='Enter')addTitre()">
+        <button class="add-btn add-btn-sm" onclick="addTitre()">+ Ajouter</button>
+      </div>
+    </div>
+
+    <!-- POST-MORTEM -->
+    <div class="det-panel" id="panel-quiz">
+      <div class="det-hint">Réponds à ces 4 questions après chaque publication. C'est ce qui te fait progresser le plus vite.</div>
+      <div class="quiz-grid">
+        <div class="quiz-item">
+          <div class="quiz-q">🐢 Où as-tu été trop lent ?</div>
+          <textarea class="det-ta det-ta-sm" id="quiz-slow" onchange="saveQuiz('slow',this.value)" placeholder="Ex: L'intro prend 45s avant le premier hook…"></textarea>
+        </div>
+        <div class="quiz-item">
+          <div class="quiz-q">⚡ Où as-tu été rapide / efficace ?</div>
+          <textarea class="det-ta det-ta-sm" id="quiz-fast" onchange="saveQuiz('fast',this.value)" placeholder="Ex: Le twist arrive au bon moment…"></textarea>
+        </div>
+        <div class="quiz-item">
+          <div class="quiz-q">🎯 Qu'est-ce que t'aurais dû faire mieux ?</div>
+          <textarea class="det-ta det-ta-sm" id="quiz-improve" onchange="saveQuiz('improve',this.value)" placeholder="Ex: Le titre ne matche pas avec la miniature…"></textarea>
+        </div>
+        <div class="quiz-item">
+          <div class="quiz-q">🚀 Comment améliorer la prochaine ?</div>
+          <textarea class="det-ta det-ta-sm" id="quiz-next" onchange="saveQuiz('next',this.value)" placeholder="Ex: Couper l'intro à 15s max…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- A/B TESTS -->
+    <div class="det-panel" id="panel-abtests">
+      <div class="det-hint">Crée des groupes de 3 miniatures comme dans YouTube Studio. Clique sur "Fini" pour archiver le groupe dans les résultats.</div>
+      <div id="ab-groups-wrap"></div>
+      <button class="add-btn" onclick="addAbGroup()">+ Nouveau groupe de 3 miniatures</button>
+
+      <!-- Résultats -->
+      <div class="results-section" id="results-section" style="margin-top:8px">
+        <div class="results-head">
+          <div class="results-lbl">🏆 Résultats des tests terminés</div>
+        </div>
+        <div class="results-grid" id="results-grid">
+          <div style="grid-column:1/-1;color:rgba(22,22,37,.35);font-size:13px;text-align:center;padding:20px">Les groupes terminés apparaîtront ici</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RPM -->
+    <div class="det-panel" id="panel-rpm">
+      <div class="det-hint">Calcule tes revenus estimés. Ton RPM est dans YouTube Studio → Analyse → Revenus.</div>
+      <div class="rpm-box">
+        <div class="rpm-inputs">
+          <div>
+            <div class="rpm-label">RPM (€ pour 1000 vues)</div>
+            <input class="rpm-inp" id="rpm-rate" type="number" min="0" step="0.1" placeholder="Ex: 2.5" oninput="calcRpm()">
+          </div>
+          <div>
+            <div class="rpm-label">Nombre de vues visées</div>
+            <input class="rpm-inp" id="rpm-views" type="number" min="0" step="1000" placeholder="Ex: 100000" oninput="calcRpm()">
+          </div>
+        </div>
+        <div class="rpm-result">
+          <div>
+            <div class="rpm-val" id="rpm-result">0 €</div>
+            <div style="font-size:12px;color:rgba(22,22,37,.4);margin-top:4px">Revenu estimé pour cette vidéo</div>
+          </div>
+        </div>
+        <div class="rpm-scenarios" id="rpm-scenarios"></div>
+      </div>
+    </div>
+
+    <!-- LIENS -->
+    <div class="det-panel" id="panel-links">
+      <div class="det-hint">Lie des docs, scripts, tableurs Google Docs ou toute autre page utile à ce projet.</div>
+      <div class="link-add-row">
+        <input class="link-inp" id="link-label" placeholder="Nom (ex: Script)">
+        <input class="link-inp" id="link-url" placeholder="https://…" style="flex:2">
+        <button class="add-btn add-btn-sm" onclick="addLink()">+ Ajouter</button>
+      </div>
+      <div class="links-list" id="links-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lb" onclick="this.classList.remove('open')"><img id="lb-img" src="" alt=""></div>
+
+<!-- NEW PROJECT POPUP -->
+<div class="new-pop-bg" id="new-pop-bg">
+  <div class="new-pop">
+    <div class="pop-title">Nouveau projet</div>
+    <div>
+      <div class="pop-label">TITRE DE LA VIDÉO</div>
+      <input class="pop-inp" id="new-name" placeholder="Ex: J'ai vécu 100H en VR…" onkeydown="if(event.key==='Enter')createProject()">
+    </div>
+    <div>
+      <div class="pop-label">DATE DE SORTIE (= deadline)</div>
+      <input class="pop-inp" id="new-deadline" type="date">
+    </div>
+    <div class="pop-btns">
+      <button class="pop-save" onclick="createProject()">Créer →</button>
+      <button class="pop-cancel" onclick="closeNewPop()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- RANK OVERLAY -->
+<div class="rank-overlay" id="rank-overlay">
+  <div class="rank-box">
+    <div class="pop-title" style="color:#fff">Classer ce test</div>
+    <div>
+      <div class="pop-label" style="color:rgba(255,255,255,.4)">POSITION (1 = meilleure)</div>
+      <input class="pop-inp" id="rank-inp" type="number" min="1" placeholder="Ex: 1">
+    </div>
+    <div class="pop-btns">
+      <button class="pop-save" onclick="saveRank()">Enregistrer</button>
+      <button class="pop-cancel" onclick="document.getElementById('rank-overlay').classList.remove('open')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STORAGE ──
+const STORE='loopbuilder_projects_v1';
+const PLAN_STORE='loopbuilder_plan';
+const uid=()=>Math.random().toString(36).slice(2,10);
+const getPs=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'[]');}catch(e){return [];}};
+const savePs=list=>{try{localStorage.setItem(STORE,JSON.stringify(list));}catch(e){}};
+const getPlan=()=>{try{return JSON.parse(localStorage.getItem(PLAN_STORE)||'{}');}catch(e){return {};}};
+const savePlan=e=>{try{localStorage.setItem(PLAN_STORE,JSON.stringify(e));}catch(e){}};
+
+// ── STATE ──
+let filterActive='all';
+let activeId=null;
+let rankTargetGid=null;
+const AB_LETTERS=['A','B','C'];
+
+// ── CHANNEL NAME ──
+function loadChannelName(){
+  try{
+    const ch=JSON.parse(localStorage.getItem('loopbuilder_ch')||'null');
+    const handle=localStorage.getItem('loopbuilder_yt')||'';
+    const name=ch?.name||ch?.customUrl||handle||'ta chaîne';
+    document.getElementById('hero-channel').textContent='de '+name;
+  }catch(e){}
+}
+loadChannelName();
+
+// ── FILTERS ──
+function setFilter(f,btn){
+  filterActive=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>{
+    c.className='filter-chip'+(c===btn?' on':'');
+  });
+  render();
+}
+
+// ── RENDER GRID ──
+function render(){
+  const grid=document.getElementById('projects-grid');
+  const q=(document.getElementById('search-inp').value||'').toLowerCase();
+  let projects=getPs().sort((a,b)=>(b.updated||0)-(a.updated||0));
+  if(filterActive!=='all')projects=projects.filter(p=>(p.status||'progress')===filterActive);
+  if(q)projects=projects.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.notes||'').toLowerCase().includes(q));
+
+  if(!projects.length){
+    const msgs={all:'Crée ton premier projet',idea:'Aucune idée pour l\'instant',progress:'Aucun projet en cours',published:'Aucune vidéo publiée'};
+    grid.innerHTML=`<div class="empty">
+      <div class="empty-orb"></div>
+      <div class="empty-title">${msgs[filterActive]||'Aucun projet'}</div>
+      <div class="empty-sub">Clique sur "+ Nouveau projet" pour commencer</div>
+      <button class="empty-btn" onclick="openNewPop()">+ Nouveau projet</button>
+    </div>`;
+    return;
+  }
+
+  const today=new Date(new Date().toDateString());
+  const statusMap={idea:{lbl:'💡 Idée',cls:'idea'},progress:{lbl:'🔧 En cours',cls:'progress'},published:{lbl:'✅ Publiée',cls:'published'}};
+
+  grid.innerHTML=projects.map((p,idx)=>{
+    const loops=p.state?.arcs?.length||0;
+    const pct=Math.min(100,Math.round(loops/5*100));
+    const status=statusMap[p.status||'progress']||statusMap.progress;
+
+    // Deadline
+    let dlBadge='',urgClass='',urgDot='';
+    if(p.deadline&&(p.status||'progress')!=='published'){
+      const diff=Math.round((new Date(p.deadline)-today)/86400000);
+      const dlCls=diff<0?'dl-urg':diff<=10?'dl-urg':diff<=14?'dl-soon':'dl-ok';
+      const dlTxt=diff<0?'En retard':diff===0?"Aujourd'hui":diff===1?'Demain':'Dans '+diff+'j';
+      dlBadge=`<span class="p-badge ${dlCls}">⏱ ${dlTxt}</span>`;
+      if(diff<=1){urgClass='urgent';urgDot=`<div class="p-urgent-dot">${diff<0?'RETARD':diff===0?"AUJOURD'HUI":'DEMAIN'}</div>`;}
+    }
+
+    // Calendar link
+    const plan=getPlan();
+    const linked=p.deadline&&plan[p.deadline]&&plan[p.deadline]._pmId===p.id;
+    const calBadge=p.deadline?`<span class="p-badge ${linked?'cal':''}">📅 ${linked?new Date(p.deadline+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'Calendrier'}</span>`:'';
+
+    return `<div class="p-card" style="animation-delay:${idx*30}ms" data-id="${p.id}" onclick="openDet('${p.id}')">
+      <div class="p-thumb">
+        ${p.thumb?`<img src="${p.thumb}" alt="">`:'<div class="p-thumb-placeholder">🎬</div>'}
+        ${urgDot}
+        <div class="p-thumb-overlay"></div>
+        <div class="p-thumb-open">Ouvrir →</div>
+      </div>
+      <div class="p-body">
+        <div class="p-header">
+          <div class="p-name">${p.name||'Sans titre'}</div>
+          <div class="p-status ${status.cls}">${status.lbl}</div>
+        </div>
+        <div class="p-meta">
+          ${dlBadge}
+          <span class="p-badge loops">🔁 ${loops}</span>
+          ${calBadge}
+        </div>
+        <div class="p-footer">
+          <button class="p-btn p-btn-main" onclick="event.stopPropagation();openDet('${p.id}')">📋 Détails</button>
+          <a class="p-btn p-btn-loop" href="loop-builder.html?p=${p.id}" onclick="event.stopPropagation()">🔁 Loop Builder</a>
+          <button class="p-btn p-btn-del" onclick="event.stopPropagation();deleteProject('${p.id}')">×</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── NEW PROJECT ──
+function openNewPop(){
+  document.getElementById('new-name').value='';
+  document.getElementById('new-deadline').value='';
+  document.getElementById('new-pop-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('new-name').focus(),50);
+}
+function closeNewPop(){document.getElementById('new-pop-bg').classList.remove('open');}
+function createProject(){
+  const name=document.getElementById('new-name').value.trim()||'Nouveau projet';
+  const deadline=document.getElementById('new-deadline').value||null;
+  const p={id:uid(),name,deadline,status:'progress',created:Date.now(),updated:Date.now(),state:null,thumb:null,notes:'',
+    feedback:'',titres:[],quiz:{},abGroups:[],results:[],links:[],fbImgs:[],rpmRate:null,rpmViews:null,videoUrl:null};
+  const list=getPs();list.push(p);savePs(list);
+  if(deadline)syncProjectCalendar(p);
+  closeNewPop();render();
+}
+function deleteProject(id){
+  if(!confirm('Supprimer ce projet ?'))return;
+  savePs(getPs().filter(p=>p.id!==id));render();
+}
+
+// ── OPEN DETAIL ──
+function openDet(id){
+  activeId=id;
+  const p=getPs().find(x=>x.id===id);if(!p)return;
+
+  // Thumb
+  const t=document.getElementById('det-thumb');
+  const existing=t.querySelector('img');
+  if(existing)existing.remove();
+  if(p.thumb){const img=document.createElement('img');img.src=p.thumb;img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0';t.appendChild(img);}
+
+  document.getElementById('det-title').value=p.name||'';
+  document.getElementById('det-status').value=p.status||'progress';
+  document.getElementById('det-deadline').value=p.deadline||'';
+  document.getElementById('det-video-url').value=p.videoUrl||'';
+  updateVideoStatus();
+  document.getElementById('ta-notes').value=p.notes||'';
+  document.getElementById('ta-feedback').value=p.feedback||'';
+  const quiz=p.quiz||{};
+  document.getElementById('quiz-slow').value=quiz.slow||'';
+  document.getElementById('quiz-fast').value=quiz.fast||'';
+  document.getElementById('quiz-improve').value=quiz.improve||'';
+  document.getElementById('quiz-next').value=quiz.next||'';
+  document.getElementById('rpm-rate').value=p.rpmRate||'';
+  document.getElementById('rpm-views').value=p.rpmViews||'';
+  calcRpm();
+
+  renderTitres();renderAbGroups();renderResults();renderFbImgs();renderLinks();
+
+  // Reset tabs
+  document.querySelectorAll('.det-tab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  document.querySelectorAll('.det-panel').forEach((p,i)=>p.classList.toggle('on',i===0));
+
+  document.getElementById('det-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDet(){
+  document.getElementById('det-bg').classList.remove('open');
+  document.body.style.overflow='';
+  activeId=null;
+  render();
+}
+function deleteActiveDet(){
+  if(!confirm('Supprimer ce projet ?'))return;
+  savePs(getPs().filter(p=>p.id!==activeId));closeDet();
+}
+function getActive(){return getPs().find(p=>p.id===activeId)||null;}
+function updateActive(fn){
+  const list=getPs();const i=list.findIndex(p=>p.id===activeId);if(i<0)return;
+  fn(list[i]);list[i].updated=Date.now();savePs(list);
+}
+function saveField(f,v){updateActive(p=>{p[f]=v;});if(f==='deadline')syncCalendar();}
+function saveQuiz(k,v){updateActive(p=>{p.quiz=p.quiz||{};p.quiz[k]=v;});}
+function manualSave(){
+  syncCalendar();
+  const lbl=document.getElementById('det-save-lbl');
+  lbl.classList.add('show');
+  clearTimeout(lbl._t);lbl._t=setTimeout(()=>lbl.classList.remove('show'),2000);
+}
+
+// ── THUMB ──
+function triggerThumbUpload(){document.getElementById('det-thumb-inp').click();}
+function thumbChosen(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    updateActive(p=>{p.thumb=e.target.result;});
+    const t=document.getElementById('det-thumb');
+    const existing=t.querySelector('img');if(existing)existing.remove();
+    const img=document.createElement('img');img.src=e.target.result;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:12px';
+    t.appendChild(img);render();
+  };reader.readAsDataURL(file);input.value='';
+}
+
+// ── VIDEO STATUS ──
+function updateVideoStatus(){
+  const url=document.getElementById('det-video-url').value;
+  const st=document.getElementById('det-video-status');
+  const watch=document.getElementById('det-watch');
+  if(url){st.textContent='Publiée';st.style.background='rgba(34,197,94,.1)';st.style.color='#16a34a';watch.href=url;watch.style.display='block';}
+  else{st.textContent='En cours';st.style.background='rgba(22,22,37,.08)';st.style.color='rgba(22,22,37,.4)';watch.style.display='none';}
+}
+
+// ── CALENDAR SYNC ──
+function syncCalendar(){
+  const p=getActive();if(!p)return;
+  syncProjectCalendar(p);
+}
+function syncProjectCalendar(p){
+  if(!p.deadline)return;
+  const events=getPlan();
+  // Remove old linked entry if date changed
+  Object.keys(events).forEach(k=>{if(events[k]._pmId===p.id&&k!==p.deadline)delete events[k];});
+  events[p.deadline]={title:p.name||'Vidéo',type:'long',time:'18:00',datetime:p.deadline+'T18:00:00',date:p.deadline,_pmId:p.id};
+  savePlan(events);
+}
+
+// ── TABS ──
+function showTab(name,btn){
+  document.querySelectorAll('.det-tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+  document.querySelectorAll('.det-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('panel-'+name).classList.add('on');
+}
+
+// ── FEEDBACK IMAGES ──
+function fbImgChosen(input){
+  [...input.files].forEach(file=>{
+    const r=new FileReader();
+    r.onload=e=>{updateActive(p=>{p.fbImgs=p.fbImgs||[];p.fbImgs.push({id:uid(),img:e.target.result});});renderFbImgs();};
+    r.readAsDataURL(file);
+  });input.value='';
+}
+function renderFbImgs(){
+  const p=getActive();if(!p)return;
+  const grid=document.getElementById('fb-img-grid');
+  grid.innerHTML=(p.fbImgs||[]).map(f=>`<div class="fb-media-item">
+    <img src="${f.img}" onclick="openLb('${f.img}')">
+    <button class="fb-media-del" onclick="delFbImg('${f.id}')">×</button>
+  </div>`).join('');
+}
+function delFbImg(id){updateActive(p=>{p.fbImgs=(p.fbImgs||[]).filter(x=>x.id!==id);});renderFbImgs();}
+
+// ── TITRES ──
+function addTitre(){
+  const inp=document.getElementById('titre-inp');
+  const text=inp.value.trim();if(!text)return;
+  updateActive(p=>{p.titres=p.titres||[];p.titres.push({id:uid(),text});});
+  inp.value='';renderTitres();
+}
+function renderTitres(){
+  const p=getActive();if(!p)return;
+  const list=document.getElementById('titres-list');
+  const titres=p.titres||[];
+  if(!titres.length){list.innerHTML='<div style="color:rgba(22,22,37,.3);font-size:13px;padding:16px;text-align:center">Lance-toi — écris le premier titre qui te vient !</div>';return;}
+  list.innerHTML=titres.map((t,i)=>`<div class="titre-item" draggable="true" id="titre-${t.id}">
+    <div class="titre-num" style="cursor:grab">≡</div>
+    <div class="titre-num">${i+1}</div>
+    <input class="titre-inp" value="${(t.text||'').replace(/"/g,'&quot;')}" onchange="updateTitreText('${t.id}',this.value)">
+    <div style="display:flex;gap:4px;flex-shrink:0">
+      ${i>0?`<button class="titre-del" style="background:rgba(99,102,241,.1);color:#6366f1;font-size:10px" onclick="moveTitre('${t.id}',-1)" title="Monter">▲</button>`:'<div style="width:24px"></div>'}
+      ${i<titres.length-1?`<button class="titre-del" style="background:rgba(99,102,241,.1);color:#6366f1;font-size:10px" onclick="moveTitre('${t.id}',1)" title="Descendre">▼</button>`:'<div style="width:24px"></div>'}
+      <button class="titre-del" onclick="delTitre('${t.id}')">×</button>
+    </div>
+  </div>`).join('');
+}
+function updateTitreText(id,val){updateActive(p=>{const t=(p.titres||[]).find(x=>x.id===id);if(t)t.text=val;});}
+function delTitre(id){updateActive(p=>{p.titres=(p.titres||[]).filter(x=>x.id!==id);});renderTitres();}
+function moveTitre(id,dir){
+  updateActive(p=>{
+    const titres=p.titres||[];
+    const i=titres.findIndex(x=>x.id===id);
+    if(i<0)return;
+    const ni=i+dir;
+    if(ni<0||ni>=titres.length)return;
+    [titres[i],titres[ni]]=[titres[ni],titres[i]];
+  });
+  renderTitres();
+}
+
+// ── A/B GROUPS ──
+function addAbGroup(){
+  updateActive(p=>{
+    p.abGroups=p.abGroups||[];
+    p.abGroups.push({id:uid(),rank:null,slots:[{id:uid(),img:null,pct:''},{id:uid(),img:null,pct:''},{id:uid(),img:null,pct:''}]});
+  });renderAbGroups();
+}
+function renderAbGroups(){
+  const p=getActive();if(!p)return;
+  const wrap=document.getElementById('ab-groups-wrap');
+  const groups=p.abGroups||[];
+  if(!groups.length){wrap.innerHTML='<div style="color:rgba(22,22,37,.35);font-size:13px;padding:20px;text-align:center">Clique "+ Nouveau groupe de 3 miniatures" pour commencer</div>';return;}
+  const maxPcts=groups.map(g=>Math.max(...g.slots.map(s=>+s.pct||0)));
+  wrap.innerHTML=groups.map((g,gi)=>{
+    const maxPct=maxPcts[gi];
+    const hasRank=g.rank!==null&&g.rank!==undefined;
+    return `<div class="ab-group">
+      <div class="ab-group-head">
+        <div class="ab-group-lbl">Test ${gi+1}${g.rank!=null?' — #'+g.rank:''}</div>
+        <button class="ab-group-rank ${hasRank?'winner-rank':''}" onclick="openRankPop('${g.id}')">📊 ${hasRank?'#'+g.rank:'Classer'}</button>
+        <button class="ab-group-done" onclick="finishAbGroup('${g.id}')">✓ Fini</button>
+        <button class="ab-group-del" onclick="delAbGroup('${g.id}')">Supprimer</button>
+      </div>
+      <div class="ab-slots">
+        ${g.slots.map((s,si)=>{
+          const isWinner=s.pct&&+s.pct===maxPct&&maxPct>0;
+          return `<div class="ab-slot ${s.img?'filled':''} ${isWinner?'winner':''}"
+            id="abs-${s.id}"
+            onclick="abSlotClick('${g.id}','${s.id}')">
+            ${s.img?`<img src="${s.img}" alt="">`:
+            `<div class="ab-slot-letter">${AB_LETTERS[si]}</div>
+             <div class="ab-slot-hint">Clique ou glisse</div>`}
+            ${isWinner?'<div class="ab-winner-tag">🏆 GAGNANT</div>':''}
+            ${s.pct?`<div class="ab-pct-display">${s.pct}%</div>`:''}
+            <div class="ab-slot-overlay">
+              <div class="ab-slot-actions">
+                ${s.img?`<button class="ab-slot-act" onclick="event.stopPropagation();openLb('${s.img}')">🔍 Voir</button>`:''}
+                <button class="ab-slot-act" onclick="event.stopPropagation();trigAbSlot('${s.id}')">📷</button>
+              </div>
+              <input type="number" min="0" max="100" placeholder="%" value="${s.pct||''}"
+                class="ab-pct-inp"
+                onchange="event.stopPropagation();updateAbPct('${g.id}','${s.id}',this.value)"
+                onclick="event.stopPropagation()">
+            </div>
+            <input type="file" accept="image/*" style="display:none" id="abf-${s.id}" onchange="abFileChosen('${g.id}','${s.id}',this)">
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  setupAbDrop();
+}
+function abSlotClick(gid,sid){
+  // Only trigger file if no img yet — otherwise show overlay naturally via CSS hover
+  const p=getActive();if(!p)return;
+  const g=(p.abGroups||[]).find(x=>x.id===gid);if(!g)return;
+  const s=g.slots.find(x=>x.id===sid);if(!s)return;
+  if(!s.img)trigAbSlot(sid);
+}
+function trigAbSlot(sid){document.getElementById('abf-'+sid)?.click();}
+function abFileChosen(gid,sid,input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    updateActive(p=>{const g=(p.abGroups||[]).find(x=>x.id===gid);if(g){const s=g.slots.find(x=>x.id===sid);if(s)s.img=e.target.result;}});
+    renderAbGroups();
+  };r.readAsDataURL(file);input.value='';
+}
+function updateAbPct(gid,sid,val){
+  updateActive(p=>{const g=(p.abGroups||[]).find(x=>x.id===gid);if(g){const s=g.slots.find(x=>x.id===sid);if(s)s.pct=val;}});
+  setTimeout(renderAbGroups,60);
+}
+function delAbGroup(gid){updateActive(p=>{p.abGroups=(p.abGroups||[]).filter(g=>g.id!==gid);});renderAbGroups();}
+function finishAbGroup(gid){
+  const p=getActive();if(!p)return;
+  const g=(p.abGroups||[]).find(x=>x.id===gid);if(!g)return;
+  // Move group to results as a composed image (store slots data)
+  updateActive(p=>{
+    const gi=p.abGroups.findIndex(x=>x.id===gid);
+    if(gi<0)return;
+    const grp=p.abGroups[gi];
+    p.results=p.results||[];
+    const maxPct=Math.max(...grp.slots.map(s=>+s.pct||0));
+    p.results.push({id:uid(),groupId:gid,slots:grp.slots,rank:grp.rank,finishedAt:Date.now(),maxPct});
+    p.abGroups.splice(gi,1);
+  });
+  renderAbGroups();renderResults();
+}
+function renderResults(){
+  const p=getActive();if(!p)return;
+  const grid=document.getElementById('results-grid');
+  const results=p.results||[];
+  if(!results.length){grid.innerHTML='<div style="grid-column:1/-1;color:rgba(22,22,37,.35);font-size:13px;text-align:center;padding:20px">Les groupes terminés apparaîtront ici</div>';return;}
+  grid.innerHTML=results.map((r,i)=>{
+    const winnerSlot=r.slots&&r.maxPct>0?r.slots.find(s=>+s.pct===r.maxPct):null;
+    const thumb=winnerSlot?.img||r.slots?.[0]?.img||null;
+    return `<div class="res-card">
+      ${thumb?`<img src="${thumb}" onclick="openLb('${thumb}')">`:
+      `<div style="height:100px;background:#f3f4fd;display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.3">🧪</div>`}
+      <div class="res-card-body">
+        <div style="font-size:10px;font-weight:700;color:${r.rank!=null?'#6366f1':'rgba(22,22,37,.4)'}">
+          ${r.rank!=null?'#'+r.rank:'—'} · Test ${i+1}${r.maxPct>0?' · '+r.maxPct+'%':''}
+        </div>
+        <button class="res-card-del" onclick="delResult('${r.id}')">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function delResult(id){updateActive(p=>{p.results=(p.results||[]).filter(x=>x.id!==id);});renderResults();}
+
+// ── RANK POPUP ──
+function openRankPop(gid){
+  rankTargetGid=gid;
+  const p=getActive();
+  const g=(p?.abGroups||[]).find(x=>x.id===gid);
+  document.getElementById('rank-inp').value=g?.rank||'';
+  document.getElementById('rank-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('rank-inp').focus(),50);
+}
+function saveRank(){
+  const val=+document.getElementById('rank-inp').value||null;
+  updateActive(p=>{const g=(p.abGroups||[]).find(x=>x.id===rankTargetGid);if(g)g.rank=val;});
+  document.getElementById('rank-overlay').classList.remove('open');
+  renderAbGroups();
+}
+
+// ── DRAG & DROP SETUP ──
+function setupAbDrop(){
+  document.querySelectorAll('.ab-slot').forEach(slot=>{
+    slot.addEventListener('dragover',e=>{e.preventDefault();slot.style.borderColor='#6366f1';});
+    slot.addEventListener('dragleave',()=>{slot.style.borderColor='';});
+    slot.addEventListener('drop',e=>{
+      e.preventDefault();slot.style.borderColor='';
+      const file=e.dataTransfer.files[0];if(!file||!file.type.startsWith('image/'))return;
+      const fi=slot.querySelector('input[type="file"]');if(!fi)return;
+      const sid=fi.id.replace('abf-','');
+      // find gid from abGroups
+      const p=getActive();if(!p)return;
+      for(const g of (p.abGroups||[])){
+        const s=g.slots.find(x=>x.id===sid);
+        if(s){abReadDrop(file,g.id,sid);return;}
+      }
+    });
+  });
+}
+function abReadDrop(file,gid,sid){
+  const r=new FileReader();
+  r.onload=e=>{
+    updateActive(p=>{const g=(p.abGroups||[]).find(x=>x.id===gid);if(g){const s=g.slots.find(x=>x.id===sid);if(s)s.img=e.target.result;}});
+    renderAbGroups();
+  };r.readAsDataURL(file);
+}
+
+// ── RPM ──
+function calcRpm(){
+  const rate=+document.getElementById('rpm-rate').value||0;
+  const views=+document.getElementById('rpm-views').value||0;
+  const earn=(rate*views)/1000;
+  document.getElementById('rpm-result').textContent=earn.toLocaleString('fr-FR',{maximumFractionDigits:2})+' €';
+  updateActive(p=>{p.rpmRate=rate||null;p.rpmViews=views||null;});
+  const sc=document.getElementById('rpm-scenarios');
+  if(rate>0){
+    sc.innerHTML=[0.5,1,2].map(m=>`<div class="rpm-scenario">
+      <div class="rpm-scenario-views">${Math.round(views*m).toLocaleString('fr-FR')} vues</div>
+      <div class="rpm-scenario-earn">${((rate*views*m)/1000).toLocaleString('fr-FR',{maximumFractionDigits:0})} €</div>
+    </div>`).join('');
+  }else sc.innerHTML='';
+}
+
+// ── LINKS ──
+function addLink(){
+  const label=document.getElementById('link-label').value.trim();
+  const url=document.getElementById('link-url').value.trim();
+  if(!label||!url){alert('Nom et URL requis');return;}
+  updateActive(p=>{p.links=p.links||[];p.links.push({id:uid(),label,url});});
+  document.getElementById('link-label').value='';
+  document.getElementById('link-url').value='';
+  renderLinks();
+}
+function renderLinks(){
+  const p=getActive();if(!p)return;
+  const list=document.getElementById('links-list');
+  const links=p.links||[];
+  if(!links.length){list.innerHTML='<div style="color:rgba(22,22,37,.35);font-size:13px;padding:16px;text-align:center">Aucun lien pour l\'instant</div>';return;}
+  list.innerHTML=links.map(l=>`<div class="link-item">
+    <span style="font-size:15px">🔗</span>
+    <span class="link-lbl">${l.label}</span>
+    <a class="link-url" href="${l.url}" target="_blank">${l.url}</a>
+    <button class="link-del" onclick="delLink('${l.id}')">×</button>
+  </div>`).join('');
+}
+function delLink(id){updateActive(p=>{p.links=(p.links||[]).filter(x=>x.id!==id);});renderLinks();}
+
+// ── LIGHTBOX ──
+function openLb(src){if(!src)return;document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open');}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.getElementById('lb').classList.remove('open');
+    document.getElementById('rank-overlay').classList.remove('open');
+    closeNewPop();
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&activeId)manualSave();
+});
+document.getElementById('new-pop-bg').addEventListener('click',e=>{if(e.target===e.currentTarget)closeNewPop();});
+document.getElementById('rank-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+
+render();
+</script>
+</body>
+</html>
