@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calendrier Éditorial — Workspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-src https://calendar.google.com https://calendar.notion.so; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -51,6 +51,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .cal-event.long{background:#6366f1;color:#fff}
 .cal-event.short{background:#22c55e;color:#000}
 .cal-event.idea{background:#f59e0b;color:#000}
+
+/* CALENDAR VIEW TOGGLE + EMBED */
+.cal-view-toggle{display:flex;gap:8px;margin-bottom:16px}
+.cal-view-btn{padding:7px 14px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--b);color:var(--sub);font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px}
+.cal-view-btn:hover{border-color:var(--bh);color:var(--text)}
+.cal-view-btn.on{background:rgba(99,102,241,.14);border-color:var(--acc);color:#fff}
+.embed-setup{background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:14px;padding:26px;max-width:540px;margin:24px auto}
+.embed-setup-title{font-size:14.5px;font-weight:700;margin-bottom:6px}
+.embed-setup-hint{font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:16px}
+.embed-setup-hint b{color:var(--text)}
+.embed-setup-row{display:flex;gap:8px}
+.embed-input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:12.5px;padding:10px 12px;outline:none}
+.embed-input:focus{border-color:var(--acc)}
+.embed-connect-btn{padding:10px 18px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0}
+.embed-connect-btn:hover{background:#5254cc}
+.embed-providers{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.embed-provider-chip{font-size:10.5px;color:var(--dim);background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:6px;padding:4px 9px}
+.embed-frame-wrap{position:relative;flex:1;min-height:0;border-radius:12px;overflow:hidden;border:1px solid var(--b);display:flex}
+.embed-frame-wrap iframe{width:100%;height:100%;border:none;min-height:500px;background:#fff}
+.embed-change-btn{position:absolute;top:10px;right:10px;padding:6px 12px;background:rgba(8,8,8,.85);backdrop-filter:blur(8px);border:1px solid var(--b);border-radius:8px;color:var(--sub);font-size:11px;font-weight:600;cursor:pointer;z-index:2;font-family:'Inter',sans-serif}
+.embed-change-btn:hover{color:#fff;border-color:var(--bh)}
+.embed-error{font-size:11.5px;color:var(--red);margin-top:8px}
 
 /* SIDEBAR */
 .sidebar{width:280px;flex-shrink:0;border-left:1px solid var(--b);display:flex;flex-direction:column;padding:20px;gap:14px;overflow-y:auto}
@@ -177,15 +199,44 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 
   <!-- CALENDAR -->
   <div class="cal-zone">
-    <div class="cal-header">
-      <div class="cal-month" id="cal-month-lbl"></div>
-      <div class="cal-nav">
-        <button class="cal-today-btn" onclick="goToday()">Aujourd'hui</button>
-        <button class="cal-nav-btn" onclick="navMonth(-1)">‹</button>
-        <button class="cal-nav-btn" onclick="navMonth(1)">›</button>
+    <div class="cal-view-toggle">
+      <button class="cal-view-btn on" id="cal-view-btn-own" onclick="setCalView('own')"><svg class="icon"><use href="icons.svg#i-calendar"/></svg> Mon calendrier</button>
+      <button class="cal-view-btn" id="cal-view-btn-embed" onclick="setCalView('embed')"><svg class="icon"><use href="icons.svg#i-link"/></svg> Calendrier externe</button>
+    </div>
+
+    <div id="own-cal-view">
+      <div class="cal-header">
+        <div class="cal-month" id="cal-month-lbl"></div>
+        <div class="cal-nav">
+          <button class="cal-today-btn" onclick="goToday()">Aujourd'hui</button>
+          <button class="cal-nav-btn" onclick="navMonth(-1)">‹</button>
+          <button class="cal-nav-btn" onclick="navMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <div id="embed-cal-view" style="display:none;flex:1;flex-direction:column">
+      <div class="embed-setup" id="embed-setup">
+        <div class="embed-setup-title">Connecter Google Calendar ou Notion Calendar</div>
+        <div class="embed-setup-hint">
+          Colle ici le lien public d'intégration de ton calendrier — <b>Google Calendar</b> : Paramètres du calendrier → « Intégrer le calendrier » → copie l'URL du champ « src » ou le lien direct <code>calendar.google.com/calendar/embed?src=…</code>. <b>Notion Calendar</b> : dans le partage du calendrier, copie le lien public <code>calendar.notion.so/…</code>.
+        </div>
+        <div class="embed-setup-row">
+          <input id="embed-url-input" class="embed-input" placeholder="https://calendar.google.com/calendar/embed?src=…" autocomplete="off">
+          <button class="embed-connect-btn" onclick="saveEmbedUrl()">Connecter</button>
+        </div>
+        <div class="embed-error" id="embed-error" style="display:none"></div>
+        <div class="embed-providers">
+          <span class="embed-provider-chip">✓ calendar.google.com</span>
+          <span class="embed-provider-chip">✓ calendar.notion.so</span>
+        </div>
+      </div>
+      <div class="embed-frame-wrap" id="embed-frame-wrap" style="display:none">
+        <button class="embed-change-btn" onclick="clearEmbedUrl()">Changer de calendrier</button>
+        <iframe id="embed-iframe" referrerpolicy="no-referrer" loading="lazy"></iframe>
       </div>
     </div>
-    <div class="cal-grid" id="cal-grid"></div>
   </div>
 
   <!-- SIDEBAR -->
@@ -405,9 +456,71 @@ function startCountdown(){
   tick(); cdInterval=setInterval(tick,1000);
 }
 
+// ═══ CALENDRIER EXTERNE (Google Calendar / Notion Calendar) ═══
+const EMBED_ALLOWED_HOSTS=['calendar.google.com','calendar.notion.so'];
+const LS_EMBED_URL='ws_planning_embed_url';
+
+function embedSafeUrl(raw){
+  try{
+    const u=new URL(raw.trim());
+    if(u.protocol!=='https:')return null;
+    if(!EMBED_ALLOWED_HOSTS.includes(u.hostname))return null;
+    return u.href;
+  }catch(e){return null;}
+}
+
+function setCalView(v){
+  document.getElementById('cal-view-btn-own').classList.toggle('on',v==='own');
+  document.getElementById('cal-view-btn-embed').classList.toggle('on',v==='embed');
+  document.getElementById('own-cal-view').style.display=v==='own'?'block':'none';
+  document.getElementById('embed-cal-view').style.display=v==='embed'?'flex':'none';
+  try{localStorage.setItem('ws_planning_calview',v);}catch(e){}
+}
+
+function saveEmbedUrl(){
+  const raw=document.getElementById('embed-url-input').value;
+  const safe=embedSafeUrl(raw);
+  const err=document.getElementById('embed-error');
+  if(!safe){
+    err.textContent='Lien non reconnu — colle une URL calendar.google.com ou calendar.notion.so.';
+    err.style.display='block';
+    return;
+  }
+  err.style.display='none';
+  try{localStorage.setItem(LS_EMBED_URL,safe);}catch(e){}
+  loadEmbedUrl();
+}
+
+function clearEmbedUrl(){
+  try{localStorage.removeItem(LS_EMBED_URL);}catch(e){}
+  loadEmbedUrl();
+}
+
+function loadEmbedUrl(){
+  let saved=null;
+  try{saved=localStorage.getItem(LS_EMBED_URL);}catch(e){}
+  const safe=saved?embedSafeUrl(saved):null;
+  const setup=document.getElementById('embed-setup');
+  const frameWrap=document.getElementById('embed-frame-wrap');
+  if(safe){
+    document.getElementById('embed-iframe').src=safe;
+    setup.style.display='none';
+    frameWrap.style.display='flex';
+  }else{
+    setup.style.display='block';
+    frameWrap.style.display='none';
+    document.getElementById('embed-iframe').src='about:blank';
+  }
+}
+
 // ═══ INIT ═══
 render();
 startCountdown();
+loadEmbedUrl();
+try{
+  const savedView=localStorage.getItem('ws_planning_calview');
+  if(savedView==='embed')setCalView('embed');
+}catch(e){}
 function wsdToggle(){
   const d=document.getElementById('wsd-drawer'),o=document.getElementById('wsd-overlay');
   const open=!d.classList.contains('open');

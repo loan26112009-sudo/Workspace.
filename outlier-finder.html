@@ -163,9 +163,12 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .nm-del{margin-top:16px;width:100%;padding:11px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
 .nm-del:hover{background:rgba(239,68,68,.18)}
 
-/* PLANNING / KANBAN */
-.kanban{display:flex;gap:16px;overflow-x:auto;padding-bottom:20px;align-items:flex-start}
-.kb-col{flex:0 0 270px;background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:14px;min-height:120px;display:flex;flex-direction:column;gap:10px;transition:all .15s}
+/* PLANNING / KANBAN — grille responsive : toutes les colonnes visibles sans défiler horizontalement, pour pouvoir glisser-déposer d'un bout à l'autre sans scroll */
+.kanban{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:start}
+@media(max-width:1300px){.kanban{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.kanban{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:400px){.kanban{grid-template-columns:1fr}}
+.kb-col{min-width:0;background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:12px;min-height:120px;display:flex;flex-direction:column;gap:10px;transition:all .15s}
 .kb-col.dragover{border-color:var(--acc);background:rgba(99,102,241,.08)}
 .kb-col-head{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 10px;border-bottom:1px solid var(--b)}
 .kb-col-title{font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:7px}
@@ -181,6 +184,35 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .kb-card-ch{font-size:10px;color:var(--dim)}
 .kb-empty-hint{font-size:11px;color:var(--dim);text-align:center;padding:16px 6px;border:1px dashed var(--b);border-radius:10px}
 .planning-notice{font-size:12.5px;color:var(--sub);background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:14px 18px;margin-bottom:18px}
+
+/* ANALYSE */
+.breakdown-banner{display:flex;align-items:center;gap:18px;background:linear-gradient(120deg,rgba(99,102,241,.14),rgba(168,85,247,.08));border:1px solid rgba(99,102,241,.28);border-radius:18px;padding:20px 24px;margin-bottom:22px;text-decoration:none;color:inherit;transition:all .2s}
+.breakdown-banner:hover{border-color:rgba(99,102,241,.5);transform:translateY(-2px);box-shadow:0 16px 40px rgba(99,102,241,.15)}
+.breakdown-banner-ico{width:52px;height:52px;border-radius:14px;background:rgba(99,102,241,.18);border:1px solid rgba(99,102,241,.3);color:var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.breakdown-banner-ico .icon{width:26px;height:26px}
+.breakdown-banner-body{flex:1;min-width:0}
+.breakdown-banner-title{font-size:19px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.breakdown-banner-tag{font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--acc);background:rgba(99,102,241,.15);padding:3px 9px;border-radius:6px}
+.breakdown-banner-desc{font-size:13px;color:var(--sub);margin-top:4px;line-height:1.5}
+.breakdown-banner-arrow{font-size:22px;color:var(--acc);flex-shrink:0;transition:transform .2s}
+.breakdown-banner:hover .breakdown-banner-arrow{transform:translateX(5px)}
+
+.analyse-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px}
+.an-card{background:var(--s1);border:1px solid var(--b);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+.an-card:hover{border-color:var(--bh)}
+.an-head{display:flex;gap:12px;padding:14px}
+.an-thumb-wrap{position:relative;width:128px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--s2);flex-shrink:0}
+.an-thumb{width:100%;height:100%;object-fit:cover;display:block}
+.an-meta{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.an-title{font-size:13.5px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.an-sub{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:5px}
+.an-sub .icon{width:12px;height:12px}
+.an-textarea{width:100%;min-height:130px;background:var(--s2);border:none;border-top:1px solid var(--b);color:var(--text);font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.6;padding:12px 14px;resize:vertical;outline:none}
+.an-textarea:focus{background:var(--s3)}
+.an-textarea::placeholder{color:var(--dim)}
+.an-save-flag{font-size:10px;color:var(--grn);padding:0 14px 10px;opacity:0;transition:opacity .3s}
+.an-save-flag.show{opacity:1}
+@media(max-width:480px){.analyse-grid{grid-template-columns:1fr}.an-head{flex-direction:column}.an-thumb-wrap{width:100%}}
 
 @media(max-width:560px){.v-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.tb-logo{display:none}}
 </style>
@@ -211,6 +243,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
 <div class="view-toggle">
   <button class="view-btn on" id="view-btn-library" onclick="setView('library')"><svg class="icon"><use href="icons.svg#i-library"/></svg> Bibliothèque</button>
   <button class="view-btn" id="view-btn-planning" onclick="setView('planning')"><svg class="icon"><use href="icons.svg#i-kanban"/></svg> Classement</button>
+  <button class="view-btn" id="view-btn-analyse" onclick="setView('analyse')"><svg class="icon"><use href="icons.svg#i-flask"/></svg> Analyse</button>
 </div>
 
 <div class="wrap">
@@ -259,6 +292,20 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="stat-line" style="margin-top:0">Classe tes outliers repérés : glisse-dépose chaque vidéo dans la colonne qui correspond à ce que tu comptes en faire.</div>
     <div class="planning-notice" id="planning-empty" style="display:none">Ajoute des vidéos depuis la Bibliothèque, puis classe-les par glisser-déposer dans les colonnes ci-dessous.</div>
     <div class="kanban" id="kanban"></div>
+  </div>
+
+  <div id="analyse-view" style="display:none">
+    <a class="breakdown-banner" href="https://v0-morethanusual.vercel.app/dashboard/breakdown" target="_blank" rel="noopener noreferrer">
+      <div class="breakdown-banner-ico"><svg class="icon"><use href="icons.svg#i-trending-up"/></svg></div>
+      <div class="breakdown-banner-body">
+        <div class="breakdown-banner-title">Breakdown <span class="breakdown-banner-tag">Outil d'analyse</span></div>
+        <div class="breakdown-banner-desc">Rétention, performance détaillée par vidéo — ouvre-le en parallèle pour creuser chaque projet ci-dessous.</div>
+      </div>
+      <div class="breakdown-banner-arrow">→</div>
+    </a>
+    <div class="stat-line" style="margin-top:0">Chaque vidéo ajoutée devient automatiquement un projet d'analyse ici. Écris ce qui explique l'outlier, ce que tu en retiens, ce que tu réutilises.</div>
+    <div class="planning-notice" id="analyse-empty" style="display:none">Ajoute des vidéos depuis la Bibliothèque : chacune apparaîtra ici comme un projet à analyser.</div>
+    <div class="analyse-grid" id="analyse-grid"></div>
   </div>
 
 </div>
@@ -700,8 +747,10 @@ function render(){
 
   document.getElementById('view-btn-library').classList.toggle('on',currentView==='library');
   document.getElementById('view-btn-planning').classList.toggle('on',currentView==='planning');
+  document.getElementById('view-btn-analyse').classList.toggle('on',currentView==='analyse');
   document.getElementById('library-view').style.display=currentView==='library'?'block':'none';
   document.getElementById('planning-view').style.display=currentView==='planning'?'block':'none';
+  document.getElementById('analyse-view').style.display=currentView==='analyse'?'block':'none';
 
   const btnAddVideo=document.getElementById('btn-add-video');
   btnAddVideo.disabled=!activeChannelId;
@@ -791,6 +840,7 @@ function render(){
   }
 
   if(currentView==='planning')renderPlanning();
+  if(currentView==='analyse')renderAnalyse();
 }
 
 function renderPlanning(){
@@ -845,6 +895,46 @@ function renderPlanning(){
       }
     });
     kanban.appendChild(colEl);
+  });
+}
+
+function renderAnalyse(){
+  document.getElementById('analyse-empty').style.display=videos.length?'none':'block';
+  const grid=document.getElementById('analyse-grid');
+  grid.innerHTML='';
+  const list=[...videos].sort((a,b)=>b.addedAt-a.addedAt);
+  list.forEach(v=>{
+    const ch=channels.find(c=>c.id===v.channelId);
+    const cls=colorClass(v.outlier);
+    const card=document.createElement('div');
+    card.className='an-card';
+    const thumbHtml=v.vid?`<img class="an-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="onThumbError(this)">`:FILM_FALLBACK;
+    card.innerHTML=`
+      <div class="an-head">
+        <div class="an-thumb-wrap">${thumbHtml}<div class="v-badge ${cls}" style="transform:scale(.85);transform-origin:top right">${fmtOutlier(v.outlier)}</div></div>
+        <div class="an-meta">
+          <div class="an-title">${escapeHtml(v.title||'Sans titre')}</div>
+          <div class="an-sub"><svg class="icon"><use href="icons.svg#${v.type==='short'?'i-zap':'i-film'}"/></svg> ${escapeHtml(ch?ch.name:'Chaîne supprimée')} · ${new Date(v.addedAt).toLocaleDateString('fr-FR')}</div>
+        </div>
+      </div>
+      <textarea class="an-textarea" placeholder="Hook, miniature, titre, structure, rétention… ce qui explique l'outlier et ce que tu réutilises."></textarea>
+      <div class="an-save-flag">✓ enregistré</div>`;
+    const ta=card.querySelector('.an-textarea');
+    ta.value=v.analysis||'';
+    let saveTimer;
+    ta.addEventListener('input',()=>{
+      clearTimeout(saveTimer);
+      saveTimer=setTimeout(()=>{
+        const vv=videos.find(x=>x.id===v.id);
+        if(!vv)return;
+        vv.analysis=ta.value;
+        saveVid(videos);
+        const flag=card.querySelector('.an-save-flag');
+        flag.classList.add('show');
+        setTimeout(()=>flag.classList.remove('show'),1400);
+      },500);
+    });
+    grid.appendChild(card);
   });
 }
 
