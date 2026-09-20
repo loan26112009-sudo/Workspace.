@@ -239,7 +239,11 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .v-add-btn:hover{background:var(--acc2);transform:translateY(-1px)}
 .v-add-btn:disabled{background:rgba(34,197,94,.85);cursor:default}
 .disc-res-ch{font-size:10.5px;color:var(--dim);display:flex;align-items:center;gap:5px;padding:0 12px 8px}
-@media(max-width:640px){.disc-mode-tabs{flex-wrap:wrap}.disc-actions{flex-direction:column}.disc-actions .btn{width:100%}}
+.disc-results-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:22px}
+.disc-results-count{font-size:11.5px;color:var(--dim)}
+.disc-results-head .sort-wrap select{width:auto;padding:9px 14px}
+.disc-load-more-note{font-size:11px;color:var(--dim);margin-top:8px}
+@media(max-width:640px){.disc-mode-tabs{flex-wrap:wrap}.disc-actions{flex-direction:column}.disc-actions .btn{width:100%}.disc-results-head{flex-direction:column;align-items:stretch}.disc-results-head .sort-wrap{justify-content:space-between}}
 
 @media(max-width:640px){
   .v-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
@@ -261,7 +265,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
   <a href="index.html" class="tb-back">← Workspace</a>
   <div class="tb-logo" style="display:flex;align-items:center;gap:9px"><img src="outlier-icon.png" alt="" style="width:24px;height:24px;object-fit:contain;border-radius:6px">Outlier <span>Finder</span></div>
   <div class="tb-sp"></div>
-  <a href="tools.html" class="tb-back" style="border-left:1px solid var(--b);border-right:none"><svg class="icon"><use href="icons.svg#i-grid"/></svg> Tous les outils</a>
+  <a href="backup.html" class="tb-back" style="border-left:1px solid var(--b);border-right:none"><svg class="icon"><use href="icons.svg#i-cloud-sync"/></svg> Sauvegarde</a>
+  <a href="tools.html" class="tb-back" style="border-right:none"><svg class="icon"><use href="icons.svg#i-grid"/></svg> Tous les outils</a>
   <button class="tb-add" id="btn-add-video" onclick="openVideoModal()" disabled>+ Ajouter une vidéo</button>
 </div>
 
@@ -382,7 +387,26 @@ button,input,textarea{font-family:'Inter',sans-serif}
 
       <div id="disc-status" class="disc-status" style="display:none"></div>
 
-      <div id="disc-results" class="v-grid" style="margin-top:20px"></div>
+      <div id="disc-results-head" class="disc-results-head" style="display:none">
+        <div class="disc-results-count" id="disc-results-count"></div>
+        <div class="sort-wrap">
+          <label for="disc-sort-select"><svg class="icon"><use href="icons.svg#i-sort"/></svg> Trier :</label>
+          <select class="f-select" id="disc-sort-select" onchange="setDiscoverSort(this.value)">
+            <option value="outlier-desc">Outlier, haut → bas</option>
+            <option value="outlier-asc">Outlier, bas → haut</option>
+            <option value="views-desc">Vues, haut → bas</option>
+            <option value="views-asc">Vues, bas → haut</option>
+            <option value="title-asc">Titre A → Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="disc-results" class="v-grid" style="margin-top:14px"></div>
+
+      <div id="disc-load-more-wrap" style="display:none;text-align:center;margin-top:20px">
+        <button class="btn btn-ghost" id="disc-load-more-btn" onclick="loadMoreDiscoverResults()"><svg class="icon"><use href="icons.svg#i-search"/></svg> Charger d'autres résultats</button>
+        <div class="disc-load-more-note" id="disc-load-more-note"></div>
+      </div>
     </div>
   </div>
 
@@ -496,6 +520,8 @@ let currentSort=localStorage.getItem('ws_outlier_sort')||'outlier-desc';
 let currentView=localStorage.getItem('ws_outlier_view')||'library';
 let discoverMode='niche';
 let discoverResults=[];
+let discoverSort='outlier-desc';
+let discoverState=null; // { mode, nichePageToken, nicheSeenVideoIds:Set, channels:{chanId:{info,uploadsId,videoIds:Set,pageToken,exhausted}} }
 
 const STATUS_COLS=[
   {key:null,label:'Non classé',dot:'#5b5b66'},
@@ -1068,11 +1094,45 @@ function saveDiscoverKey(){
 }
 
 function setDiscoverMode(m){
+  if(m!==discoverMode){
+    discoverResults=[];
+    discoverState=null;
+    document.getElementById('disc-results').innerHTML='';
+    document.getElementById('disc-results-head').style.display='none';
+    setDiscoverStatus('');
+    updateLoadMoreUI();
+  }
   discoverMode=m;
   document.getElementById('disc-tab-niche').classList.toggle('on',m==='niche');
   document.getElementById('disc-tab-creators').classList.toggle('on',m==='creators');
   document.getElementById('disc-form-niche').style.display=m==='niche'?'block':'none';
   document.getElementById('disc-form-creators').style.display=m==='creators'?'block':'none';
+}
+
+const DISC_SORTERS={
+  'outlier-desc':(a,b)=>(b.outlier??-1)-(a.outlier??-1),
+  'outlier-asc':(a,b)=>(a.outlier??Infinity)-(b.outlier??Infinity),
+  'views-desc':(a,b)=>b.views-a.views,
+  'views-asc':(a,b)=>a.views-b.views,
+  'title-asc':(a,b)=>(a.title||'').localeCompare(b.title||'')
+};
+function setDiscoverSort(v){discoverSort=v;renderDiscoverResults();}
+function getSortedDiscoverResults(){
+  return [...discoverResults].sort(DISC_SORTERS[discoverSort]||DISC_SORTERS['outlier-desc']);
+}
+
+function updateLoadMoreUI(){
+  const wrap=document.getElementById('disc-load-more-wrap');
+  const btn=document.getElementById('disc-load-more-btn');
+  const note=document.getElementById('disc-load-more-note');
+  if(!discoverResults.length||!discoverState){wrap.style.display='none';return;}
+  let canLoadMore=false;
+  if(discoverState.mode==='niche')canLoadMore=!!discoverState.nichePageToken;
+  else if(discoverState.mode==='creators')canLoadMore=Object.values(discoverState.channels).some(c=>!c.exhausted);
+  wrap.style.display='block';
+  btn.style.display=canLoadMore?'inline-flex':'none';
+  btn.disabled=!canLoadMore;
+  note.textContent=canLoadMore?'':'Tout a été chargé pour cette recherche.';
 }
 
 function loadPresets(){try{return JSON.parse(localStorage.getItem(LS_PRESETS)||'[]');}catch(e){return [];}}
@@ -1174,9 +1234,13 @@ async function fetchVideosByIds(key,ids){
   return out;
 }
 
-async function fetchUploadsPlaylistVideos(key,uploadsPlaylistId,maxResults){
-  const d=await ytFetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${uploadsPlaylistId}&maxResults=${maxResults||15}&key=${encodeURIComponent(key)}`);
-  return (d.items||[]).map(it=>it.contentDetails&&it.contentDetails.videoId).filter(Boolean);
+async function fetchUploadsPlaylistPage(key,uploadsPlaylistId,maxResults,pageToken){
+  const pageParam=pageToken?`&pageToken=${encodeURIComponent(pageToken)}`:'';
+  const d=await ytFetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${uploadsPlaylistId}&maxResults=${maxResults||15}${pageParam}&key=${encodeURIComponent(key)}`);
+  return {
+    videoIds:(d.items||[]).map(it=>it.contentDetails&&it.contentDetails.videoId).filter(Boolean),
+    nextPageToken:d.nextPageToken||null
+  };
 }
 
 async function resolveChannelIdByName(key,name){
@@ -1202,9 +1266,11 @@ async function runDiscoverSearch(){
   btn.disabled=true;
   document.getElementById('disc-results').innerHTML='';
   discoverResults=[];
+  discoverState=null;
+  updateLoadMoreUI();
   try{
-    if(discoverMode==='niche')await runNicheSearch(key);
-    else await runCreatorsSearch(key);
+    if(discoverMode==='niche')await runNicheSearch(key,false);
+    else await runCreatorsSearch(key,false);
   }catch(err){
     console.error(err);
     setDiscoverStatus('Erreur : '+(err.message||'réseau ou clé API invalide'),true);
@@ -1213,116 +1279,182 @@ async function runDiscoverSearch(){
   }
 }
 
-async function runNicheSearch(key){
+async function loadMoreDiscoverResults(){
+  const key=getApiKey();
+  if(!key||!discoverState)return;
+  const btn=document.getElementById('disc-load-more-btn');
+  btn.disabled=true;
+  try{
+    if(discoverState.mode==='niche')await runNicheSearch(key,true);
+    else await runCreatorsSearch(key,true);
+  }catch(err){
+    console.error(err);
+    setDiscoverStatus('Erreur : '+(err.message||'réseau ou clé API invalide'),true);
+  }finally{
+    updateLoadMoreUI();
+  }
+}
+
+async function runNicheSearch(key,more){
   const niche=document.getElementById('disc-inp-niche').value.trim();
   if(!niche){alert('Décris la niche en une phrase.');return;}
-  setDiscoverStatus('Recherche sur YouTube…');
-  const searchData=await ytFetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=viewCount&maxResults=25&q=${encodeURIComponent(niche)}&key=${encodeURIComponent(key)}`);
-  const items=(searchData.items||[]).filter(it=>it.id&&it.id.videoId);
-  if(!items.length){setDiscoverStatus('Aucun résultat pour cette niche.');return;}
+  if(!more)discoverState={mode:'niche',nichePageToken:null,seenVideoIds:new Set(),channels:{}};
+  const st=discoverState;
+  setDiscoverStatus(more?'Recherche d\'autres résultats…':'Recherche sur YouTube…');
+  const pageParam=st.nichePageToken?`&pageToken=${encodeURIComponent(st.nichePageToken)}`:'';
+  const searchData=await ytFetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=viewCount&maxResults=25&q=${encodeURIComponent(niche)}${pageParam}&key=${encodeURIComponent(key)}`);
+  st.nichePageToken=searchData.nextPageToken||null;
+  const items=(searchData.items||[]).filter(it=>it.id&&it.id.videoId&&!st.seenVideoIds.has(it.id.videoId));
+  items.forEach(it=>st.seenVideoIds.add(it.id.videoId));
+  if(!items.length){
+    setDiscoverStatus(more?'Aucun résultat supplémentaire trouvé.':'Aucun résultat pour cette niche.');
+    if(!more)renderDiscoverResults();
+    updateLoadMoreUI();
+    return;
+  }
   const videoIds=items.map(it=>it.id.videoId);
-  const channelIds=[...new Set(items.map(it=>it.snippet.channelId))];
+  const newChannelIds=[...new Set(items.map(it=>it.snippet.channelId))].filter(cid=>!st.channels[cid]);
 
-  setDiscoverStatus(`${items.length} vidéos trouvées, analyse de ${channelIds.length} chaîne(s)…`);
-  const channelDetails=await fetchChannelsByIds(key,channelIds);
-  const chById={};
-  channelDetails.forEach(c=>chById[c.id]=c);
-
-  const perChannelVideoIds={};
-  for(const cid of channelIds){
-    const c=chById[cid];
-    const uploadsId=c&&c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
-    if(!uploadsId){perChannelVideoIds[cid]=[];continue;}
-    try{perChannelVideoIds[cid]=await fetchUploadsPlaylistVideos(key,uploadsId,15);}
-    catch(e){perChannelVideoIds[cid]=[];}
+  if(newChannelIds.length){
+    setDiscoverStatus(`${items.length} vidéo(s) trouvée(s), analyse de ${newChannelIds.length} nouvelle(s) chaîne(s)…`);
+    const channelDetails=await fetchChannelsByIds(key,newChannelIds);
+    for(const c of channelDetails){
+      const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
+      let sampleIds=[];
+      if(uploadsId){
+        try{sampleIds=(await fetchUploadsPlaylistPage(key,uploadsId,15)).videoIds;}catch(e){}
+      }
+      st.channels[c.id]={info:c,uploadsId,sampleIds};
+    }
+    newChannelIds.forEach(cid=>{if(!st.channels[cid])st.channels[cid]={info:null,uploadsId:null,sampleIds:[]};});
   }
 
-  const allExtraIds=[...new Set(Object.values(perChannelVideoIds).flat())];
-  const idsToFetch=[...new Set([...videoIds,...allExtraIds])];
+  const sampleIdsAll=[...new Set(Object.values(st.channels).flatMap(c=>c.sampleIds||[]))];
+  const idsToFetch=[...new Set([...videoIds,...sampleIdsAll])];
   setDiscoverStatus('Calcul des outliers…');
   const videoDetails=await fetchVideosByIds(key,idsToFetch);
   const vidById={};
   videoDetails.forEach(v=>vidById[v.id]=v);
 
-  const results=[];
+  const newResults=[];
   for(const it of items){
     const vid=it.id.videoId;
     const vd=vidById[vid];
     if(!vd)continue;
     const cid=it.snippet.channelId;
-    const sampleIds=(perChannelVideoIds[cid]||[]).filter(x=>vidById[x]&&x!==vid);
+    const chState=st.channels[cid]||{};
+    const sampleIds=(chState.sampleIds||[]).filter(x=>vidById[x]&&x!==vid);
     const sampleViews=sampleIds.map(x=>+vidById[x].statistics.viewCount||0);
     const med=median(sampleViews);
     const views=+vd.statistics.viewCount||0;
     const outlier=(med&&med>0)?views/med:null;
     const durSec=parseISO8601Duration(vd.contentDetails.duration);
-    const ch=chById[cid];
-    results.push({
+    const ch=chState.info;
+    newResults.push({
       videoId:vid,title:vd.snippet.title,views,outlier,
       type:(durSec>0&&durSec<=60)?'short':'long',
       channelId:cid,channelName:ch?ch.snippet.title:it.snippet.channelTitle,
       channelCustomUrl:ch?ch.snippet.customUrl:''
     });
   }
-  results.sort((a,b)=>(b.outlier??-1)-(a.outlier??-1));
-  discoverResults=results;
+  discoverResults=discoverResults.concat(newResults);
   setDiscoverStatus('');
   renderDiscoverResults();
+  updateLoadMoreUI();
 }
 
-async function runCreatorsSearch(key){
+async function runCreatorsSearch(key,more){
   const raw=document.getElementById('disc-inp-creators').value.trim();
   if(!raw){alert('Écris au moins un nom de créateur.');return;}
-  const names=raw.split('\n').map(s=>s.trim()).filter(Boolean);
-  setDiscoverStatus(`Résolution de ${names.length} créateur(s)…`);
-  const resolved=[];
-  for(const name of names){
-    const cid=await resolveChannelIdByName(key,name);
-    if(cid)resolved.push(cid);
-  }
-  const channelIds=[...new Set(resolved)];
-  if(!channelIds.length){setDiscoverStatus('Aucune chaîne trouvée pour ces noms.',true);return;}
-
-  setDiscoverStatus(`Analyse de ${channelIds.length} chaîne(s)…`);
-  const channelDetails=await fetchChannelsByIds(key,channelIds);
-
-  const results=[];
-  for(const c of channelDetails){
-    const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
-    if(!uploadsId)continue;
-    let vids=[];
-    try{vids=await fetchUploadsPlaylistVideos(key,uploadsId,20);}catch(e){continue;}
-    if(!vids.length)continue;
-    const details=await fetchVideosByIds(key,vids);
-    const withViews=details.map(v=>({id:v.id,views:+v.statistics.viewCount||0}));
-    details.forEach(vd=>{
-      const others=withViews.filter(x=>x.id!==vd.id).map(x=>x.views);
-      const med=median(others);
-      const views=+vd.statistics.viewCount||0;
-      const outlier=(med&&med>0)?views/med:null;
-      const durSec=parseISO8601Duration(vd.contentDetails.duration);
-      results.push({
-        videoId:vd.id,title:vd.snippet.title,views,outlier,
-        type:(durSec>0&&durSec<=60)?'short':'long',
-        channelId:c.id,channelName:c.snippet.title,
-        channelCustomUrl:c.snippet.customUrl
-      });
+  if(!more){
+    const names=raw.split('\n').map(s=>s.trim()).filter(Boolean);
+    setDiscoverStatus(`Résolution de ${names.length} créateur(s)…`);
+    const resolved=[];
+    for(const name of names){
+      const cid=await resolveChannelIdByName(key,name);
+      if(cid)resolved.push(cid);
+    }
+    const channelIds=[...new Set(resolved)];
+    if(!channelIds.length){setDiscoverStatus('Aucune chaîne trouvée pour ces noms.',true);discoverState=null;updateLoadMoreUI();return;}
+    setDiscoverStatus(`Analyse de ${channelIds.length} chaîne(s)…`);
+    const channelDetails=await fetchChannelsByIds(key,channelIds);
+    discoverState={mode:'creators',channels:{}};
+    channelDetails.forEach(c=>{
+      const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
+      discoverState.channels[c.id]={info:c,uploadsId,videoIds:[],pageToken:null,exhausted:!uploadsId};
     });
   }
-  results.sort((a,b)=>(b.outlier??-1)-(a.outlier??-1));
-  discoverResults=results;
+  const st=discoverState;
+  if(!st)return;
+  setDiscoverStatus(more?'Chargement d\'autres vidéos…':'Récupération des vidéos…');
+  const chanIds=Object.keys(st.channels);
+  const activeChans=more?chanIds.filter(cid=>!st.channels[cid].exhausted):chanIds;
+
+  for(const cid of activeChans){
+    const chState=st.channels[cid];
+    if(!chState.uploadsId){chState.exhausted=true;continue;}
+    let batch;
+    try{batch=await fetchUploadsPlaylistPage(key,chState.uploadsId,20,chState.pageToken);}
+    catch(e){chState.exhausted=true;continue;}
+    chState.pageToken=batch.nextPageToken;
+    if(!batch.nextPageToken)chState.exhausted=true;
+    const newIds=batch.videoIds.filter(id=>!chState.videoIds.includes(id));
+    chState.videoIds.push(...newIds);
+  }
+
+  const allVideoIds=[...new Set(Object.values(st.channels).flatMap(c=>c.videoIds))];
+  if(!allVideoIds.length){
+    setDiscoverStatus('Aucune vidéo exploitable pour ces créateurs.',true);
+    updateLoadMoreUI();
+    return;
+  }
+  setDiscoverStatus('Calcul des outliers…');
+  const videoDetails=await fetchVideosByIds(key,allVideoIds);
+  const vidById={};
+  videoDetails.forEach(v=>vidById[v.id]=v);
+
+  const newResults=[];
+  Object.keys(st.channels).forEach(cid=>{
+    const chState=st.channels[cid];
+    const viewsById={};
+    chState.videoIds.forEach(id=>{if(vidById[id])viewsById[id]=+vidById[id].statistics.viewCount||0;});
+    chState.videoIds.forEach(id=>{
+      const vd=vidById[id];
+      if(!vd)return;
+      const others=chState.videoIds.filter(x=>x!==id&&viewsById[x]!==undefined).map(x=>viewsById[x]);
+      const med=median(others);
+      const views=viewsById[id];
+      const outlier=(med&&med>0)?views/med:null;
+      const durSec=parseISO8601Duration(vd.contentDetails.duration);
+      newResults.push({
+        videoId:id,title:vd.snippet.title,views,outlier,
+        type:(durSec>0&&durSec<=60)?'short':'long',
+        channelId:cid,channelName:chState.info.snippet.title,
+        channelCustomUrl:chState.info.snippet.customUrl
+      });
+    });
+  });
+  discoverResults=newResults;
   setDiscoverStatus('');
   renderDiscoverResults();
+  updateLoadMoreUI();
 }
 
 function renderDiscoverResults(){
   const grid=document.getElementById('disc-results');
+  const head=document.getElementById('disc-results-head');
   grid.innerHTML='';
+  const sortSelect=document.getElementById('disc-sort-select');
+  if(sortSelect)sortSelect.value=discoverSort;
   if(!discoverResults.length){
-    setDiscoverStatus('Aucun résultat exploitable — essaie une niche ou des noms différents.');
+    head.style.display='none';
+    if(!document.getElementById('disc-status').innerHTML)setDiscoverStatus('Aucun résultat exploitable — essaie une niche ou des noms différents.');
+    updateLoadMoreUI();
     return;
   }
-  discoverResults.forEach((r,idx)=>{
+  head.style.display='flex';
+  document.getElementById('disc-results-count').textContent=`${discoverResults.length} résultat${discoverResults.length>1?'s':''}`;
+  getSortedDiscoverResults().forEach(r=>{
     const cls=colorClass(r.outlier);
     const card=document.createElement('div');
     card.className='v-card '+cls;
@@ -1339,13 +1471,14 @@ function renderDiscoverResults(){
         <div class="disc-res-ch"><svg class="icon"><use href="icons.svg#i-users"/></svg> ${escapeHtml(r.channelName||'')} · ${r.type==='short'?'Short':'Vidéo longue'}</div>
       </div>`;
     const addBtn=card.querySelector('.v-add-btn');
-    addBtn.addEventListener('click',()=>importDiscoverResult(idx,addBtn));
+    addBtn.addEventListener('click',()=>importDiscoverResult(r.videoId,addBtn));
     grid.appendChild(card);
   });
+  updateLoadMoreUI();
 }
 
-function importDiscoverResult(idx,btnEl){
-  const r=discoverResults[idx];
+function importDiscoverResult(videoId,btnEl){
+  const r=discoverResults.find(x=>x.videoId===videoId);
   if(!r)return;
   let ch=channels.find(c=>c.ytChannelId===r.channelId);
   if(!ch){
