@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Confidentialité — Workspace</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080808">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -67,7 +69,37 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 
   <div class="p-sec">
     <div class="p-sec-title">💣 Outlier Finder</div>
-    <p>Cet outil ne se connecte à aucune API YouTube avec clé. Il te permet de coller des liens de chaînes et de vidéos publiques ; pour afficher la miniature et tenter de récupérer le titre, il utilise l'endpoint public et sans authentification <code>youtube.com/oembed</code> ainsi que les miniatures publiques YouTube (<code>i.ytimg.com</code>) — comme le ferait n'importe quelle page qui intègre une vidéo YouTube. Tes notes et outliers restent en local.</p>
+    <p>Cet outil ne se connecte à aucune API YouTube avec clé. Il te permet de coller des liens de chaînes et de vidéos publiques ; pour afficher la miniature et tenter de récupérer le titre, il utilise l'endpoint public et sans authentification <code>youtube.com/oembed</code> ainsi que les miniatures publiques YouTube (<code>i.ytimg.com</code>) — comme le ferait n'importe quelle page qui intègre une vidéo YouTube. La photo de profil d'une chaîne est récupérée via le service public <code>unavatar.io</code>, qui reçoit uniquement le nom/identifiant public de la chaîne que tu as toi-même collé — jamais tes données personnelles. Tes notes, outliers et classements restent en local.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">⚖️ Responsable, base légale et durée de conservation</div>
+    <p>Comme aucune donnée n'est envoyée à un serveur, il n'y a pas de « traitement de données personnelles » au sens du RGPD réalisé par Workspace : l'éditeur du site n'a accès à rien de ce que tu saisis. Les seules données qui existent sont celles que ton navigateur garde pour toi, aussi longtemps que tu ne les effaces pas ou que tu ne vides pas les données du site.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🌍 Transferts hors Union européenne</div>
+    <p>Les polices (Google Fonts) et, pour Outlier Finder, les requêtes vers YouTube (<code>oembed</code>, <code>i.ytimg.com</code>) et <code>unavatar.io</code> peuvent être servies par des infrastructures situées hors de l'UE. Ces échanges se font directement entre ton navigateur et ces services, sans passer par un serveur Workspace, et ne contiennent aucune information sur ton identité réelle.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🛡️ Sécurité</div>
+    <p>Le site applique une politique de sécurité du contenu (CSP) qui limite les domaines pouvant charger des scripts, images ou styles, une politique de référent restrictive, et des vérifications qui empêchent l'insertion de liens ou de code dangereux dans les champs de texte. Voir <a href="https://github.com/loan26112009-sudo/Workspace." target="_blank" rel="noopener noreferrer">le dépôt du projet</a> pour le détail technique, ou le fichier <code>SECURITY.md</code>.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">✅ Tes droits</div>
+    <p>Comme Workspace ne collecte ni ne reçoit aucune donnée sur un serveur, il n'y a rien à demander à l'éditeur : tu as déjà un accès total, direct et permanent à tes données (elles sont dans ton propre navigateur), tu peux les modifier ou les supprimer toi-même à tout moment, et rien n'est partagé avec qui que ce soit. Si malgré tout tu as une question sur la manière dont l'un des outils fonctionne, utilise le contact ci-dessous.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🧒 Mineurs</div>
+    <p>Workspace ne demande ni ne vérifie l'âge de qui l'utilise, car il ne collecte aucune donnée personnelle sur un serveur. Si tu es mineur·e, utilise-le avec l'accord de tes parents ou responsables légaux, notamment avant de renseigner une clé API YouTube qui t'appartient.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🔄 Modifications de cette page</div>
+    <p>Cette page peut évoluer si de nouveaux outils ou services externes sont ajoutés à Workspace. La date de mise à jour en haut de page indique la dernière révision.</p>
   </div>
 
   <div class="p-sec">
@@ -88,6 +120,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
   <div class="p-sec">
     <div class="p-sec-title">✉️ Contact</div>
     <p>Une question, une idée, un souci de confidentialité ? Utilise le formulaire « Proposer une idée » accessible depuis l'accueil.</p>
+  </div>
+
+  <div class="p-sec" style="border-top:1px solid var(--b);padding-top:24px">
+    <p>Voir aussi : <a href="mentions-legales.html" style="color:var(--acc)">Mentions légales</a> · <a href="cgu.html" style="color:var(--acc)">Conditions d'utilisation</a></p>
   </div>
 </div>
 
