@@ -117,6 +117,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .wsd-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:600;transition:all .15s}
 .wsd-link:hover{background:rgba(255,255,255,.06);color:#fff}
 .wsd-link-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex-shrink:0}
 
 
 /* ══════════════════════
@@ -150,19 +151,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
     <button class="wsd-drawer-close" onclick="wsdClose()" aria-label="Fermer le menu">×</button>
   </div>
   <div class="wsd-section-lbl">Navigation rapide</div>
-  <a class="wsd-link" href="index.html"><span class="wsd-link-ico">🏠</span> Accueil</a>
-  <a class="wsd-link" href="tools.html"><span class="wsd-link-ico">🧰</span> Tous les outils</a>
-  <div class="wsd-section-lbl">Outils</div>
-  <a class="wsd-link" href="loop-builder.html"><span class="wsd-link-ico">🔁</span> Loop Builder</a>
-  <a class="wsd-link" href="planning.html"><span class="wsd-link-ico">📅</span> Calendrier Éditorial</a>
-  <a class="wsd-link" href="school.html"><span class="wsd-link-ico">📚</span> Organisation Scolaire</a>
-  <a class="wsd-link" href="index.html#proj-mgr-section"><span class="wsd-link-ico">📋</span> Mes Projets</a>
+  <a class="wsd-link" href="index.html"><span class="wsd-link-ico"><svg class="icon"><use href="icons.svg#i-home"/></svg></span> Accueil</a>
+  <a class="wsd-link" href="tools.html"><span class="wsd-link-ico"><svg class="icon"><use href="icons.svg#i-grid"/></svg></span> Tous les outils</a>
+  <div class="wsd-section-lbl">Contenu</div>
   <a class="wsd-link" href="outlier-finder.html"><span class="wsd-link-ico"><img src="outlier-icon.png" alt="" style="width:16px;height:16px;object-fit:contain;vertical-align:-3px;border-radius:3px"></span> Outlier Finder</a>
+  <a class="wsd-link" href="index.html#proj-mgr-section"><span class="wsd-link-ico"><svg class="icon"><use href="icons.svg#i-folder"/></svg></span> Mes Projets</a>
+  <a class="wsd-link" href="loop-builder.html"><span class="wsd-link-ico"><svg class="icon"><use href="icons.svg#i-repeat"/></svg></span> Loop Builder</a>
+  <div class="wsd-section-lbl">Organisation</div>
+  <a class="wsd-link" href="planning.html"><span class="wsd-link-ico"><svg class="icon"><use href="icons.svg#i-calendar"/></svg></span> Calendrier Éditorial</a>
+  <a class="wsd-link" href="school.html"><span class="wsd-link-ico"><svg class="icon"><use href="icons.svg#i-cap"/></svg></span> Organisation Scolaire</a>
 </div>
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <button class="wsd-hamburger" onclick="wsdToggle()" aria-label="Menu">☰</button>
+  <button class="wsd-hamburger" onclick="wsdToggle()" aria-label="Menu"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-menu"/></svg></button>
   <a href="index.html" class="tb-back">← Workspace</a>
   <div class="tb-sep"></div>
   <div class="tb-logo">Work<span>space</span></div>

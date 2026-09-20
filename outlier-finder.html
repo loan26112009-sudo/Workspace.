@@ -23,6 +23,7 @@ body{overflow-y:auto}
 a{color:inherit}
 button,input,textarea{font-family:'Inter',sans-serif}
 
+.icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex-shrink:0}
 /* TOPBAR */
 .tb{height:60px;display:flex;align-items:center;gap:0;border-bottom:1px solid var(--b);position:sticky;top:0;background:rgba(8,8,8,.9);backdrop-filter:blur(20px);z-index:200}
 .tb-back{display:flex;align-items:center;gap:7px;padding:0 22px;height:100%;color:var(--sub);font-size:13px;font-weight:600;text-decoration:none;border-right:1px solid var(--b);transition:all .15s;flex-shrink:0}
@@ -71,7 +72,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .ch-add:hover{border-color:var(--acc);color:var(--text)}
 
 .empty{text-align:center;padding:70px 20px;color:var(--sub)}
-.empty-ico{font-size:40px;margin-bottom:14px}
+.empty-ico{margin-bottom:14px}
+.empty-ico .icon{width:40px;height:40px;color:var(--dim)}
 .empty-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px}
 .empty-sub{font-size:13px;line-height:1.6;max-width:380px;margin:0 auto 20px}
 .empty .ch-add{margin:0 auto}
@@ -98,7 +100,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .v-card-inner{background:var(--s1);border-radius:14px;overflow:hidden}
 .v-thumb-wrap{position:relative;aspect-ratio:16/9;background:var(--s2);overflow:hidden}
 .v-thumb{width:100%;height:100%;object-fit:cover;display:block}
-.v-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--dim);background:var(--s2)}
+.v-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--dim);background:var(--s2)}
+.v-thumb-fallback .icon{width:32px;height:32px}
 .v-refresh-btn{position:absolute;top:8px;left:8px;width:27px;height:27px;border-radius:8px;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;opacity:.55;z-index:2}
 .v-thumb-wrap:hover .v-refresh-btn{opacity:1}
 .v-refresh-btn:hover{background:rgba(99,102,241,.85);transform:scale(1.08)}
@@ -188,7 +191,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
   <a href="index.html" class="tb-back">← Workspace</a>
   <div class="tb-logo" style="display:flex;align-items:center;gap:9px"><img src="outlier-icon.png" alt="" style="width:24px;height:24px;object-fit:contain;border-radius:6px">Outlier <span>Finder</span></div>
   <div class="tb-sp"></div>
-  <a href="tools.html" class="tb-back" style="border-left:1px solid var(--b);border-right:none">🧰 Tous les outils</a>
+  <a href="tools.html" class="tb-back" style="border-left:1px solid var(--b);border-right:none"><svg class="icon"><use href="icons.svg#i-grid"/></svg> Tous les outils</a>
   <button class="tb-add" id="btn-add-video" onclick="openVideoModal()" disabled>+ Ajouter une vidéo</button>
 </div>
 
@@ -206,8 +209,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
 </div>
 
 <div class="view-toggle">
-  <button class="view-btn on" id="view-btn-library" onclick="setView('library')">🗂 Bibliothèque</button>
-  <button class="view-btn" id="view-btn-planning" onclick="setView('planning')">🗃️ Classement</button>
+  <button class="view-btn on" id="view-btn-library" onclick="setView('library')"><svg class="icon"><use href="icons.svg#i-library"/></svg> Bibliothèque</button>
+  <button class="view-btn" id="view-btn-planning" onclick="setView('planning')"><svg class="icon"><use href="icons.svg#i-kanban"/></svg> Classement</button>
 </div>
 
 <div class="wrap">
@@ -217,7 +220,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="ch-row" id="ch-row"></div>
 
     <div id="channel-empty" class="empty" style="display:none">
-      <div class="empty-ico">📺</div>
+      <div class="empty-ico"><svg class="icon"><use href="icons.svg#i-play-circle"/></svg></div>
       <div class="empty-title">Aucune chaîne pour l'instant</div>
       <div class="empty-sub">Colle juste le lien d'une chaîne YouTube — pas besoin de clé API. Ensuite tu logs tes vidéos et leurs outliers dedans.</div>
       <button class="ch-add" onclick="openChannelModal()">+ Ajouter une chaîne</button>
@@ -226,11 +229,11 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div id="channel-content" style="display:none">
       <div class="type-tabs-row">
         <div class="type-tabs">
-          <button class="type-tab on" id="tab-long" onclick="setType('long')">🎬 Vidéos longues <span class="type-count" id="count-long">0</span></button>
-          <button class="type-tab" id="tab-short" onclick="setType('short')">⚡ Shorts <span class="type-count" id="count-short">0</span></button>
+          <button class="type-tab on" id="tab-long" onclick="setType('long')"><svg class="icon"><use href="icons.svg#i-film"/></svg> Vidéos longues <span class="type-count" id="count-long">0</span></button>
+          <button class="type-tab" id="tab-short" onclick="setType('short')"><svg class="icon"><use href="icons.svg#i-zap"/></svg> Shorts <span class="type-count" id="count-short">0</span></button>
         </div>
         <div class="sort-wrap">
-          <label for="sort-select">Trier :</label>
+          <label for="sort-select"><svg class="icon"><use href="icons.svg#i-sort"/></svg> Trier :</label>
           <select class="f-select" id="sort-select" onchange="setSort(this.value)">
             <option value="outlier-desc">Outlier, haut → bas</option>
             <option value="outlier-asc">Outlier, bas → haut</option>
@@ -243,7 +246,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
       <div class="stat-line" id="stat-line"></div>
       <div class="v-grid" id="v-grid"></div>
       <div id="type-empty" class="empty" style="display:none">
-        <div class="empty-ico">📈</div>
+        <div class="empty-ico"><svg class="icon"><use href="icons.svg#i-trending-up"/></svg></div>
         <div class="empty-title" id="type-empty-title">Aucune vidéo ici</div>
         <div class="empty-sub">Ajoute une vidéo, écris l'outlier que tu as repéré, et regarde la couleur faire le tri pour toi.</div>
         <button class="ch-add" onclick="openVideoModal()">+ Ajouter une vidéo</button>
@@ -288,8 +291,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="f-group">
       <label class="f-lbl">Format</label>
       <div class="type-pick">
-        <div class="type-pick-opt on" id="pick-long" onclick="pickType('long')">🎬 Vidéo longue</div>
-        <div class="type-pick-opt" id="pick-short" onclick="pickType('short')">⚡ Short</div>
+        <div class="type-pick-opt on" id="pick-long" onclick="pickType('long')"><svg class="icon"><use href="icons.svg#i-film"/></svg> Vidéo longue</div>
+        <div class="type-pick-opt" id="pick-short" onclick="pickType('short')"><svg class="icon"><use href="icons.svg#i-zap"/></svg> Short</div>
       </div>
     </div>
     <div class="f-group">
@@ -321,7 +324,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="nm-badges">
       <span class="v-badge" id="nm-badge" style="position:static"></span>
       <a class="nm-link" id="nm-link" href="#" target="_blank" rel="noopener noreferrer">Voir sur YouTube ↗</a>
-      <button type="button" class="nm-refresh-btn" id="nm-refresh-btn" title="Actualiser le titre et la miniature (elle peut avoir changé)">🔄 Actualiser</button>
+      <button type="button" class="nm-refresh-btn" id="nm-refresh-btn" title="Actualiser le titre et la miniature (elle peut avoir changé)"><svg class="icon"><use href="icons.svg#i-refresh"/></svg> <span id="nm-refresh-label">Actualiser</span></button>
       <span class="nm-save-flag" id="nm-refresh-flag">✓ Actualisé</span>
     </div>
     <div class="f-group">
@@ -343,12 +346,14 @@ button,input,textarea{font-family:'Inter',sans-serif}
       <label class="f-lbl">Notes <span class="nm-save-flag" id="nm-save-flag">✓ enregistré</span></label>
       <textarea class="f-textarea" id="nm-notes" style="min-height:140px" placeholder="Hook, thumbnail, titre, timing de publication… note tout ce qui explique cet outlier." oninput="scheduleNoteSave()"></textarea>
     </div>
-    <button class="nm-del" onclick="deleteActiveVideo()">🗑 Supprimer cette vidéo</button>
+    <button class="nm-del" onclick="deleteActiveVideo()"><svg class="icon"><use href="icons.svg#i-trash"/></svg> Supprimer cette vidéo</button>
   </div>
 </div>
 
 <script>
 const LS_CH='ws_outlier_channels', LS_VID='ws_outlier_videos', LS_ACTIVE='ws_outlier_active';
+const FILM_FALLBACK='<div class="v-thumb-fallback"><svg class="icon"><use href="icons.svg#i-film"></use></svg></div>';
+function onThumbError(el){el.outerHTML=FILM_FALLBACK;}
 
 function loadCh(){try{return JSON.parse(localStorage.getItem(LS_CH)||'[]');}catch(e){return [];}}
 function saveCh(v){try{localStorage.setItem(LS_CH,JSON.stringify(v));}catch(e){}}
@@ -584,7 +589,7 @@ function openNotesModal(videoId){
   const v=videos.find(x=>x.id===videoId);
   if(!v)return;
   const thumbEl=document.getElementById('nm-thumb');
-  thumbEl.innerHTML=v.vid?`<img src="${thumbUrl(v.vid,v.thumbBust)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+  thumbEl.innerHTML=v.vid?`<img src="${thumbUrl(v.vid,v.thumbBust)}" alt="" onerror="onThumbError(this)">`:FILM_FALLBACK;
   document.getElementById('nm-title').textContent=v.title||'Sans titre';
   const badge=document.getElementById('nm-badge');
   badge.className='v-badge '+colorClass(v.outlier);
@@ -600,7 +605,7 @@ function openNotesModal(videoId){
   const refreshBtn=document.getElementById('nm-refresh-btn');
   refreshBtn.style.display=v.vid?'':'none';
   refreshBtn.disabled=false;
-  refreshBtn.textContent='🔄 Actualiser';
+  document.getElementById('nm-refresh-label').textContent='Actualiser';
   document.getElementById('ov-notes').classList.add('open');
 }
 
@@ -619,18 +624,18 @@ function refreshVideo(id,ev){
   if(isModalOpen){
     refreshBtn=document.getElementById('nm-refresh-btn');
     refreshBtn.disabled=true;
-    refreshBtn.textContent='Actualisation…';
+    document.getElementById('nm-refresh-label').textContent='Actualisation…';
   }
 
   fetchTitle(v.id,v.url,(ok)=>{
     if(activeVideoId!==id)return;
     const vv=videos.find(x=>x.id===id);
     if(!vv)return;
-    document.getElementById('nm-thumb').innerHTML=vv.vid?`<img src="${thumbUrl(vv.vid,vv.thumbBust)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+    document.getElementById('nm-thumb').innerHTML=vv.vid?`<img src="${thumbUrl(vv.vid,vv.thumbBust)}" alt="" onerror="onThumbError(this)">`:FILM_FALLBACK;
     document.getElementById('nm-title').textContent=vv.title||'Sans titre';
     if(refreshBtn){
       refreshBtn.disabled=false;
-      refreshBtn.textContent=ok?'✓ Actualisé':'🔄 Actualiser';
+      document.getElementById('nm-refresh-label').textContent=ok?'Actualisé':'Actualiser';
       const flag=document.getElementById('nm-refresh-flag');
       flag.textContent=ok?'✓ Titre et miniature à jour':'⚠ Miniature actualisée, titre indisponible';
       flag.classList.add('show');
@@ -765,18 +770,18 @@ function render(){
       const card=document.createElement('div');
       card.className='v-card '+cls;
       card.onclick=()=>openNotesModal(v.id);
-      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="onThumbError(this)">`:FILM_FALLBACK;
       card.innerHTML=`
         <div class="v-card-inner">
           <div class="v-thumb-wrap">
             ${thumbHtml}
-            ${v.vid?`<button type="button" class="v-refresh-btn" title="Actualiser la miniature et le titre (ça peut changer sur YouTube)">🔄</button>`:''}
+            ${v.vid?`<button type="button" class="v-refresh-btn" title="Actualiser la miniature et le titre (ça peut changer sur YouTube)"><svg class="icon"><use href="icons.svg#i-refresh"/></svg></button>`:''}
             <div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div>
             <div class="v-caption">${escapeHtml(v.title||'Sans titre')}</div>
           </div>
           <div class="v-meta">
             <span>${new Date(v.addedAt).toLocaleDateString('fr-FR')}</span>
-            ${v.note?'<span class="note-flag">📝 note</span>':'<span></span>'}
+            ${v.note?'<span class="note-flag"><svg class="icon"><use href="icons.svg#i-note"/></svg> note</span>':'<span></span>'}
           </div>
         </div>`;
       const refreshBtn=card.querySelector('.v-refresh-btn');
@@ -809,12 +814,12 @@ function renderPlanning(){
       const card=document.createElement('div');
       card.className='kb-card';
       card.draggable=true;
-      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="onThumbError(this)">`:FILM_FALLBACK;
       card.innerHTML=`
         <div class="kb-card-thumb">${thumbHtml}<div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div></div>
         <div class="kb-card-body">
           <div class="kb-card-title">${escapeHtml(v.title||'Sans titre')}</div>
-          <div class="kb-card-ch">${v.type==='short'?'⚡':'🎬'} ${escapeHtml(ch?ch.name:'')}</div>
+          <div class="kb-card-ch"><svg class="icon"><use href="icons.svg#${v.type==='short'?'i-zap':'i-film'}"/></svg> ${escapeHtml(ch?ch.name:'')}</div>
         </div>`;
       card.addEventListener('click',()=>openNotesModal(v.id));
       card.addEventListener('dragstart',e=>{
