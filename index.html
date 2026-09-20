@@ -39,6 +39,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 .drawer-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--sub);text-decoration:none;font-size:13px;font-weight:600;transition:all .15s}
 .drawer-item:hover{background:rgba(255,255,255,.06);color:var(--text)}
 .drawer-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex-shrink:0}
 .close-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--b);color:var(--sub);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
 /* YT SETUP */
@@ -147,33 +148,34 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
     <button class="close-btn" onclick="closeDrawer()">×</button>
   </div>
   <div class="drawer-sec">Navigation</div>
-  <a class="drawer-item" href="index.html"><span class="drawer-ico">🏠</span>Accueil</a>
-  <a class="drawer-item" href="projets.html"><span class="drawer-ico">📋</span>Mes Projets</a>
-  <a class="drawer-item" href="tools.html"><span class="drawer-ico">🧰</span>Tous les outils</a>
-  <div class="drawer-sec">Outils</div>
-  <a class="drawer-item" href="loop-builder.html"><span class="drawer-ico">🔁</span>Loop Builder</a>
-  <a class="drawer-item" href="planning.html"><span class="drawer-ico">📅</span>Calendrier Éditorial</a>
-  <a class="drawer-item" href="school.html"><span class="drawer-ico">📚</span>Organisation Scolaire</a>
-  <a class="drawer-item" href="organisation.html"><span class="drawer-ico">📅🎬</span>École × YouTube</a>
+  <a class="drawer-item" href="index.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-home"/></svg></span>Accueil</a>
+  <a class="drawer-item" href="tools.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-grid"/></svg></span>Tous les outils</a>
+  <div class="drawer-sec">Contenu</div>
   <a class="drawer-item" href="outlier-finder.html"><span class="drawer-ico"><img src="outlier-icon.png" alt="" style="width:16px;height:16px;object-fit:contain;vertical-align:-3px;border-radius:3px"></span>Outlier Finder</a>
+  <a class="drawer-item" href="projets.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-folder"/></svg></span>Mes Projets</a>
+  <a class="drawer-item" href="loop-builder.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-repeat"/></svg></span>Loop Builder</a>
+  <div class="drawer-sec">Organisation</div>
+  <a class="drawer-item" href="planning.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-calendar"/></svg></span>Calendrier Éditorial</a>
+  <a class="drawer-item" href="school.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-cap"/></svg></span>Organisation Scolaire</a>
+  <a class="drawer-item" href="organisation.html"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-layers"/></svg></span>École × YouTube</a>
   <div class="drawer-sec">Liens importants</div>
-  <a class="drawer-item" href="https://v0-morethanusual.vercel.app/dashboard/breakdown" target="_blank" rel="noopener noreferrer"><span class="drawer-ico">📉</span>Breakdown</a>
-  <a class="drawer-item" href="https://pay.viralchecklist.fr/school?tab=enrollments" target="_blank" rel="noopener noreferrer"><span class="drawer-ico">✅</span>Viral Checklist</a>
-  <a class="drawer-item" href="https://app.squiduuverse.com/home" target="_blank" rel="noopener noreferrer"><span class="drawer-ico">🌊</span>Squiduuverse</a>
+  <a class="drawer-item" href="https://v0-morethanusual.vercel.app/dashboard/breakdown" target="_blank" rel="noopener noreferrer"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-trending-up"/></svg></span>Breakdown</a>
+  <a class="drawer-item" href="https://pay.viralchecklist.fr/school?tab=enrollments" target="_blank" rel="noopener noreferrer"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-check-circle"/></svg></span>Viral Checklist</a>
+  <a class="drawer-item" href="https://app.squiduuverse.com/home" target="_blank" rel="noopener noreferrer"><span class="drawer-ico"><svg class="icon"><use href="icons.svg#i-waves"/></svg></span>Squiduuverse</a>
 </div>
 
 <nav class="nav">
   <div style="display:flex;align-items:center;height:100%">
-    <button class="icon-btn" style="margin:0 12px" onclick="toggleDrawer()">☰</button>
+    <button class="icon-btn" style="margin:0 12px" onclick="toggleDrawer()"><svg class="icon" style="width:18px;height:18px"><use href="icons.svg#i-menu"/></svg></button>
     <div class="nav-logo" style="border-left:1px solid var(--b)">
       <div class="nav-logo-dot"></div><span>Workspace</span>
     </div>
-    <a class="nav-link" href="projets.html">📋 Mes Projets</a>
-    <a class="nav-link" href="tools.html">🧰 Outils</a>
+    <a class="nav-link" href="projets.html"><svg class="icon"><use href="icons.svg#i-folder"/></svg> Mes Projets</a>
+    <a class="nav-link" href="tools.html"><svg class="icon"><use href="icons.svg#i-grid"/></svg> Outils</a>
   </div>
   <div class="nav-right">
     <div class="nav-clock" id="app-clock">--:--</div>
-    <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube">⚙</button>
+    <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-settings"/></svg></button>
   </div>
 </nav>
 
@@ -193,9 +195,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
   <div class="hero-title">Ton studio YouTube<br><span class="acc">tout en un</span></div>
   <div class="hero-sub">Projets, calendrier, école — tout centralisé pour créer sans friction.</div>
   <div class="hero-cta">
-    <a class="btn-primary" href="projets.html">📋 Mes Projets</a>
+    <a class="btn-primary" href="projets.html"><svg class="icon"><use href="icons.svg#i-folder"/></svg> Mes Projets</a>
     <a class="btn-ghost" href="tools.html">Tous les outils →</a>
-    <a class="btn-ghost" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank" rel="noopener noreferrer">💡 Proposer une idée</a>
+    <a class="btn-ghost" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="icons.svg#i-bulb"/></svg> Proposer une idée</a>
   </div>
 </div>
 
@@ -238,40 +240,8 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 </div>
 <!-- TOOLS -->
 <div class="section">
-  <div class="section-lbl">MES OUTILS</div>
+  <div class="section-lbl">CONTENU</div>
   <div class="tools-grid">
-    <a class="tool-card tc-loop" href="loop-builder.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)">🔁</div>
-        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
-      </div>
-      <div><div class="tool-title">Loop Builder</div><div class="tool-desc">Structure ta vidéo boucle par boucle. Timeline et courbe émotionnelle en direct.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:var(--acc)">Ouvrir</span><span class="tool-arrow" style="color:var(--acc)">→</span></div>
-    </a>
-    <a class="tool-card tc-cal" href="planning.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)">📅</div>
-        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
-      </div>
-      <div><div class="tool-title">Calendrier Éditorial</div><div class="tool-desc">Planifie ta stratégie de contenu. Deadlines et compte à rebours en direct.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#22c55e">Ouvrir</span><span class="tool-arrow" style="color:#22c55e">→</span></div>
-    </a>
-    <a class="tool-card tc-school" href="school.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)">📚</div>
-        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
-      </div>
-      <div><div class="tool-title">Organisation Scolaire</div><div class="tool-desc">DST à venir, moyenne calculée, équilibre école / YouTube.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#06b6d4">Ouvrir</span><span class="tool-arrow" style="color:#06b6d4">→</span></div>
-    </a>
-    <a class="tool-card tc-proj" href="projets.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2)">📋</div>
-        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
-      </div>
-      <div><div class="tool-title">Mes Projets</div><div class="tool-desc">Gère tes vidéos avec miniatures, titres, A/B tests, captures annotées.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#a855f7">Ouvrir</span><span class="tool-arrow" style="color:#a855f7">→</span></div>
-    </a>
     <a class="tool-card tc-outlier" href="outlier-finder.html">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div class="tool-icon" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)"><img src="outlier-icon.png" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:6px"></div>
@@ -280,9 +250,45 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
       <div><div class="tool-title">Outlier Finder</div><div class="tool-desc">Log tes outliers par vidéo, couleur selon l'ampleur, séparé longs / Shorts.</div></div>
       <div class="tool-footer"><span class="tool-cta" style="color:#ef4444">Ouvrir</span><span class="tool-arrow" style="color:#ef4444">→</span></div>
     </a>
+    <a class="tool-card tc-proj" href="projets.html">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="tool-icon" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-folder"/></svg></div>
+        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
+      </div>
+      <div><div class="tool-title">Mes Projets</div><div class="tool-desc">Gère tes vidéos avec miniatures, titres, A/B tests, captures annotées.</div></div>
+      <div class="tool-footer"><span class="tool-cta" style="color:#a855f7">Ouvrir</span><span class="tool-arrow" style="color:#a855f7">→</span></div>
+    </a>
+    <a class="tool-card tc-loop" href="loop-builder.html">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="tool-icon" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-repeat"/></svg></div>
+        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
+      </div>
+      <div><div class="tool-title">Loop Builder</div><div class="tool-desc">Structure ta vidéo boucle par boucle. Timeline et courbe émotionnelle en direct.</div></div>
+      <div class="tool-footer"><span class="tool-cta" style="color:var(--acc)">Ouvrir</span><span class="tool-arrow" style="color:var(--acc)">→</span></div>
+    </a>
+  </div>
+
+  <div class="section-lbl" style="margin-top:28px">ORGANISATION</div>
+  <div class="tools-grid">
+    <a class="tool-card tc-cal" href="planning.html">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="tool-icon" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-calendar"/></svg></div>
+        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
+      </div>
+      <div><div class="tool-title">Calendrier Éditorial</div><div class="tool-desc">Planifie ta stratégie de contenu. Deadlines et compte à rebours en direct.</div></div>
+      <div class="tool-footer"><span class="tool-cta" style="color:#22c55e">Ouvrir</span><span class="tool-arrow" style="color:#22c55e">→</span></div>
+    </a>
+    <a class="tool-card tc-school" href="school.html">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="tool-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-cap"/></svg></div>
+        <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
+      </div>
+      <div><div class="tool-title">Organisation Scolaire</div><div class="tool-desc">DST à venir, moyenne calculée, équilibre école / YouTube.</div></div>
+      <div class="tool-footer"><span class="tool-cta" style="color:#06b6d4">Ouvrir</span><span class="tool-arrow" style="color:#06b6d4">→</span></div>
+    </a>
     <a class="tool-card tc-ideas" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank" rel="noopener noreferrer">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)">💡</div>
+        <div class="tool-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-bulb"/></svg></div>
         <div class="tool-badge" style="background:rgba(245,158,11,.1);color:var(--yel)">NOUVEAU</div>
       </div>
       <div><div class="tool-title">Idées Workspace</div><div class="tool-desc">Propose une fonctionnalité ou une amélioration. Chaque suggestion est lue.</div></div>
@@ -293,9 +299,9 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 
 <div style="padding:4px 24px 8px;position:relative;z-index:1"><div class="section-lbl">LIENS IMPORTANTS</div></div>
 <div class="imp-links">
-  <a class="imp-link" href="https://v0-morethanusual.vercel.app/dashboard/breakdown" target="_blank" rel="noopener noreferrer">📉 Breakdown ↗</a>
-  <a class="imp-link" href="https://pay.viralchecklist.fr/school?tab=enrollments" target="_blank" rel="noopener noreferrer">✅ Viral Checklist ↗</a>
-  <a class="imp-link" href="https://app.squiduuverse.com/home" target="_blank" rel="noopener noreferrer">🌊 Squiduuverse ↗</a>
+  <a class="imp-link" href="https://v0-morethanusual.vercel.app/dashboard/breakdown" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="icons.svg#i-trending-up"/></svg> Breakdown ↗</a>
+  <a class="imp-link" href="https://pay.viralchecklist.fr/school?tab=enrollments" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="icons.svg#i-check-circle"/></svg> Viral Checklist ↗</a>
+  <a class="imp-link" href="https://app.squiduuverse.com/home" target="_blank" rel="noopener noreferrer"><svg class="icon"><use href="icons.svg#i-waves"/></svg> Squiduuverse ↗</a>
 </div>
 
 <div class="footer">

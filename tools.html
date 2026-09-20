@@ -68,6 +68,10 @@ body{overflow-y:auto}
 .tool-card.soon .tool-icon-wrap{background:rgba(255,255,255,.05);border:1px solid var(--b)}
 
 .tool-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex-shrink:0}
+.tools-section-lbl{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.1em;margin:0 0 16px;display:flex;align-items:center;gap:10px}
+.tools-section-lbl::after{content:'';flex:1;height:1px;background:var(--b)}
+.tools-section-lbl:not(:first-child){margin-top:36px}
 .tool-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;letter-spacing:.05em;width:fit-content}
 .tool-badge.live{background:rgba(34,197,94,.12);color:var(--grn)}
 .tool-badge.new{background:rgba(99,102,241,.15);color:var(--acc)}
@@ -95,67 +99,9 @@ body{overflow-y:auto}
 </div>
 
 <div class="tools-wrap">
+
+  <div class="tools-section-lbl">CONTENU</div>
   <div class="tools-grid">
-
-    <div class="tool-card loop" onclick="location.href='loop-builder.html'" tabindex="0" role="button">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="tool-icon-wrap">🔁</div>
-        <div class="tool-badge live">● DISPONIBLE</div>
-      </div>
-      <div>
-        <div class="tool-card-title">Loop Builder</div>
-        <div class="tool-card-desc">Structure ta vidéo boucle par boucle. Timeline interactive, courbe émotionnelle, stats YouTube en direct.</div>
-      </div>
-      <div class="tool-card-action">
-        <span class="tool-card-action-lbl">Ouvrir Loop Builder</span>
-        <span class="tool-arrow">→</span>
-      </div>
-    </div>
-
-    <div class="tool-card cal" onclick="location.href='planning.html'" tabindex="0" role="button">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="tool-icon-wrap">📅</div>
-        <div class="tool-badge live">● DISPONIBLE</div>
-      </div>
-      <div>
-        <div class="tool-card-title">Calendrier Éditorial</div>
-        <div class="tool-card-desc">Planifie ta stratégie de contenu. Deadlines avec compte à rebours en direct, planning de tes longues et Shorts.</div>
-      </div>
-      <div class="tool-card-action">
-        <span class="tool-card-action-lbl">Ouvrir le calendrier</span>
-        <span class="tool-arrow">→</span>
-      </div>
-    </div>
-
-    <div class="tool-card school" onclick="location.href='school.html'" tabindex="0" role="button">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="tool-icon-wrap">📚</div>
-        <div class="tool-badge live">● DISPONIBLE</div>
-      </div>
-      <div>
-        <div class="tool-card-title">Organisation Scolaire</div>
-        <div class="tool-card-desc">Ton année organisée en un coup d'œil : DST à venir, moyenne calculée, et l'équilibre parfait entre l'école et YouTube.</div>
-      </div>
-      <div class="tool-card-action">
-        <span class="tool-card-action-lbl" style="color:#06b6d4">Ouvrir le dashboard</span>
-        <span class="tool-arrow">→</span>
-      </div>
-    </div>
-
-    <div class="tool-card" onclick="location.href='index.html#proj-mgr-section'" tabindex="0" role="button">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="tool-icon-wrap">📋</div>
-        <div class="tool-badge live">● DISPONIBLE</div>
-      </div>
-      <div>
-        <div class="tool-card-title">Mes Projets</div>
-        <div class="tool-card-desc">Gestionnaire de projets vidéo : miniatures, notes, A/B tests, captures annotées, liens et suivi du montage.</div>
-      </div>
-      <div class="tool-card-action">
-        <span class="tool-card-action-lbl">Voir mes projets</span>
-        <span class="tool-arrow">→</span>
-      </div>
-    </div>
 
     <div class="tool-card outlier" onclick="location.href='outlier-finder.html'" tabindex="0" role="button">
       <div style="display:flex;align-items:flex-start;justify-content:space-between">
@@ -172,9 +118,94 @@ body{overflow-y:auto}
       </div>
     </div>
 
+    <div class="tool-card" onclick="location.href='index.html#proj-mgr-section'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2)"><svg class="icon" style="width:26px;height:26px;color:#a855f7"><use href="icons.svg#i-folder"/></svg></div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Mes Projets</div>
+        <div class="tool-card-desc">Gestionnaire de projets vidéo : miniatures, notes, A/B tests, captures annotées, liens et suivi du montage.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl" style="color:#a855f7">Voir mes projets</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card loop" onclick="location.href='loop-builder.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap"><svg class="icon" style="width:26px;height:26px;color:var(--acc)"><use href="icons.svg#i-repeat"/></svg></div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Loop Builder</div>
+        <div class="tool-card-desc">Structure ta vidéo boucle par boucle. Timeline interactive, courbe émotionnelle, stats YouTube en direct.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl">Ouvrir Loop Builder</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tools-section-lbl">ORGANISATION</div>
+  <div class="tools-grid">
+
+    <div class="tool-card cal" onclick="location.href='planning.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap"><svg class="icon" style="width:26px;height:26px;color:var(--grn)"><use href="icons.svg#i-calendar"/></svg></div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Calendrier Éditorial</div>
+        <div class="tool-card-desc">Planifie ta stratégie de contenu. Deadlines avec compte à rebours en direct, planning de tes longues et Shorts.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl">Ouvrir le calendrier</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card school" onclick="location.href='school.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap"><svg class="icon" style="width:26px;height:26px;color:#06b6d4"><use href="icons.svg#i-cap"/></svg></div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Organisation Scolaire</div>
+        <div class="tool-card-desc">Ton année organisée en un coup d'œil : DST à venir, moyenne calculée, et l'équilibre parfait entre l'école et YouTube.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl" style="color:#06b6d4">Ouvrir le dashboard</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card" onclick="location.href='organisation.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap" style="background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.2)"><svg class="icon" style="width:26px;height:26px;color:#14b8a6"><use href="icons.svg#i-layers"/></svg></div>
+        <div class="tool-badge live">● DISPONIBLE</div>
+      </div>
+      <div>
+        <div class="tool-card-title">École × YouTube</div>
+        <div class="tool-card-desc">Emploi du temps type entre les cours et la création de contenu, réparti intelligemment sur la semaine.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl" style="color:#14b8a6">Ouvrir le planning</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tools-section-lbl">PLUS</div>
+  <div class="tools-grid">
+
     <div class="tool-card ideas" onclick="window.open('https://forms.gle/7ujaNXwwpGVXtPDC7','_blank')" tabindex="0" role="button">
       <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="tool-icon-wrap">💡</div>
+        <div class="tool-icon-wrap"><svg class="icon" style="width:26px;height:26px;color:var(--yel)"><use href="icons.svg#i-bulb"/></svg></div>
         <div class="tool-badge new">NOUVEAU</div>
       </div>
       <div>
@@ -189,7 +220,7 @@ body{overflow-y:auto}
 
     <div class="tool-card soon">
       <div style="display:flex;align-items:flex-start;justify-content:space-between">
-        <div class="tool-icon-wrap">📊</div>
+        <div class="tool-icon-wrap"><svg class="icon" style="width:26px;height:26px"><use href="icons.svg#i-chart-bar"/></svg></div>
         <div class="tool-badge soon">BIENTÔT</div>
       </div>
       <div>
