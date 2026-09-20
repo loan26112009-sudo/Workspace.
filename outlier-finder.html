@@ -34,8 +34,15 @@ button,input,textarea{font-family:'Inter',sans-serif}
 
 /* HEADER */
 .page-head{padding:44px 24px 24px;text-align:center}
+.hero-icon{width:clamp(76px,12vw,116px);height:clamp(76px,12vw,116px);object-fit:contain;border-radius:24px;display:block;margin:0 auto 20px;box-shadow:0 20px 60px rgba(239,68,68,.35),0 0 0 1px rgba(255,255,255,.08);}
 .page-title{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.03em}
 .page-sub{font-size:13.5px;color:var(--sub);margin-top:10px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.65}
+
+/* VIEW TOGGLE */
+.view-toggle{display:flex;justify-content:center;gap:8px;padding:0 24px 28px}
+.view-btn{padding:10px 22px;border-radius:12px;background:var(--s1);border:1px solid var(--b);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.view-btn:hover{border-color:var(--bh);color:var(--text)}
+.view-btn.on{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:#fff}
 
 /* LEGEND */
 .legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:0 24px 28px}
@@ -53,7 +60,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .ch-chip{display:flex;align-items:center;gap:9px;padding:8px 8px 8px 10px;border-radius:14px;background:var(--s1);border:1px solid var(--b);cursor:pointer;transition:all .15s;flex-shrink:0;white-space:nowrap}
 .ch-chip:hover{border-color:var(--bh)}
 .ch-chip.on{border-color:var(--acc);background:rgba(99,102,241,.1)}
-.ch-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.ch-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden}
+.ch-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .ch-name{font-size:12.5px;font-weight:700}
 .ch-del{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--sub);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
 .ch-del:hover{background:var(--red);color:#fff}
@@ -67,17 +75,21 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .empty .ch-add{margin:0 auto}
 
 /* TYPE TABS */
-.type-tabs{display:flex;gap:8px;margin-bottom:6px}
+.type-tabs-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px}
+.type-tabs{display:flex;gap:8px}
 .type-tab{padding:9px 18px;border-radius:11px;background:var(--s1);border:1px solid var(--b);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
 .type-tab:hover{border-color:var(--bh);color:var(--text)}
 .type-tab.on{background:rgba(99,102,241,.12);border-color:var(--acc);color:#fff}
 .type-count{opacity:.6;font-weight:600;margin-left:4px}
+.sort-wrap{display:flex;align-items:center;gap:8px}
+.sort-wrap label{font-size:11.5px;font-weight:700;color:var(--sub);white-space:nowrap}
+.sort-wrap select{width:auto;padding:9px 14px}
 
 .stat-line{font-size:11.5px;color:var(--dim);margin:14px 2px 18px}
 .stat-line b{color:var(--sub);font-weight:700}
 
 /* GRID */
-.v-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.v-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
 
 .v-card{position:relative;border-radius:16px;padding:3px;cursor:pointer;background:var(--b);transition:transform .18s}
 .v-card:hover{transform:translateY(-3px)}
@@ -90,7 +102,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .v-badge.oc-yellow{background:rgba(245,158,11,.9);color:#000}
 .v-badge.oc-red{background:rgba(239,68,68,.9);color:#fff}
 .v-badge.oc-rainbow{background:linear-gradient(90deg,#f43f5e,#f59e0b,#22c55e,#06b6d4,#6366f1,#a855f7);background-size:300% 100%;animation:rainbowShift 2.2s linear infinite;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.v-caption{position:absolute;left:0;right:0;bottom:0;padding:20px 10px 9px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);font-size:11.5px;font-weight:700;color:#fff;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.v-caption{position:absolute;left:0;right:0;bottom:0;padding:40px 12px 11px;background:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 38%,rgba(0,0,0,.4) 72%,transparent 100%);font-size:12.5px;font-weight:800;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,.9);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .v-meta{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 12px;font-size:10.5px;color:var(--dim)}
 .v-meta .note-flag{color:var(--acc);font-weight:700}
 
@@ -140,7 +152,26 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .nm-del{margin-top:16px;width:100%;padding:11px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
 .nm-del:hover{background:rgba(239,68,68,.18)}
 
-@media(max-width:560px){.v-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.tb-logo{display:none}}
+/* PLANNING / KANBAN */
+.kanban{display:flex;gap:16px;overflow-x:auto;padding-bottom:20px;align-items:flex-start}
+.kb-col{flex:0 0 270px;background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:14px;min-height:120px;display:flex;flex-direction:column;gap:10px;transition:all .15s}
+.kb-col.dragover{border-color:var(--acc);background:rgba(99,102,241,.08)}
+.kb-col-head{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 10px;border-bottom:1px solid var(--b)}
+.kb-col-title{font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:7px}
+.kb-col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.kb-col-count{font-size:11px;color:var(--dim);font-weight:700;background:rgba(255,255,255,.05);padding:2px 9px;border-radius:20px}
+.kb-cards{display:flex;flex-direction:column;gap:10px;min-height:60px}
+.kb-card{background:var(--s2);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:grab;transition:all .15s}
+.kb-card:hover{border-color:var(--bh);transform:translateY(-2px)}
+.kb-card.dragging{opacity:.35}
+.kb-card-thumb{position:relative;aspect-ratio:16/9;background:var(--s3);overflow:hidden}
+.kb-card-body{padding:9px 10px 10px}
+.kb-card-title{font-size:11.5px;font-weight:700;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.kb-card-ch{font-size:10px;color:var(--dim)}
+.kb-empty-hint{font-size:11px;color:var(--dim);text-align:center;padding:16px 6px;border:1px dashed var(--b);border-radius:10px}
+.planning-notice{font-size:12.5px;color:var(--sub);background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:14px 18px;margin-bottom:18px}
+
+@media(max-width:560px){.v-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.tb-logo{display:none}}
 </style>
 </head>
 <body>
@@ -154,7 +185,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
 </div>
 
 <div class="page-head">
-  <div class="page-title" style="display:flex;align-items:center;justify-content:center;gap:14px"><img src="outlier-icon.png" alt="" style="width:38px;height:38px;object-fit:contain;border-radius:9px">Repère tes bombes</div>
+  <img src="outlier-icon.png" alt="Outlier Finder" class="hero-icon">
+  <div class="page-title">Repère tes bombes</div>
   <div class="page-sub">Un lien de chaîne, un lien de vidéo, l'outlier que tu observes — et Outlier Finder classe tout par couleur. Zéro API, zéro friction, que des données qui restent dans ton navigateur.</div>
 </div>
 
@@ -165,30 +197,56 @@ button,input,textarea{font-family:'Inter',sans-serif}
   <div class="leg-chip"><span class="leg-dot rainbow"></span>100+ : complètement dingue</div>
 </div>
 
+<div class="view-toggle">
+  <button class="view-btn on" id="view-btn-library" onclick="setView('library')">🗂 Bibliothèque</button>
+  <button class="view-btn" id="view-btn-planning" onclick="setView('planning')">📋 Planning</button>
+</div>
+
 <div class="wrap">
 
-  <div class="ch-row" id="ch-row"></div>
+  <div id="library-view">
 
-  <div id="channel-empty" class="empty" style="display:none">
-    <div class="empty-ico">📺</div>
-    <div class="empty-title">Aucune chaîne pour l'instant</div>
-    <div class="empty-sub">Colle juste le lien d'une chaîne YouTube — pas besoin de clé API. Ensuite tu logs tes vidéos et leurs outliers dedans.</div>
-    <button class="ch-add" onclick="openChannelModal()">+ Ajouter une chaîne</button>
+    <div class="ch-row" id="ch-row"></div>
+
+    <div id="channel-empty" class="empty" style="display:none">
+      <div class="empty-ico">📺</div>
+      <div class="empty-title">Aucune chaîne pour l'instant</div>
+      <div class="empty-sub">Colle juste le lien d'une chaîne YouTube — pas besoin de clé API. Ensuite tu logs tes vidéos et leurs outliers dedans.</div>
+      <button class="ch-add" onclick="openChannelModal()">+ Ajouter une chaîne</button>
+    </div>
+
+    <div id="channel-content" style="display:none">
+      <div class="type-tabs-row">
+        <div class="type-tabs">
+          <button class="type-tab on" id="tab-long" onclick="setType('long')">🎬 Vidéos longues <span class="type-count" id="count-long">0</span></button>
+          <button class="type-tab" id="tab-short" onclick="setType('short')">⚡ Shorts <span class="type-count" id="count-short">0</span></button>
+        </div>
+        <div class="sort-wrap">
+          <label for="sort-select">Trier :</label>
+          <select class="f-select" id="sort-select" onchange="setSort(this.value)">
+            <option value="outlier-desc">Outlier, haut → bas</option>
+            <option value="outlier-asc">Outlier, bas → haut</option>
+            <option value="date-desc">Plus récent</option>
+            <option value="date-asc">Plus ancien</option>
+            <option value="title-asc">Titre A → Z</option>
+          </select>
+        </div>
+      </div>
+      <div class="stat-line" id="stat-line"></div>
+      <div class="v-grid" id="v-grid"></div>
+      <div id="type-empty" class="empty" style="display:none">
+        <div class="empty-ico">📈</div>
+        <div class="empty-title" id="type-empty-title">Aucune vidéo ici</div>
+        <div class="empty-sub">Ajoute une vidéo, écris l'outlier que tu as repéré, et regarde la couleur faire le tri pour toi.</div>
+        <button class="ch-add" onclick="openVideoModal()">+ Ajouter une vidéo</button>
+      </div>
+    </div>
+
   </div>
 
-  <div id="channel-content" style="display:none">
-    <div class="type-tabs">
-      <button class="type-tab on" id="tab-long" onclick="setType('long')">🎬 Vidéos longues <span class="type-count" id="count-long">0</span></button>
-      <button class="type-tab" id="tab-short" onclick="setType('short')">⚡ Shorts <span class="type-count" id="count-short">0</span></button>
-    </div>
-    <div class="stat-line" id="stat-line"></div>
-    <div class="v-grid" id="v-grid"></div>
-    <div id="type-empty" class="empty" style="display:none">
-      <div class="empty-ico">📈</div>
-      <div class="empty-title" id="type-empty-title">Aucune vidéo ici</div>
-      <div class="empty-sub">Ajoute une vidéo, écris l'outlier que tu as repéré, et regarde la couleur faire le tri pour toi.</div>
-      <button class="ch-add" onclick="openVideoModal()">+ Ajouter une vidéo</button>
-    </div>
+  <div id="planning-view" style="display:none">
+    <div class="planning-notice" id="planning-empty" style="display:none">Ajoute des vidéos depuis la Bibliothèque, puis glisse-les dans les colonnes pour planifier tes prochains formats.</div>
+    <div class="kanban" id="kanban"></div>
   </div>
 
 </div>
@@ -260,6 +318,17 @@ button,input,textarea{font-family:'Inter',sans-serif}
       <input class="f-inp" id="nm-outlier" type="number" step="0.1" min="0" oninput="updateActiveOutlier(this.value)">
     </div>
     <div class="f-group">
+      <label class="f-lbl">Statut de planning</label>
+      <select class="f-select" id="nm-status" onchange="updateActiveStatus(this.value)">
+        <option value="">Non classé</option>
+        <option value="ready">Prêt à faire</option>
+        <option value="this-month">Ce mois-ci</option>
+        <option value="soon">Bientôt</option>
+        <option value="later">Peut-être plus tard</option>
+        <option value="never">Jamais mais intéressant</option>
+      </select>
+    </div>
+    <div class="f-group">
       <label class="f-lbl">Notes <span class="nm-save-flag" id="nm-save-flag">✓ enregistré</span></label>
       <textarea class="f-textarea" id="nm-notes" style="min-height:140px" placeholder="Hook, thumbnail, titre, timing de publication… note tout ce qui explique cet outlier." oninput="scheduleNoteSave()"></textarea>
     </div>
@@ -282,6 +351,17 @@ let activeChannelId=localStorage.getItem(LS_ACTIVE)||null;
 let activeType='long';
 let activeVideoId=null;
 let noteSaveTimer=null;
+let currentSort=localStorage.getItem('ws_outlier_sort')||'outlier-desc';
+let currentView=localStorage.getItem('ws_outlier_view')||'library';
+
+const STATUS_COLS=[
+  {key:null,label:'Non classé',dot:'#5b5b66'},
+  {key:'ready',label:'Prêt à faire',dot:'#22c55e'},
+  {key:'this-month',label:'Ce mois-ci',dot:'#6366f1'},
+  {key:'soon',label:'Bientôt',dot:'#06b6d4'},
+  {key:'later',label:'Peut-être plus tard',dot:'#f59e0b'},
+  {key:'never',label:'Jamais mais intéressant',dot:'#a855f7'}
+];
 
 function extractVideoId(url){
   if(!url)return null;
@@ -310,6 +390,24 @@ function extractChannelName(url){
   }catch(e){
     return url.trim().slice(0,24)||'Chaîne';
   }
+}
+
+function channelAvatarSlug(url){
+  try{
+    const u=new URL(url.trim());
+    let path=u.pathname.replace(/^\/+|\/+$/g,'');
+    if(!path)return null;
+    const parts=path.split('/');
+    let slug=parts[parts.length-1];
+    if(['channel','c','user'].includes(parts[0])&&parts[1])slug=parts[1];
+    slug=decodeURIComponent(slug).replace(/^@/,'');
+    return slug||null;
+  }catch(e){return null;}
+}
+
+function channelAvatarUrl(url){
+  const slug=channelAvatarSlug(url);
+  return slug?`https://unavatar.io/youtube/${encodeURIComponent(slug)}?fallback=false`:null;
 }
 
 function normalizeUrl(url){
@@ -394,6 +492,12 @@ function deleteChannel(id,ev){
 // ── Type tabs ──
 function setType(t){activeType=t;render();}
 
+// ── Sort ──
+function setSort(v){currentSort=v;localStorage.setItem('ws_outlier_sort',v);render();}
+
+// ── View ──
+function setView(v){currentView=v;localStorage.setItem('ws_outlier_view',v);render();}
+
 // ── Videos ──
 let pickedType='long';
 function pickType(t){
@@ -438,9 +542,17 @@ function submitVideo(){
   if(vid)fetchTitle(v.id,url);
 }
 
+const SORTERS={
+  'outlier-desc':(a,b)=>(b.outlier??-1)-(a.outlier??-1),
+  'outlier-asc':(a,b)=>(a.outlier??Infinity)-(b.outlier??Infinity),
+  'date-desc':(a,b)=>b.addedAt-a.addedAt,
+  'date-asc':(a,b)=>a.addedAt-b.addedAt,
+  'title-asc':(a,b)=>(a.title||'').localeCompare(b.title||'')
+};
+
 function currentChannelVideos(){
-  return videos.filter(v=>v.channelId===activeChannelId&&v.type===activeType)
-    .sort((a,b)=>(b.outlier??-1)-(a.outlier??-1));
+  const sorter=SORTERS[currentSort]||SORTERS['outlier-desc'];
+  return videos.filter(v=>v.channelId===activeChannelId&&v.type===activeType).sort(sorter);
 }
 
 // ── Notes modal ──
@@ -457,6 +569,7 @@ function openNotesModal(videoId){
   const link=document.getElementById('nm-link');
   link.href=v.url;
   document.getElementById('nm-outlier').value=v.outlier??'';
+  document.getElementById('nm-status').value=v.status||'';
   document.getElementById('nm-notes').value=v.note||'';
   document.getElementById('nm-save-flag').classList.remove('show');
   document.getElementById('ov-notes').classList.add('open');
@@ -474,6 +587,13 @@ function updateActiveOutlier(val){
   const badge=document.getElementById('nm-badge');
   badge.className='v-badge '+colorClass(v.outlier);
   badge.textContent=fmtOutlier(v.outlier);
+  render();
+}
+function updateActiveStatus(val){
+  const v=videos.find(x=>x.id===activeVideoId);
+  if(!v)return;
+  v.status=val||null;
+  saveVid(videos);
   render();
 }
 function scheduleNoteSave(){
@@ -507,6 +627,14 @@ function render(){
   if(activeChannelId&&!channels.find(c=>c.id===activeChannelId))activeChannelId=channels.length?channels[0].id:null;
   if(!activeChannelId&&channels.length)activeChannelId=channels[0].id;
 
+  document.getElementById('view-btn-library').classList.toggle('on',currentView==='library');
+  document.getElementById('view-btn-planning').classList.toggle('on',currentView==='planning');
+  document.getElementById('library-view').style.display=currentView==='library'?'block':'none';
+  document.getElementById('planning-view').style.display=currentView==='planning'?'block':'none';
+
+  const btnAddVideo=document.getElementById('btn-add-video');
+  btnAddVideo.disabled=!activeChannelId;
+
   const chRow=document.getElementById('ch-row');
   chRow.innerHTML='';
   channels.forEach(c=>{
@@ -514,7 +642,19 @@ function render(){
     chip.className='ch-chip'+(c.id===activeChannelId?' on':'');
     chip.onclick=()=>selectChannel(c.id);
     const initial=(c.name||'?').replace('@','').charAt(0).toUpperCase()||'?';
-    chip.innerHTML=`<div class="ch-avatar">${initial}</div><div class="ch-name">${escapeHtml(c.name)}</div><button class="ch-del" title="Supprimer la chaîne">×</button>`;
+    chip.innerHTML=`<div class="ch-avatar"></div><div class="ch-name">${escapeHtml(c.name)}</div><button class="ch-del" title="Supprimer la chaîne">×</button>`;
+    const avEl=chip.querySelector('.ch-avatar');
+    const avatarUrl=channelAvatarUrl(c.url);
+    if(avatarUrl){
+      const img=document.createElement('img');
+      img.src=avatarUrl;
+      img.alt='';
+      img.loading='lazy';
+      img.onerror=()=>{img.remove();avEl.textContent=initial;};
+      avEl.appendChild(img);
+    }else{
+      avEl.textContent=initial;
+    }
     chip.querySelector('.ch-del').onclick=(ev)=>deleteChannel(c.id,ev);
     chRow.appendChild(chip);
   });
@@ -524,57 +664,113 @@ function render(){
   addBtn.onclick=openChannelModal;
   chRow.appendChild(addBtn);
 
-  const btnAddVideo=document.getElementById('btn-add-video');
-  btnAddVideo.disabled=!activeChannelId;
-
   document.getElementById('channel-empty').style.display=channels.length?'none':'block';
   document.getElementById('channel-content').style.display=channels.length?'block':'none';
-  if(!channels.length)return;
 
-  document.getElementById('tab-long').classList.toggle('on',activeType==='long');
-  document.getElementById('tab-short').classList.toggle('on',activeType==='short');
-  const longCount=videos.filter(v=>v.channelId===activeChannelId&&v.type==='long').length;
-  const shortCount=videos.filter(v=>v.channelId===activeChannelId&&v.type==='short').length;
-  document.getElementById('count-long').textContent=longCount;
-  document.getElementById('count-short').textContent=shortCount;
+  if(channels.length){
+    document.getElementById('tab-long').classList.toggle('on',activeType==='long');
+    document.getElementById('tab-short').classList.toggle('on',activeType==='short');
+    const longCount=videos.filter(v=>v.channelId===activeChannelId&&v.type==='long').length;
+    const shortCount=videos.filter(v=>v.channelId===activeChannelId&&v.type==='short').length;
+    document.getElementById('count-long').textContent=longCount;
+    document.getElementById('count-short').textContent=shortCount;
+    document.getElementById('sort-select').value=currentSort;
 
-  const list=currentChannelVideos();
-  const grid=document.getElementById('v-grid');
-  grid.innerHTML='';
-  document.getElementById('type-empty').style.display=list.length?'none':'block';
-  document.getElementById('type-empty-title').textContent=activeType==='long'?'Aucune vidéo longue loggée':'Aucun short loggé';
+    const list=currentChannelVideos();
+    const grid=document.getElementById('v-grid');
+    grid.innerHTML='';
+    document.getElementById('type-empty').style.display=list.length?'none':'block';
+    document.getElementById('type-empty-title').textContent=activeType==='long'?'Aucune vidéo longue loggée':'Aucun short loggé';
 
-  if(list.length){
-    const valid=list.filter(v=>v.outlier!==null&&!isNaN(v.outlier));
-    const best=valid.length?Math.max(...valid.map(v=>v.outlier)):null;
-    const avg=valid.length?(valid.reduce((a,v)=>a+v.outlier,0)/valid.length):null;
-    document.getElementById('stat-line').innerHTML=
-      `<b>${list.length}</b> vidéo${list.length>1?'s':''} loggée${list.length>1?'s':''}`+
-      (best!==null?` · meilleur outlier <b>${fmtOutlier(best)}</b>`:'')+
-      (avg!==null?` · moyenne <b>${fmtOutlier(avg)}</b>`:'');
-  }else{
-    document.getElementById('stat-line').textContent='';
+    if(list.length){
+      const valid=list.filter(v=>v.outlier!==null&&!isNaN(v.outlier));
+      const best=valid.length?Math.max(...valid.map(v=>v.outlier)):null;
+      const avg=valid.length?(valid.reduce((a,v)=>a+v.outlier,0)/valid.length):null;
+      document.getElementById('stat-line').innerHTML=
+        `<b>${list.length}</b> vidéo${list.length>1?'s':''} loggée${list.length>1?'s':''}`+
+        (best!==null?` · meilleur outlier <b>${fmtOutlier(best)}</b>`:'')+
+        (avg!==null?` · moyenne <b>${fmtOutlier(avg)}</b>`:'');
+    }else{
+      document.getElementById('stat-line').textContent='';
+    }
+
+    list.forEach(v=>{
+      const cls=colorClass(v.outlier);
+      const card=document.createElement('div');
+      card.className='v-card '+cls;
+      card.onclick=()=>openNotesModal(v.id);
+      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+      card.innerHTML=`
+        <div class="v-card-inner">
+          <div class="v-thumb-wrap">
+            ${thumbHtml}
+            <div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div>
+            <div class="v-caption">${escapeHtml(v.title||'Sans titre')}</div>
+          </div>
+          <div class="v-meta">
+            <span>${new Date(v.addedAt).toLocaleDateString('fr-FR')}</span>
+            ${v.note?'<span class="note-flag">📝 note</span>':'<span></span>'}
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
   }
 
-  list.forEach(v=>{
-    const cls=colorClass(v.outlier);
-    const card=document.createElement('div');
-    card.className='v-card '+cls;
-    card.onclick=()=>openNotesModal(v.id);
-    const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
-    card.innerHTML=`
-      <div class="v-card-inner">
-        <div class="v-thumb-wrap">
-          ${thumbHtml}
-          <div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div>
-          <div class="v-caption">${escapeHtml(v.title||'Sans titre')}</div>
-        </div>
-        <div class="v-meta">
-          <span>${new Date(v.addedAt).toLocaleDateString('fr-FR')}</span>
-          ${v.note?'<span class="note-flag">📝 note</span>':'<span></span>'}
-        </div>
-      </div>`;
-    grid.appendChild(card);
+  if(currentView==='planning')renderPlanning();
+}
+
+function renderPlanning(){
+  document.getElementById('planning-empty').style.display=videos.length?'none':'block';
+  const kanban=document.getElementById('kanban');
+  kanban.innerHTML='';
+
+  STATUS_COLS.forEach(col=>{
+    const list=videos.filter(v=>(v.status||null)===col.key).sort(SORTERS['outlier-desc']);
+    const colEl=document.createElement('div');
+    colEl.className='kb-col';
+    colEl.innerHTML=`<div class="kb-col-head"><div class="kb-col-title"><span class="kb-col-dot" style="background:${col.dot}"></span>${col.label}</div><div class="kb-col-count">${list.length}</div></div><div class="kb-cards"></div>`;
+    const cardsWrap=colEl.querySelector('.kb-cards');
+
+    if(!list.length){
+      cardsWrap.innerHTML='<div class="kb-empty-hint">Dépose une vidéo ici</div>';
+    }
+    list.forEach(v=>{
+      const ch=channels.find(c=>c.id===v.channelId);
+      const cls=colorClass(v.outlier);
+      const card=document.createElement('div');
+      card.className='kb-card';
+      card.draggable=true;
+      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+      card.innerHTML=`
+        <div class="kb-card-thumb">${thumbHtml}<div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div></div>
+        <div class="kb-card-body">
+          <div class="kb-card-title">${escapeHtml(v.title||'Sans titre')}</div>
+          <div class="kb-card-ch">${v.type==='short'?'⚡':'🎬'} ${escapeHtml(ch?ch.name:'')}</div>
+        </div>`;
+      card.addEventListener('click',()=>openNotesModal(v.id));
+      card.addEventListener('dragstart',e=>{
+        e.dataTransfer.setData('text/plain',v.id);
+        e.dataTransfer.effectAllowed='move';
+        card.classList.add('dragging');
+      });
+      card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+      cardsWrap.appendChild(card);
+    });
+
+    colEl.addEventListener('dragover',e=>{e.preventDefault();colEl.classList.add('dragover');});
+    colEl.addEventListener('dragleave',()=>colEl.classList.remove('dragover'));
+    colEl.addEventListener('drop',e=>{
+      e.preventDefault();
+      colEl.classList.remove('dragover');
+      const id=e.dataTransfer.getData('text/plain');
+      const v=videos.find(x=>x.id===id);
+      if(v){
+        v.status=col.key;
+        saveVid(videos);
+        render();
+      }
+    });
+    kanban.appendChild(colEl);
   });
 }
 
