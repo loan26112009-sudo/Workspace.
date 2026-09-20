@@ -217,7 +217,18 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .an-save-flag.show{opacity:1}
 @media(max-width:480px){.analyse-grid{grid-template-columns:1fr}.an-head{flex-direction:column}.an-thumb-wrap{width:100%}}
 
-@media(max-width:560px){.v-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.tb-logo{display:none}}
+@media(max-width:640px){
+  .v-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  .tb-logo{display:none}
+  html,body{overflow-x:hidden;max-width:100%}
+  .tb{flex-wrap:wrap;height:auto;padding:8px 0}
+  .tb-back{height:44px;padding:0 14px}
+  .tb-sp{flex:1 1 auto;min-width:8px}
+  .tb-add{flex:0 0 calc(100% - 32px);margin:8px 16px 0;justify-content:center}
+  .view-toggle{flex-wrap:wrap}
+  .type-tabs-row{flex-direction:column;align-items:stretch}
+  .sort-wrap{justify-content:space-between}
+}
 </style>
 </head>
 <body>
