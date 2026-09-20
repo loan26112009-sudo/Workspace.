@@ -14,7 +14,7 @@ navigateur.
 | 📚 Organisation Scolaire | `school.html` | Suivi de l'année scolaire (DST, moyennes) en parallèle de YouTube. |
 | 📅🎬 École × YouTube | `organisation.html` | Emploi du temps type entre école et création de contenu. |
 | 📋 Mes Projets | `projets.html` | Gestion de projets vidéo : miniatures, notes, A/B tests, liens. |
-| 💣 Outlier Finder | `outlier-finder.html` | Suivi manuel des outliers repérés sur YouTube (vidéos longues/Shorts), classement par glisser-déposer. |
+| 💣 Outlier Finder | `outlier-finder.html` | Suivi manuel des outliers repérés sur YouTube (vidéos longues/Shorts), classement par glisser-déposer, et onglet Découverte pour chercher des outliers par niche ou par créateur sur tout YouTube. |
 | 🧰 Tous les outils | `tools.html` | Grille listant tous les outils disponibles. |
 
 ## Fonctionnement
@@ -24,15 +24,20 @@ sans framework ni étape de build. Chaque page est autonome et stocke ses
 données dans le `localStorage` du navigateur — il n'y a pas de serveur, pas
 de base de données, pas de compte utilisateur.
 
-Deux outils peuvent appeler des services externes, toujours depuis le
+Certains outils peuvent appeler des services externes, toujours depuis le
 navigateur de l'utilisateur et jamais via un serveur intermédiaire :
 
 - **Statistiques YouTube en direct** (accueil, Loop Builder) : optionnelles,
   via l'API YouTube Data officielle, avec une clé API que l'utilisateur
   fournit et qui reste stockée en local.
-- **Outlier Finder** : miniatures et titres publics via les endpoints publics
-  `i.ytimg.com` / `youtube.com/oembed` (sans clé), et photo de profil de
-  chaîne via `unavatar.io`.
+- **Outlier Finder — tracking manuel** : miniatures et titres publics via les
+  endpoints publics `i.ytimg.com` / `youtube.com/oembed` (sans clé), et photo
+  de profil de chaîne via `unavatar.io`.
+- **Outlier Finder — onglet Découverte** : optionnel, via l'API YouTube Data
+  officielle (`googleapis.com`), avec la même clé API stockée en local que
+  l'accueil/Loop Builder. Permet de chercher des outliers par niche ou par
+  nom de créateur sur l'ensemble de YouTube (y compris des chaînes non
+  encore suivies) ; les présets de recherche restent eux aussi en local.
 
 ## Lancer le projet en local
 

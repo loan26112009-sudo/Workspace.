@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outlier Finder — Workspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://unavatar.io; media-src 'self'; connect-src 'self' https://www.youtube.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://unavatar.io https://*.ggpht.com https://*.googleusercontent.com; media-src 'self'; connect-src 'self' https://www.youtube.com https://www.googleapis.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080808">
@@ -217,6 +217,30 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .an-save-flag.show{opacity:1}
 @media(max-width:480px){.analyse-grid{grid-template-columns:1fr}.an-head{flex-direction:column}.an-thumb-wrap{width:100%}}
 
+/* DÉCOUVERTE */
+.disc-key-zone{max-width:460px;margin:0 auto;background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:22px}
+.disc-key-title{font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.disc-key-title .icon{width:16px;height:16px;color:var(--acc)}
+.disc-key-sub{font-size:12px;color:var(--sub);line-height:1.55;margin-bottom:16px}
+.disc-mode-tabs{display:flex;gap:8px;margin-bottom:18px}
+.disc-form{margin-bottom:16px}
+.disc-actions{display:flex;gap:10px;flex-wrap:wrap}
+.disc-actions .btn{flex:none;padding:12px 22px;display:flex;align-items:center;justify-content:center;gap:8px}
+.disc-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.disc-preset-chip{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 14px;border-radius:20px;background:var(--s1);border:1px solid var(--b);font-size:11.5px;font-weight:700;color:var(--sub);cursor:pointer;transition:all .15s}
+.disc-preset-chip:hover{border-color:var(--acc);color:var(--text)}
+.disc-preset-del{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--sub);font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.disc-preset-del:hover{background:var(--red);color:#fff}
+.disc-status{font-size:12.5px;color:var(--sub);background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:14px 18px;margin-top:18px;display:flex;align-items:center;gap:10px}
+.disc-status.err{color:var(--red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)}
+.disc-spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--dim);border-top-color:var(--acc);animation:discSpin .7s linear infinite;flex-shrink:0}
+@keyframes discSpin{to{transform:rotate(360deg)}}
+.v-add-btn{position:absolute;bottom:44px;right:8px;padding:6px 12px;border-radius:8px;background:rgba(99,102,241,.9);backdrop-filter:blur(6px);border:none;color:#fff;font-size:11px;font-weight:800;cursor:pointer;transition:all .15s;z-index:2}
+.v-add-btn:hover{background:var(--acc2);transform:translateY(-1px)}
+.v-add-btn:disabled{background:rgba(34,197,94,.85);cursor:default}
+.disc-res-ch{font-size:10.5px;color:var(--dim);display:flex;align-items:center;gap:5px;padding:0 12px 8px}
+@media(max-width:640px){.disc-mode-tabs{flex-wrap:wrap}.disc-actions{flex-direction:column}.disc-actions .btn{width:100%}}
+
 @media(max-width:640px){
   .v-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
   .tb-logo{display:none}
@@ -244,7 +268,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
 <div class="page-head">
   <img src="outlier-icon.png" alt="Outlier Finder" class="hero-icon">
   <div class="page-title">Repère tes bombes</div>
-  <div class="page-sub">Un lien de chaîne, un lien de vidéo, l'outlier que tu observes — et Outlier Finder classe tout par couleur. Zéro API, zéro friction, que des données qui restent dans ton navigateur.</div>
+  <div class="page-sub">Un lien de chaîne, un lien de vidéo, l'outlier que tu observes — et Outlier Finder classe tout par couleur. Zéro API pour le tracking manuel, que des données qui restent dans ton navigateur. L'onglet Découverte est optionnel et utilise ta propre clé API YouTube pour scanner tout YouTube.</div>
 </div>
 
 <div class="legend">
@@ -258,6 +282,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
   <button class="view-btn on" id="view-btn-library" onclick="setView('library')"><svg class="icon"><use href="icons.svg#i-library"/></svg> Bibliothèque</button>
   <button class="view-btn" id="view-btn-planning" onclick="setView('planning')"><svg class="icon"><use href="icons.svg#i-kanban"/></svg> Classement</button>
   <button class="view-btn" id="view-btn-analyse" onclick="setView('analyse')"><svg class="icon"><use href="icons.svg#i-flask"/></svg> Analyse</button>
+  <button class="view-btn" id="view-btn-discover" onclick="setView('discover')"><svg class="icon"><use href="icons.svg#i-search"/></svg> Découverte</button>
 </div>
 
 <div class="wrap">
@@ -320,6 +345,45 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="stat-line" style="margin-top:0">Chaque vidéo ajoutée devient automatiquement un projet d'analyse ici. Écris ce qui explique l'outlier, ce que tu en retiens, ce que tu réutilises.</div>
     <div class="planning-notice" id="analyse-empty" style="display:none">Ajoute des vidéos depuis la Bibliothèque : chacune apparaîtra ici comme un projet à analyser.</div>
     <div class="analyse-grid" id="analyse-grid"></div>
+  </div>
+
+  <div id="discover-view" style="display:none">
+    <div class="stat-line" style="margin-top:0">Décris une niche en une phrase, ou colle des noms de créateurs — Découverte scanne tout YouTube (même les inconnus) et calcule les outliers pour toi. Nécessite ta propre clé API YouTube.</div>
+
+    <div id="disc-key-zone" class="disc-key-zone" style="display:none">
+      <div class="disc-key-title"><svg class="icon"><use href="icons.svg#i-link"/></svg> Connecte ta clé API YouTube</div>
+      <div class="disc-key-sub">La même clé que sur l'accueil (Loop Builder) — gratuite chez Google, elle reste stockée uniquement dans ton navigateur.</div>
+      <input class="f-inp" id="disc-inp-key" placeholder="AIza…" autocomplete="off" style="margin-bottom:10px">
+      <button class="btn btn-primary" style="width:100%" onclick="saveDiscoverKey()">Enregistrer la clé</button>
+    </div>
+
+    <div id="disc-main" style="display:none">
+      <div class="disc-mode-tabs">
+        <button class="type-tab on" id="disc-tab-niche" onclick="setDiscoverMode('niche')"><svg class="icon"><use href="icons.svg#i-tag"/></svg> Par niche</button>
+        <button class="type-tab" id="disc-tab-creators" onclick="setDiscoverMode('creators')"><svg class="icon"><use href="icons.svg#i-users"/></svg> Par créateurs</button>
+      </div>
+
+      <div id="disc-form-niche" class="disc-form">
+        <label class="f-lbl">Décris la niche en une phrase</label>
+        <input class="f-inp" id="disc-inp-niche" placeholder="ex : vulgarisation d'astrophysique en français" autocomplete="off">
+      </div>
+
+      <div id="disc-form-creators" class="disc-form" style="display:none">
+        <label class="f-lbl">Noms de créateurs (un par ligne, même inconnus)</label>
+        <textarea class="f-textarea" id="disc-inp-creators" style="min-height:90px" placeholder="ex :&#10;@lachaine1&#10;Nom de créateur 2&#10;@petitecréatrice"></textarea>
+      </div>
+
+      <div class="disc-actions">
+        <button class="btn btn-primary" id="disc-btn-search" onclick="runDiscoverSearch()"><svg class="icon"><use href="icons.svg#i-search"/></svg> Chercher les outliers</button>
+        <button class="btn btn-ghost" onclick="saveDiscoverPreset()"><svg class="icon"><use href="icons.svg#i-bookmark"/></svg> Garder ce preset</button>
+      </div>
+
+      <div id="disc-presets" class="disc-presets"></div>
+
+      <div id="disc-status" class="disc-status" style="display:none"></div>
+
+      <div id="disc-results" class="v-grid" style="margin-top:20px"></div>
+    </div>
   </div>
 
 </div>
@@ -412,7 +476,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
 </div>
 
 <script>
-const LS_CH='ws_outlier_channels', LS_VID='ws_outlier_videos', LS_ACTIVE='ws_outlier_active';
+const LS_CH='ws_outlier_channels', LS_VID='ws_outlier_videos', LS_ACTIVE='ws_outlier_active', LS_PRESETS='ws_outlier_presets', LS_APIKEY='loopbuilder_apikey';
 const FILM_FALLBACK='<div class="v-thumb-fallback"><svg class="icon"><use href="icons.svg#i-film"></use></svg></div>';
 function onThumbError(el){el.outerHTML=FILM_FALLBACK;}
 
@@ -430,6 +494,8 @@ let activeVideoId=null;
 let noteSaveTimer=null;
 let currentSort=localStorage.getItem('ws_outlier_sort')||'outlier-desc';
 let currentView=localStorage.getItem('ws_outlier_view')||'library';
+let discoverMode='niche';
+let discoverResults=[];
 
 const STATUS_COLS=[
   {key:null,label:'Non classé',dot:'#5b5b66'},
@@ -762,9 +828,11 @@ function render(){
   document.getElementById('view-btn-library').classList.toggle('on',currentView==='library');
   document.getElementById('view-btn-planning').classList.toggle('on',currentView==='planning');
   document.getElementById('view-btn-analyse').classList.toggle('on',currentView==='analyse');
+  document.getElementById('view-btn-discover').classList.toggle('on',currentView==='discover');
   document.getElementById('library-view').style.display=currentView==='library'?'block':'none';
   document.getElementById('planning-view').style.display=currentView==='planning'?'block':'none';
   document.getElementById('analyse-view').style.display=currentView==='analyse'?'block':'none';
+  document.getElementById('discover-view').style.display=currentView==='discover'?'block':'none';
 
   const btnAddVideo=document.getElementById('btn-add-video');
   btnAddVideo.disabled=!activeChannelId;
@@ -855,6 +923,7 @@ function render(){
 
   if(currentView==='planning')renderPlanning();
   if(currentView==='analyse')renderAnalyse();
+  if(currentView==='discover')initDiscoverView();
 }
 
 function renderPlanning(){
@@ -979,6 +1048,324 @@ function escapeHtml(s){
   const d=document.createElement('div');
   d.textContent=s??'';
   return d.innerHTML;
+}
+
+// ══════════ DÉCOUVERTE ══════════
+function getApiKey(){try{return localStorage.getItem(LS_APIKEY)||'';}catch(e){return '';}}
+
+function initDiscoverView(){
+  const key=getApiKey();
+  document.getElementById('disc-key-zone').style.display=key?'none':'block';
+  document.getElementById('disc-main').style.display=key?'block':'none';
+  if(key)renderDiscoverPresets();
+}
+
+function saveDiscoverKey(){
+  const key=document.getElementById('disc-inp-key').value.trim();
+  if(!key){alert('Colle ta clé API YouTube (AIza…)');return;}
+  try{localStorage.setItem(LS_APIKEY,key);}catch(e){}
+  initDiscoverView();
+}
+
+function setDiscoverMode(m){
+  discoverMode=m;
+  document.getElementById('disc-tab-niche').classList.toggle('on',m==='niche');
+  document.getElementById('disc-tab-creators').classList.toggle('on',m==='creators');
+  document.getElementById('disc-form-niche').style.display=m==='niche'?'block':'none';
+  document.getElementById('disc-form-creators').style.display=m==='creators'?'block':'none';
+}
+
+function loadPresets(){try{return JSON.parse(localStorage.getItem(LS_PRESETS)||'[]');}catch(e){return [];}}
+function savePresets(v){try{localStorage.setItem(LS_PRESETS,JSON.stringify(v));}catch(e){}}
+
+function currentDiscoverQuery(){
+  return discoverMode==='niche'
+    ?document.getElementById('disc-inp-niche').value.trim()
+    :document.getElementById('disc-inp-creators').value.trim();
+}
+
+function saveDiscoverPreset(){
+  const q=currentDiscoverQuery();
+  if(!q){alert('Écris une niche ou des noms de créateurs avant de garder le preset.');return;}
+  const presets=loadPresets();
+  const label=q.split('\n')[0].slice(0,42);
+  presets.unshift({id:uid(),mode:discoverMode,query:q,label,createdAt:Date.now()});
+  savePresets(presets);
+  renderDiscoverPresets();
+}
+
+function renderDiscoverPresets(){
+  const wrap=document.getElementById('disc-presets');
+  const presets=loadPresets();
+  wrap.innerHTML='';
+  presets.forEach(p=>{
+    const chip=document.createElement('div');
+    chip.className='disc-preset-chip';
+    chip.innerHTML=`<svg class="icon"><use href="icons.svg#${p.mode==='niche'?'i-tag':'i-users'}"/></svg><span></span><button type="button" class="disc-preset-del" title="Supprimer ce preset">×</button>`;
+    chip.querySelector('span').textContent=p.label||p.query.slice(0,30);
+    chip.addEventListener('click',(ev)=>{
+      if(ev.target.closest('.disc-preset-del'))return;
+      applyDiscoverPreset(p);
+    });
+    chip.querySelector('.disc-preset-del').addEventListener('click',(ev)=>{
+      ev.stopPropagation();
+      savePresets(loadPresets().filter(x=>x.id!==p.id));
+      renderDiscoverPresets();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+function applyDiscoverPreset(p){
+  setDiscoverMode(p.mode);
+  if(p.mode==='niche')document.getElementById('disc-inp-niche').value=p.query;
+  else document.getElementById('disc-inp-creators').value=p.query;
+  runDiscoverSearch();
+}
+
+function setDiscoverStatus(msg,isErr){
+  const el=document.getElementById('disc-status');
+  if(!msg){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='flex';
+  el.className='disc-status'+(isErr?' err':'');
+  el.innerHTML=isErr?escapeHtml(msg):`<div class="disc-spin"></div><span>${escapeHtml(msg)}</span>`;
+}
+
+function median(nums){
+  if(!nums||!nums.length)return null;
+  const s=[...nums].sort((a,b)=>a-b);
+  const mid=Math.floor(s.length/2);
+  return s.length%2!==0?s[mid]:(s[mid-1]+s[mid])/2;
+}
+
+function parseISO8601Duration(iso){
+  if(!iso)return 0;
+  const m=iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if(!m)return 0;
+  const h=parseInt(m[1]||'0',10),mi=parseInt(m[2]||'0',10),s=parseInt(m[3]||'0',10);
+  return h*3600+mi*60+s;
+}
+
+async function ytFetch(url){
+  const r=await fetch(url);
+  let d;
+  try{d=await r.json();}catch(e){throw new Error('Réponse invalide de l\'API YouTube');}
+  if(d.error)throw new Error(d.error.message||'Erreur API YouTube');
+  return d;
+}
+
+async function fetchChannelsByIds(key,ids){
+  const out=[];
+  for(let i=0;i<ids.length;i+=50){
+    const batch=ids.slice(i,i+50);
+    const d=await ytFetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${batch.join(',')}&key=${encodeURIComponent(key)}`);
+    if(d.items)out.push(...d.items);
+  }
+  return out;
+}
+
+async function fetchVideosByIds(key,ids){
+  const out=[];
+  for(let i=0;i<ids.length;i+=50){
+    const batch=ids.slice(i,i+50);
+    const d=await ytFetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${batch.join(',')}&key=${encodeURIComponent(key)}`);
+    if(d.items)out.push(...d.items);
+  }
+  return out;
+}
+
+async function fetchUploadsPlaylistVideos(key,uploadsPlaylistId,maxResults){
+  const d=await ytFetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${uploadsPlaylistId}&maxResults=${maxResults||15}&key=${encodeURIComponent(key)}`);
+  return (d.items||[]).map(it=>it.contentDetails&&it.contentDetails.videoId).filter(Boolean);
+}
+
+async function resolveChannelIdByName(key,name){
+  name=(name||'').trim();
+  if(!name)return null;
+  if(name.startsWith('UC')&&name.length>20)return name;
+  const handle=name.startsWith('@')?name.slice(1):name;
+  try{
+    const d1=await ytFetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(handle)}&key=${encodeURIComponent(key)}`);
+    if(d1.items&&d1.items.length)return d1.items[0].id;
+  }catch(e){}
+  try{
+    const d2=await ytFetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(name)}&maxResults=1&key=${encodeURIComponent(key)}`);
+    if(d2.items&&d2.items.length)return d2.items[0].snippet.channelId||d2.items[0].id.channelId;
+  }catch(e){}
+  return null;
+}
+
+async function runDiscoverSearch(){
+  const key=getApiKey();
+  if(!key){alert('Clé API manquante.');return;}
+  const btn=document.getElementById('disc-btn-search');
+  btn.disabled=true;
+  document.getElementById('disc-results').innerHTML='';
+  discoverResults=[];
+  try{
+    if(discoverMode==='niche')await runNicheSearch(key);
+    else await runCreatorsSearch(key);
+  }catch(err){
+    console.error(err);
+    setDiscoverStatus('Erreur : '+(err.message||'réseau ou clé API invalide'),true);
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+async function runNicheSearch(key){
+  const niche=document.getElementById('disc-inp-niche').value.trim();
+  if(!niche){alert('Décris la niche en une phrase.');return;}
+  setDiscoverStatus('Recherche sur YouTube…');
+  const searchData=await ytFetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=viewCount&maxResults=25&q=${encodeURIComponent(niche)}&key=${encodeURIComponent(key)}`);
+  const items=(searchData.items||[]).filter(it=>it.id&&it.id.videoId);
+  if(!items.length){setDiscoverStatus('Aucun résultat pour cette niche.');return;}
+  const videoIds=items.map(it=>it.id.videoId);
+  const channelIds=[...new Set(items.map(it=>it.snippet.channelId))];
+
+  setDiscoverStatus(`${items.length} vidéos trouvées, analyse de ${channelIds.length} chaîne(s)…`);
+  const channelDetails=await fetchChannelsByIds(key,channelIds);
+  const chById={};
+  channelDetails.forEach(c=>chById[c.id]=c);
+
+  const perChannelVideoIds={};
+  for(const cid of channelIds){
+    const c=chById[cid];
+    const uploadsId=c&&c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
+    if(!uploadsId){perChannelVideoIds[cid]=[];continue;}
+    try{perChannelVideoIds[cid]=await fetchUploadsPlaylistVideos(key,uploadsId,15);}
+    catch(e){perChannelVideoIds[cid]=[];}
+  }
+
+  const allExtraIds=[...new Set(Object.values(perChannelVideoIds).flat())];
+  const idsToFetch=[...new Set([...videoIds,...allExtraIds])];
+  setDiscoverStatus('Calcul des outliers…');
+  const videoDetails=await fetchVideosByIds(key,idsToFetch);
+  const vidById={};
+  videoDetails.forEach(v=>vidById[v.id]=v);
+
+  const results=[];
+  for(const it of items){
+    const vid=it.id.videoId;
+    const vd=vidById[vid];
+    if(!vd)continue;
+    const cid=it.snippet.channelId;
+    const sampleIds=(perChannelVideoIds[cid]||[]).filter(x=>vidById[x]&&x!==vid);
+    const sampleViews=sampleIds.map(x=>+vidById[x].statistics.viewCount||0);
+    const med=median(sampleViews);
+    const views=+vd.statistics.viewCount||0;
+    const outlier=(med&&med>0)?views/med:null;
+    const durSec=parseISO8601Duration(vd.contentDetails.duration);
+    const ch=chById[cid];
+    results.push({
+      videoId:vid,title:vd.snippet.title,views,outlier,
+      type:(durSec>0&&durSec<=60)?'short':'long',
+      channelId:cid,channelName:ch?ch.snippet.title:it.snippet.channelTitle,
+      channelCustomUrl:ch?ch.snippet.customUrl:''
+    });
+  }
+  results.sort((a,b)=>(b.outlier??-1)-(a.outlier??-1));
+  discoverResults=results;
+  setDiscoverStatus('');
+  renderDiscoverResults();
+}
+
+async function runCreatorsSearch(key){
+  const raw=document.getElementById('disc-inp-creators').value.trim();
+  if(!raw){alert('Écris au moins un nom de créateur.');return;}
+  const names=raw.split('\n').map(s=>s.trim()).filter(Boolean);
+  setDiscoverStatus(`Résolution de ${names.length} créateur(s)…`);
+  const resolved=[];
+  for(const name of names){
+    const cid=await resolveChannelIdByName(key,name);
+    if(cid)resolved.push(cid);
+  }
+  const channelIds=[...new Set(resolved)];
+  if(!channelIds.length){setDiscoverStatus('Aucune chaîne trouvée pour ces noms.',true);return;}
+
+  setDiscoverStatus(`Analyse de ${channelIds.length} chaîne(s)…`);
+  const channelDetails=await fetchChannelsByIds(key,channelIds);
+
+  const results=[];
+  for(const c of channelDetails){
+    const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
+    if(!uploadsId)continue;
+    let vids=[];
+    try{vids=await fetchUploadsPlaylistVideos(key,uploadsId,20);}catch(e){continue;}
+    if(!vids.length)continue;
+    const details=await fetchVideosByIds(key,vids);
+    const withViews=details.map(v=>({id:v.id,views:+v.statistics.viewCount||0}));
+    details.forEach(vd=>{
+      const others=withViews.filter(x=>x.id!==vd.id).map(x=>x.views);
+      const med=median(others);
+      const views=+vd.statistics.viewCount||0;
+      const outlier=(med&&med>0)?views/med:null;
+      const durSec=parseISO8601Duration(vd.contentDetails.duration);
+      results.push({
+        videoId:vd.id,title:vd.snippet.title,views,outlier,
+        type:(durSec>0&&durSec<=60)?'short':'long',
+        channelId:c.id,channelName:c.snippet.title,
+        channelCustomUrl:c.snippet.customUrl
+      });
+    });
+  }
+  results.sort((a,b)=>(b.outlier??-1)-(a.outlier??-1));
+  discoverResults=results;
+  setDiscoverStatus('');
+  renderDiscoverResults();
+}
+
+function renderDiscoverResults(){
+  const grid=document.getElementById('disc-results');
+  grid.innerHTML='';
+  if(!discoverResults.length){
+    setDiscoverStatus('Aucun résultat exploitable — essaie une niche ou des noms différents.');
+    return;
+  }
+  discoverResults.forEach((r,idx)=>{
+    const cls=colorClass(r.outlier);
+    const card=document.createElement('div');
+    card.className='v-card '+cls;
+    card.style.cursor='default';
+    const alreadyImported=videos.some(v=>v.vid===r.videoId);
+    card.innerHTML=`
+      <div class="v-card-inner">
+        <div class="v-thumb-wrap">
+          <img class="v-thumb" src="${thumbUrl(r.videoId)}" alt="" loading="lazy" onerror="onThumbError(this)">
+          <div class="v-badge ${cls}">${fmtOutlier(r.outlier)}</div>
+          <button type="button" class="v-add-btn"${alreadyImported?' disabled':''}>${alreadyImported?'✓ Ajoutée':'+ Ajouter'}</button>
+          <div class="v-caption">${escapeHtml(r.title||'Sans titre')}</div>
+        </div>
+        <div class="disc-res-ch"><svg class="icon"><use href="icons.svg#i-users"/></svg> ${escapeHtml(r.channelName||'')} · ${r.type==='short'?'Short':'Vidéo longue'}</div>
+      </div>`;
+    const addBtn=card.querySelector('.v-add-btn');
+    addBtn.addEventListener('click',()=>importDiscoverResult(idx,addBtn));
+    grid.appendChild(card);
+  });
+}
+
+function importDiscoverResult(idx,btnEl){
+  const r=discoverResults[idx];
+  if(!r)return;
+  let ch=channels.find(c=>c.ytChannelId===r.channelId);
+  if(!ch){
+    const handle=(r.channelCustomUrl||'').trim();
+    const url=handle?`https://youtube.com/${handle.startsWith('@')?handle:'@'+handle}`:`https://youtube.com/channel/${r.channelId}`;
+    ch={id:uid(),url,name:r.channelName||'Chaîne',addedAt:Date.now(),ytChannelId:r.channelId};
+    channels.push(ch);
+    saveCh(channels);
+  }
+  const alreadyImported=videos.some(v=>v.vid===r.videoId);
+  if(!alreadyImported){
+    const v={
+      id:uid(),channelId:ch.id,type:r.type,url:`https://youtube.com/watch?v=${r.videoId}`,vid:r.videoId,
+      title:r.title||'Vidéo',titleManual:false,outlier:r.outlier,note:'',addedAt:Date.now()
+    };
+    videos.push(v);
+    saveVid(videos);
+  }
+  if(btnEl){btnEl.disabled=true;btnEl.textContent='✓ Ajoutée';}
+  render();
 }
 
 render();

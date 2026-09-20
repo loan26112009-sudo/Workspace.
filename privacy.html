@@ -69,7 +69,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 
   <div class="p-sec">
     <div class="p-sec-title">💣 Outlier Finder</div>
-    <p>Cet outil ne se connecte à aucune API YouTube avec clé. Il te permet de coller des liens de chaînes et de vidéos publiques ; pour afficher la miniature et tenter de récupérer le titre, il utilise l'endpoint public et sans authentification <code>youtube.com/oembed</code> ainsi que les miniatures publiques YouTube (<code>i.ytimg.com</code>) — comme le ferait n'importe quelle page qui intègre une vidéo YouTube. La photo de profil d'une chaîne est récupérée via le service public <code>unavatar.io</code>, qui reçoit uniquement le nom/identifiant public de la chaîne que tu as toi-même collé — jamais tes données personnelles. Tes notes, outliers et classements restent en local.</p>
+    <p>Le tracking manuel (onglets Bibliothèque, Classement, Analyse) ne se connecte à aucune API YouTube avec clé. Il te permet de coller des liens de chaînes et de vidéos publiques ; pour afficher la miniature et tenter de récupérer le titre, il utilise l'endpoint public et sans authentification <code>youtube.com/oembed</code> ainsi que les miniatures publiques YouTube (<code>i.ytimg.com</code>) — comme le ferait n'importe quelle page qui intègre une vidéo YouTube. La photo de profil d'une chaîne est récupérée via le service public <code>unavatar.io</code>, qui reçoit uniquement le nom/identifiant public de la chaîne que tu as toi-même collé — jamais tes données personnelles. Tes notes, outliers et classements restent en local.</p>
+    <p style="margin-top:10px">L'onglet <strong>Découverte</strong> est différent et optionnel : il te permet de chercher des outliers par niche ou par nom de créateur sur l'ensemble de YouTube, y compris des chaînes que tu n'as pas encore ajoutées. Pour ça, il utilise ta propre clé API YouTube (la même que celle du bouton ⚙ sur l'accueil, voir la section ci-dessus) et appelle l'API YouTube Data v3 (<code>googleapis.com</code>) directement depuis ton navigateur — jamais via un serveur Workspace. Ces appels consomment le quota gratuit journalier de ta clé. Les présets de recherche que tu enregistres restent eux aussi uniquement dans ton navigateur.</p>
   </div>
 
   <div class="p-sec">
@@ -79,7 +80,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 
   <div class="p-sec">
     <div class="p-sec-title">🌍 Transferts hors Union européenne</div>
-    <p>Les polices (Google Fonts) et, pour Outlier Finder, les requêtes vers YouTube (<code>oembed</code>, <code>i.ytimg.com</code>) et <code>unavatar.io</code> peuvent être servies par des infrastructures situées hors de l'UE. Ces échanges se font directement entre ton navigateur et ces services, sans passer par un serveur Workspace, et ne contiennent aucune information sur ton identité réelle.</p>
+    <p>Les polices (Google Fonts) et, pour Outlier Finder, les requêtes vers YouTube (<code>oembed</code>, <code>i.ytimg.com</code>, et pour l'onglet Découverte <code>googleapis.com</code> ainsi que les avatars de chaînes via <code>ggpht.com</code>/<code>googleusercontent.com</code>) et <code>unavatar.io</code> peuvent être servies par des infrastructures situées hors de l'UE. Ces échanges se font directement entre ton navigateur et ces services, sans passer par un serveur Workspace, et ne contiennent aucune information sur ton identité réelle.</p>
   </div>
 
   <div class="p-sec">
