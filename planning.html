@@ -106,6 +106,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 
 /* EVENT POPUP */
 .popup{position:fixed;background:#13131f;border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:18px;width:270px;z-index:9999;box-shadow:0 16px 48px rgba(0,0,0,.8);display:none;flex-direction:column;gap:10px}
+.popup-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998}
+@media(max-width:640px){
+  .popup.open{display:flex}
+  .popup{left:50% !important;top:50% !important;transform:translate(-50%,-50%);width:calc(100vw - 32px);max-width:340px;max-height:calc(100vh - 32px);overflow-y:auto}
+  .popup-backdrop.open{display:block;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+}
 .popup.open{display:flex}
 .popup-date{font-size:10px;font-weight:700;color:rgba(99,102,241,.7);letter-spacing:.08em}
 .popup input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;padding:9px 11px;outline:none;width:100%}
@@ -147,20 +153,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 ══════════════════════ */
 @media(max-width:768px){
   body{flex-direction:column}
-  .sidebar{width:100%;flex-direction:row;flex-wrap:wrap;gap:10px;padding:14px;border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
-  .cal-main{padding:16px 12px}
+  .main{flex-direction:column;overflow-y:auto;overflow-x:hidden}
+  .cal-zone{overflow-y:visible}
+  .sidebar{width:100%;flex-direction:row;flex-wrap:wrap;gap:10px;padding:14px;border-right:none;border-top:1px solid rgba(255,255,255,.08);overflow-y:visible}
+  .cal-zone{padding:16px 12px}
   .cal-grid{grid-template-columns:repeat(7,1fr);gap:4px}
   .cal-day{min-height:60px;padding:4px}
   .cal-day-num{font-size:11px}
   .cal-event{font-size:9px;padding:2px 4px}
   .cal-nav{flex-wrap:wrap;gap:8px;margin-bottom:16px}
-  .cal-nav-month{font-size:18px}
-  .back-btn{font-size:12px;padding:7px 12px}
+  .cal-month{font-size:18px}
+  .tb-back{font-size:12px;padding:7px 12px;white-space:nowrap}
+  .topbar{gap:8px;padding:0 12px}
+  .topbar .tb-logo,.topbar .tb-sep{display:none}
+  .tb-title{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 }
 @media(max-width:480px){
   .cal-grid{gap:2px}
-  .cal-day{min-height:48px;padding:3px}
-  .sidebar{display:none}
+  .cal-day{min-height:44px;padding:3px}
+  .cal-event{font-size:8px}
+  .sidebar{flex-direction:column;flex-wrap:nowrap}
+  .cd-box,.sum-box,.upcoming-box{width:100%}
+  .cal-month{font-size:17px}
 }
 </style>
 </head>
@@ -272,6 +286,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 </div>
 
 <!-- POPUP -->
+<div class="popup-backdrop" id="popup-backdrop" onclick="closePopup()"></div>
 <div class="popup" id="popup">
   <div class="popup-date" id="popup-date"></div>
   <input id="pp-title" placeholder="Titre de la vidéo…" maxlength="80">
@@ -394,14 +409,16 @@ function openPopup(dateKey,date,evt){
   let left=rect.right+10, top=rect.top;
   if(left+280>window.innerWidth)left=rect.left-285;
   if(top+320>window.innerHeight)top=window.innerHeight-330;
+  left=Math.max(8,Math.min(left,window.innerWidth-278));
   popup.style.left=left+'px'; popup.style.top=Math.max(8,top)+'px';
   popup.classList.add('open');
+  document.getElementById('popup-backdrop').classList.add('open');
   document.getElementById('pp-title').focus();
   setTimeout(()=>document.addEventListener('click',closeOnOut),200);
 }
 
 function closeOnOut(e){if(!document.getElementById('popup').contains(e.target)){closePopup();document.removeEventListener('click',closeOnOut);}}
-function closePopup(){document.getElementById('popup').classList.remove('open');document.removeEventListener('click',closeOnOut);}
+function closePopup(){document.getElementById('popup').classList.remove('open');document.getElementById('popup-backdrop').classList.remove('open');document.removeEventListener('click',closeOnOut);}
 function setType(t){eventType=t;document.querySelectorAll('.type-btn').forEach(b=>b.classList.toggle('on',b.dataset.type===t));}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopup();});
 
