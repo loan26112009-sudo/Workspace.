@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
 <title>Mes Projets — Workspace</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080808">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -441,7 +443,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
     <span style="font-size:16px;flex-shrink:0">🎥</span>
     <input class="det-video-inp" id="det-video-url" placeholder="Lien YouTube (si publiée)…" onchange="saveField('videoUrl',this.value);updateVideoStatus()">
     <span id="det-video-status" style="font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;background:rgba(22,22,37,.08);color:rgba(22,22,37,.4)">En cours</span>
-    <a id="det-watch" href="#" target="_blank" class="det-watch">▶ Regarder</a>
+    <a id="det-watch" href="#" target="_blank" rel="noopener noreferrer" class="det-watch">▶ Regarder</a>
   </div>
 
   <div class="det-tabs">
@@ -809,12 +811,27 @@ function thumbChosen(input){
   };reader.readAsDataURL(file);input.value='';
 }
 
+// ── SECURITY: only allow http/https links to be rendered or navigated to (blocks javascript: URIs etc.) ──
+function safeHref(u){
+  try{
+    const parsed=new URL(u,location.href);
+    if(parsed.protocol==='http:'||parsed.protocol==='https:')return parsed.href;
+  }catch(e){}
+  return null;
+}
+function escapeHtml(s){
+  const d=document.createElement('div');
+  d.textContent=s??'';
+  return d.innerHTML;
+}
+
 // ── VIDEO STATUS ──
 function updateVideoStatus(){
   const url=document.getElementById('det-video-url').value;
   const st=document.getElementById('det-video-status');
   const watch=document.getElementById('det-watch');
-  if(url){st.textContent='Publiée';st.style.background='rgba(34,197,94,.1)';st.style.color='#16a34a';watch.href=url;watch.style.display='block';}
+  const safe=url?safeHref(url):null;
+  if(safe){st.textContent='Publiée';st.style.background='rgba(34,197,94,.1)';st.style.color='#16a34a';watch.href=safe;watch.style.display='block';}
   else{st.textContent='En cours';st.style.background='rgba(22,22,37,.08)';st.style.color='rgba(22,22,37,.4)';watch.style.display='none';}
 }
 
@@ -1078,12 +1095,14 @@ function renderLinks(){
   const list=document.getElementById('links-list');
   const links=p.links||[];
   if(!links.length){list.innerHTML='<div style="color:rgba(22,22,37,.35);font-size:13px;padding:16px;text-align:center">Aucun lien pour l\'instant</div>';return;}
-  list.innerHTML=links.map(l=>`<div class="link-item">
+  list.innerHTML=links.map(l=>{
+    const href=safeHref(l.url);
+    return `<div class="link-item">
     <span style="font-size:15px">🔗</span>
-    <span class="link-lbl">${l.label}</span>
-    <a class="link-url" href="${l.url}" target="_blank">${l.url}</a>
+    <span class="link-lbl">${escapeHtml(l.label)}</span>
+    ${href?`<a class="link-url" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(l.url)}</a>`:`<span class="link-url" style="opacity:.4">${escapeHtml(l.url)} (lien invalide)</span>`}
     <button class="link-del" onclick="delLink('${l.id}')">×</button>
-  </div>`).join('');
+  </div>`;}).join('');
 }
 function delLink(id){updateActive(p=>{p.links=(p.links||[]).filter(x=>x.id!==id);});renderLinks();}
 

@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outlier Finder — Workspace</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://unavatar.io; media-src 'self'; connect-src 'self' https://www.youtube.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080808">
 <link rel="icon" type="image/png" href="outlier-icon.png">
@@ -97,6 +99,9 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .v-thumb-wrap{position:relative;aspect-ratio:16/9;background:var(--s2);overflow:hidden}
 .v-thumb{width:100%;height:100%;object-fit:cover;display:block}
 .v-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--dim);background:var(--s2)}
+.v-refresh-btn{position:absolute;top:8px;left:8px;width:27px;height:27px;border-radius:8px;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;opacity:.55;z-index:2}
+.v-thumb-wrap:hover .v-refresh-btn{opacity:1}
+.v-refresh-btn:hover{background:rgba(99,102,241,.85);transform:scale(1.08)}
 .v-badge{position:absolute;top:8px;right:8px;padding:4px 9px;border-radius:8px;font-size:11.5px;font-weight:900;letter-spacing:-.01em;backdrop-filter:blur(6px)}
 .v-badge.oc-gray{background:rgba(138,138,148,.85);color:#000}
 .v-badge.oc-yellow{background:rgba(245,158,11,.9);color:#000}
@@ -149,6 +154,9 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .nm-link:hover{text-decoration:underline}
 .nm-save-flag{font-size:10.5px;color:var(--grn);opacity:0;transition:opacity .3s}
 .nm-save-flag.show{opacity:1}
+.nm-refresh-btn{padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--b);color:var(--sub);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
+.nm-refresh-btn:hover{background:rgba(99,102,241,.15);border-color:var(--acc);color:#fff}
+.nm-refresh-btn:disabled{opacity:.5;cursor:default}
 .nm-del{margin-top:16px;width:100%;padding:11px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
 .nm-del:hover{background:rgba(239,68,68,.18)}
 
@@ -199,7 +207,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
 
 <div class="view-toggle">
   <button class="view-btn on" id="view-btn-library" onclick="setView('library')">🗂 Bibliothèque</button>
-  <button class="view-btn" id="view-btn-planning" onclick="setView('planning')">📋 Planning</button>
+  <button class="view-btn" id="view-btn-planning" onclick="setView('planning')">🗃️ Classement</button>
 </div>
 
 <div class="wrap">
@@ -245,7 +253,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
   </div>
 
   <div id="planning-view" style="display:none">
-    <div class="planning-notice" id="planning-empty" style="display:none">Ajoute des vidéos depuis la Bibliothèque, puis glisse-les dans les colonnes pour planifier tes prochains formats.</div>
+    <div class="stat-line" style="margin-top:0">Classe tes outliers repérés : glisse-dépose chaque vidéo dans la colonne qui correspond à ce que tu comptes en faire.</div>
+    <div class="planning-notice" id="planning-empty" style="display:none">Ajoute des vidéos depuis la Bibliothèque, puis classe-les par glisser-déposer dans les colonnes ci-dessous.</div>
     <div class="kanban" id="kanban"></div>
   </div>
 
@@ -311,14 +320,16 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="nm-title" id="nm-title"></div>
     <div class="nm-badges">
       <span class="v-badge" id="nm-badge" style="position:static"></span>
-      <a class="nm-link" id="nm-link" href="#" target="_blank" rel="noopener">Voir sur YouTube ↗</a>
+      <a class="nm-link" id="nm-link" href="#" target="_blank" rel="noopener noreferrer">Voir sur YouTube ↗</a>
+      <button type="button" class="nm-refresh-btn" id="nm-refresh-btn" title="Actualiser le titre et la miniature (elle peut avoir changé)">🔄 Actualiser</button>
+      <span class="nm-save-flag" id="nm-refresh-flag">✓ Actualisé</span>
     </div>
     <div class="f-group">
       <label class="f-lbl">Outlier observé</label>
       <input class="f-inp" id="nm-outlier" type="number" step="0.1" min="0" oninput="updateActiveOutlier(this.value)">
     </div>
     <div class="f-group">
-      <label class="f-lbl">Statut de planning</label>
+      <label class="f-lbl">Classement</label>
       <select class="f-select" id="nm-status" onchange="updateActiveStatus(this.value)">
         <option value="">Non classé</option>
         <option value="ready">Prêt à faire</option>
@@ -417,21 +428,31 @@ function normalizeUrl(url){
   return url;
 }
 
-function thumbUrl(vid){return `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`;}
+// Only http/https survive — blocks javascript: and other dangerous URI schemes.
+function isSafeUrl(url){
+  try{
+    const p=new URL(url);
+    return p.protocol==='http:'||p.protocol==='https:';
+  }catch(e){return false;}
+}
 
-function fetchTitle(videoObjId,url){
+function thumbUrl(vid,bust){return `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`+(bust?`?_=${bust}`:'');}
+
+function fetchTitle(videoObjId,url,onDone){
   fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`)
     .then(r=>r.ok?r.json():null)
     .then(data=>{
-      if(!data||!data.title)return;
       const v=videos.find(x=>x.id===videoObjId);
-      if(v&&!v.titleManual){
+      let ok=false;
+      if(data&&data.title&&v){
         v.title=data.title;
         saveVid(videos);
-        render();
+        ok=true;
       }
+      render();
+      if(onDone)onDone(ok);
     })
-    .catch(()=>{});
+    .catch(()=>{if(onDone)onDone(false);});
 }
 
 function colorClass(outlier){
@@ -460,6 +481,7 @@ function submitChannel(){
   const rawUrl=document.getElementById('inp-ch-url').value.trim();
   if(!rawUrl){alert('Colle le lien de la chaîne.');return;}
   const url=normalizeUrl(rawUrl);
+  if(!isSafeUrl(url)){alert('Ce lien ne semble pas valide.');return;}
   const nameOverride=document.getElementById('inp-ch-name').value.trim();
   const ch={id:uid(),url,name:nameOverride||extractChannelName(url),addedAt:Date.now()};
   channels.push(ch);
@@ -526,6 +548,7 @@ function submitVideo(){
   if(!rawUrl){alert('Colle le lien de la vidéo.');return;}
   if(outlierRaw===''){alert('Écris l\'outlier que tu observes (ex: 23.5).');return;}
   const url=normalizeUrl(rawUrl);
+  if(!isSafeUrl(url)){alert('Ce lien ne semble pas valide.');return;}
   const vid=extractVideoId(url);
   const outlier=parseFloat(outlierRaw);
   const note=document.getElementById('inp-v-note').value.trim();
@@ -561,18 +584,59 @@ function openNotesModal(videoId){
   const v=videos.find(x=>x.id===videoId);
   if(!v)return;
   const thumbEl=document.getElementById('nm-thumb');
-  thumbEl.innerHTML=v.vid?`<img src="${thumbUrl(v.vid)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+  thumbEl.innerHTML=v.vid?`<img src="${thumbUrl(v.vid,v.thumbBust)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
   document.getElementById('nm-title').textContent=v.title||'Sans titre';
   const badge=document.getElementById('nm-badge');
   badge.className='v-badge '+colorClass(v.outlier);
   badge.textContent=fmtOutlier(v.outlier);
   const link=document.getElementById('nm-link');
-  link.href=v.url;
+  link.href=isSafeUrl(v.url)?v.url:'#';
+  link.style.display=isSafeUrl(v.url)?'':'none';
   document.getElementById('nm-outlier').value=v.outlier??'';
   document.getElementById('nm-status').value=v.status||'';
   document.getElementById('nm-notes').value=v.note||'';
   document.getElementById('nm-save-flag').classList.remove('show');
+  document.getElementById('nm-refresh-flag').classList.remove('show');
+  const refreshBtn=document.getElementById('nm-refresh-btn');
+  refreshBtn.style.display=v.vid?'':'none';
+  refreshBtn.disabled=false;
+  refreshBtn.textContent='🔄 Actualiser';
   document.getElementById('ov-notes').classList.add('open');
+}
+
+// ── Refresh (thumbnails / titles can change on YouTube after upload) ──
+function refreshVideo(id,ev){
+  if(ev)ev.stopPropagation();
+  const v=videos.find(x=>x.id===id);
+  if(!v||!v.vid)return;
+  v.thumbBust=Date.now();
+  v.titleManual=false;
+  saveVid(videos);
+  render();
+
+  const isModalOpen=activeVideoId===id;
+  let refreshBtn=null;
+  if(isModalOpen){
+    refreshBtn=document.getElementById('nm-refresh-btn');
+    refreshBtn.disabled=true;
+    refreshBtn.textContent='Actualisation…';
+  }
+
+  fetchTitle(v.id,v.url,(ok)=>{
+    if(activeVideoId!==id)return;
+    const vv=videos.find(x=>x.id===id);
+    if(!vv)return;
+    document.getElementById('nm-thumb').innerHTML=vv.vid?`<img src="${thumbUrl(vv.vid,vv.thumbBust)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+    document.getElementById('nm-title').textContent=vv.title||'Sans titre';
+    if(refreshBtn){
+      refreshBtn.disabled=false;
+      refreshBtn.textContent=ok?'✓ Actualisé':'🔄 Actualiser';
+      const flag=document.getElementById('nm-refresh-flag');
+      flag.textContent=ok?'✓ Titre et miniature à jour':'⚠ Miniature actualisée, titre indisponible';
+      flag.classList.add('show');
+      setTimeout(()=>flag.classList.remove('show'),2200);
+    }
+  });
 }
 function closeNotesModal(){
   document.getElementById('ov-notes').classList.remove('open');
@@ -620,6 +684,8 @@ function deleteActiveVideo(){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeChannelModal();closeVideoModal();closeNotesModal();}
 });
+
+document.getElementById('nm-refresh-btn').addEventListener('click',()=>refreshVideo(activeVideoId));
 
 // ── Render ──
 function render(){
@@ -699,11 +765,12 @@ function render(){
       const card=document.createElement('div');
       card.className='v-card '+cls;
       card.onclick=()=>openNotesModal(v.id);
-      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
       card.innerHTML=`
         <div class="v-card-inner">
           <div class="v-thumb-wrap">
             ${thumbHtml}
+            ${v.vid?`<button type="button" class="v-refresh-btn" title="Actualiser la miniature et le titre (ça peut changer sur YouTube)">🔄</button>`:''}
             <div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div>
             <div class="v-caption">${escapeHtml(v.title||'Sans titre')}</div>
           </div>
@@ -712,6 +779,8 @@ function render(){
             ${v.note?'<span class="note-flag">📝 note</span>':'<span></span>'}
           </div>
         </div>`;
+      const refreshBtn=card.querySelector('.v-refresh-btn');
+      if(refreshBtn)refreshBtn.addEventListener('click',ev=>refreshVideo(v.id,ev));
       grid.appendChild(card);
     });
   }
@@ -740,7 +809,7 @@ function renderPlanning(){
       const card=document.createElement('div');
       card.className='kb-card';
       card.draggable=true;
-      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+      const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid,v.thumbBust)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
       card.innerHTML=`
         <div class="kb-card-thumb">${thumbHtml}<div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div></div>
         <div class="kb-card-body">
