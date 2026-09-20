@@ -56,6 +56,10 @@ body{overflow-y:auto}
 .tool-card.ideas:hover{border-color:rgba(251,191,36,.3);box-shadow:0 16px 48px rgba(251,191,36,.1)}
 .tool-card.ideas .tool-icon-wrap{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2)}
 
+.tool-card.outlier::before{background:radial-gradient(ellipse at top left,rgba(239,68,68,.1) 0%,transparent 60%)}
+.tool-card.outlier:hover{border-color:rgba(239,68,68,.35);box-shadow:0 16px 48px rgba(239,68,68,.13)}
+.tool-card.outlier .tool-icon-wrap{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
+
 .tool-card.soon{cursor:default;opacity:.55}
 .tool-card.soon:hover{transform:none;border-color:var(--b);box-shadow:none}
 .tool-card.soon::before{display:none}
@@ -147,6 +151,21 @@ body{overflow-y:auto}
       </div>
       <div class="tool-card-action">
         <span class="tool-card-action-lbl">Voir mes projets</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card outlier" onclick="location.href='outlier-finder.html'" tabindex="0" role="button">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="tool-icon-wrap">💣</div>
+        <div class="tool-badge new">NOUVEAU</div>
+      </div>
+      <div>
+        <div class="tool-card-title">Outlier Finder</div>
+        <div class="tool-card-desc">Log les outliers de tes chaînes vidéo par vidéo. Couleur selon l'ampleur, séparé longs/Shorts, notes sur chaque miniature.</div>
+      </div>
+      <div class="tool-card-action">
+        <span class="tool-card-action-lbl" style="color:#ef4444">Ouvrir Outlier Finder</span>
         <span class="tool-arrow">→</span>
       </div>
     </div>

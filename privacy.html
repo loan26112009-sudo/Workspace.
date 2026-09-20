@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confidentialité — Workspace</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080808">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;
+  --b:rgba(255,255,255,.06);--bh:rgba(255,255,255,.14);
+  --text:#f0f0f0;--sub:rgba(255,255,255,.4);--dim:rgba(255,255,255,.15);
+  --acc:#6366f1;--acc2:#a855f7;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+
+.tb{height:60px;display:flex;align-items:center;border-bottom:1px solid var(--b);position:sticky;top:0;background:rgba(8,8,8,.9);backdrop-filter:blur(20px);z-index:100}
+.tb-back{display:flex;align-items:center;gap:7px;padding:0 24px;height:100%;color:var(--sub);font-size:13px;font-weight:600;text-decoration:none;border-right:1px solid var(--b);transition:all .15s}
+.tb-back:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tb-logo{padding:0 24px;font-size:16px;font-weight:800;letter-spacing:-.03em}
+.tb-logo span{background:linear-gradient(90deg,#fff,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.wrap{max-width:720px;margin:0 auto;padding:56px 24px 100px}
+.p-title{font-size:clamp(26px,4vw,36px);font-weight:900;letter-spacing:-.03em;margin-bottom:12px}
+.p-updated{font-size:12px;color:var(--dim);margin-bottom:36px}
+.p-sec{margin-bottom:32px}
+.p-sec-title{font-size:15px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.p-sec p,.p-sec li{font-size:13.5px;color:var(--sub);line-height:1.75}
+.p-sec ul{padding-left:20px;margin-top:6px}
+.p-card{background:var(--s1);border:1px solid var(--b);border-radius:14px;padding:18px 20px;margin-bottom:32px}
+.p-card p{color:var(--text);opacity:.8}
+</style>
+</head>
+<body>
+
+<div class="tb">
+  <a href="index.html" class="tb-back">← Workspace</a>
+  <div class="tb-logo">Confidentialité</div>
+</div>
+
+<div class="wrap">
+  <div class="p-title">Confidentialité &amp; données</div>
+  <div class="p-updated">Dernière mise à jour : 2026</div>
+
+  <div class="p-card">
+    <p>Workspace est un outil personnel : il n'y a pas de serveur, pas de compte, pas de base de données. Tout ce que tu saisis (projets, planning, notes, outliers…) reste stocké localement dans ton navigateur, via <code>localStorage</code>.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">📦 Ce qui est stocké, et où</div>
+    <p>Chaque outil (Loop Builder, Calendrier Éditorial, Organisation Scolaire, Mes Projets, Outlier Finder…) enregistre ses données uniquement dans le <code>localStorage</code> de ton navigateur, sur cet appareil. Rien n'est envoyé vers un serveur externe que tu ne contrôles pas.</p>
+    <ul>
+      <li>Aucun compte, aucun mot de passe, aucune donnée personnelle collectée par Workspace lui-même.</li>
+      <li>Si tu vides le cache / les données de site de ton navigateur, ces données sont perdues — pense à exporter/sauvegarder ce qui compte.</li>
+      <li>Les données ne sont pas synchronisées entre appareils : chaque navigateur a sa propre copie.</li>
+    </ul>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🔑 Clé API YouTube (optionnelle)</div>
+    <p>Si tu connectes ta chaîne YouTube (bouton ⚙ sur l'accueil), la clé API et ton identifiant de chaîne sont stockés uniquement dans ton navigateur et utilisés uniquement pour appeler l'API YouTube directement depuis ton appareil. Cette clé n'est jamais transmise à un tiers ni stockée ailleurs.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">💣 Outlier Finder</div>
+    <p>Cet outil ne se connecte à aucune API YouTube avec clé. Il te permet de coller des liens de chaînes et de vidéos publiques ; pour afficher la miniature et tenter de récupérer le titre, il utilise l'endpoint public et sans authentification <code>youtube.com/oembed</code> ainsi que les miniatures publiques YouTube (<code>i.ytimg.com</code>) — comme le ferait n'importe quelle page qui intègre une vidéo YouTube. Tes notes et outliers restent en local.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🍪 Cookies &amp; traceurs</div>
+    <p>Workspace ne pose pas de cookie de tracking et n'utilise aucun outil d'analytics ou de publicité. La police est chargée depuis Google Fonts (CDN), qui peut techniquement voir ton adresse IP au moment du chargement — c'est la seule ressource externe chargée par défaut sur la plupart des pages.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🔗 Liens externes</div>
+    <p>Certains raccourcis pointent vers des services tiers (formulaire d'idées, outils externes). Une fois que tu cliques dessus, c'est la politique de confidentialité de ce service tiers qui s'applique, pas celle de Workspace.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">🗑 Supprimer tes données</div>
+    <p>Tu peux tout effacer à tout moment en vidant les données de site pour ce domaine dans les réglages de ton navigateur, ou en supprimant les entrées individuellement dans chaque outil.</p>
+  </div>
+
+  <div class="p-sec">
+    <div class="p-sec-title">✉️ Contact</div>
+    <p>Une question, une idée, un souci de confidentialité ? Utilise le formulaire « Proposer une idée » accessible depuis l'accueil.</p>
+  </div>
+</div>
+
+</body>
+</html>

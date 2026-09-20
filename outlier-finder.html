@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outlier Finder — Workspace</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080808">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
+  --b:rgba(255,255,255,.06);--bh:rgba(255,255,255,.14);
+  --text:#f0f0f0;--sub:rgba(255,255,255,.4);--dim:rgba(255,255,255,.15);
+  --acc:#6366f1;--acc2:#a855f7;--grn:#22c55e;--red:#ef4444;--yel:#f59e0b;--gray:#8a8a94;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+body{overflow-y:auto}
+a{color:inherit}
+button,input,textarea{font-family:'Inter',sans-serif}
+
+/* TOPBAR */
+.tb{height:60px;display:flex;align-items:center;gap:0;border-bottom:1px solid var(--b);position:sticky;top:0;background:rgba(8,8,8,.9);backdrop-filter:blur(20px);z-index:200}
+.tb-back{display:flex;align-items:center;gap:7px;padding:0 22px;height:100%;color:var(--sub);font-size:13px;font-weight:600;text-decoration:none;border-right:1px solid var(--b);transition:all .15s;flex-shrink:0}
+.tb-back:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tb-logo{padding:0 22px;font-size:15px;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+.tb-logo span{background:linear-gradient(90deg,#fff,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tb-sp{flex:1}
+.tb-add{margin-right:16px;padding:9px 18px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap}
+.tb-add:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.tb-add:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* HEADER */
+.page-head{padding:44px 24px 24px;text-align:center}
+.page-title{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.03em}
+.page-sub{font-size:13.5px;color:var(--sub);margin-top:10px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.65}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:0 24px 28px}
+.leg-chip{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;background:var(--s1);border:1px solid var(--b);font-size:11px;font-weight:600;color:var(--sub)}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.leg-dot.gray{background:var(--gray)}
+.leg-dot.yellow{background:var(--yel)}
+.leg-dot.red{background:var(--red)}
+.leg-dot.rainbow{background:linear-gradient(90deg,#f43f5e,#f59e0b,#22c55e,#06b6d4,#6366f1,#a855f7);background-size:300% 100%;animation:rainbowShift 3s linear infinite}
+
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px 100px}
+
+/* CHANNELS */
+.ch-row{display:flex;align-items:center;gap:10px;overflow-x:auto;padding-bottom:16px;margin-bottom:22px;border-bottom:1px solid var(--b)}
+.ch-chip{display:flex;align-items:center;gap:9px;padding:8px 8px 8px 10px;border-radius:14px;background:var(--s1);border:1px solid var(--b);cursor:pointer;transition:all .15s;flex-shrink:0;white-space:nowrap}
+.ch-chip:hover{border-color:var(--bh)}
+.ch-chip.on{border-color:var(--acc);background:rgba(99,102,241,.1)}
+.ch-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.ch-name{font-size:12.5px;font-weight:700}
+.ch-del{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--sub);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.ch-del:hover{background:var(--red);color:#fff}
+.ch-add{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:14px;background:transparent;border:1px dashed var(--bh);color:var(--sub);cursor:pointer;font-size:12.5px;font-weight:700;flex-shrink:0;transition:all .15s}
+.ch-add:hover{border-color:var(--acc);color:var(--text)}
+
+.empty{text-align:center;padding:70px 20px;color:var(--sub)}
+.empty-ico{font-size:40px;margin-bottom:14px}
+.empty-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px}
+.empty-sub{font-size:13px;line-height:1.6;max-width:380px;margin:0 auto 20px}
+.empty .ch-add{margin:0 auto}
+
+/* TYPE TABS */
+.type-tabs{display:flex;gap:8px;margin-bottom:6px}
+.type-tab{padding:9px 18px;border-radius:11px;background:var(--s1);border:1px solid var(--b);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.type-tab:hover{border-color:var(--bh);color:var(--text)}
+.type-tab.on{background:rgba(99,102,241,.12);border-color:var(--acc);color:#fff}
+.type-count{opacity:.6;font-weight:600;margin-left:4px}
+
+.stat-line{font-size:11.5px;color:var(--dim);margin:14px 2px 18px}
+.stat-line b{color:var(--sub);font-weight:700}
+
+/* GRID */
+.v-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+
+.v-card{position:relative;border-radius:16px;padding:3px;cursor:pointer;background:var(--b);transition:transform .18s}
+.v-card:hover{transform:translateY(-3px)}
+.v-card-inner{background:var(--s1);border-radius:14px;overflow:hidden}
+.v-thumb-wrap{position:relative;aspect-ratio:16/9;background:var(--s2);overflow:hidden}
+.v-thumb{width:100%;height:100%;object-fit:cover;display:block}
+.v-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--dim);background:var(--s2)}
+.v-badge{position:absolute;top:8px;right:8px;padding:4px 9px;border-radius:8px;font-size:11.5px;font-weight:900;letter-spacing:-.01em;backdrop-filter:blur(6px)}
+.v-badge.oc-gray{background:rgba(138,138,148,.85);color:#000}
+.v-badge.oc-yellow{background:rgba(245,158,11,.9);color:#000}
+.v-badge.oc-red{background:rgba(239,68,68,.9);color:#fff}
+.v-badge.oc-rainbow{background:linear-gradient(90deg,#f43f5e,#f59e0b,#22c55e,#06b6d4,#6366f1,#a855f7);background-size:300% 100%;animation:rainbowShift 2.2s linear infinite;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.v-caption{position:absolute;left:0;right:0;bottom:0;padding:20px 10px 9px;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);font-size:11.5px;font-weight:700;color:#fff;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.v-meta{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 12px;font-size:10.5px;color:var(--dim)}
+.v-meta .note-flag{color:var(--acc);font-weight:700}
+
+/* border ring per outlier level */
+.v-card.oc-gray{background:rgba(138,138,148,.25)}
+.v-card.oc-yellow{background:rgba(245,158,11,.35)}
+.v-card.oc-red{background:rgba(239,68,68,.45);box-shadow:0 0 22px rgba(239,68,68,.15)}
+.v-card.oc-rainbow{background:linear-gradient(120deg,#f43f5e,#f59e0b,#22c55e,#06b6d4,#6366f1,#a855f7);background-size:300% 300%;animation:rainbowShift 3s linear infinite;box-shadow:0 0 28px rgba(168,85,247,.28)}
+
+@keyframes rainbowShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+
+/* MODAL BASE */
+.ov{display:none;position:fixed;inset:0;z-index:9000;background:rgba(4,4,6,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);align-items:center;justify-content:center;padding:24px}
+.ov.open{display:flex}
+.modal{width:100%;max-width:440px;background:var(--s1);border:1px solid var(--b);border-radius:20px;padding:26px;max-height:88vh;overflow-y:auto}
+.modal.wide{max-width:520px}
+.modal-title{font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--sub);margin-bottom:20px;line-height:1.5}
+.f-lbl{font-size:11.5px;font-weight:700;color:var(--sub);margin-bottom:7px;display:block}
+.f-inp,.f-textarea,.f-select{width:100%;padding:11px 14px;background:var(--s2);border:1px solid var(--b);border-radius:10px;color:var(--text);font-size:13px;outline:none;transition:border-color .15s}
+.f-inp:focus,.f-textarea:focus,.f-select:focus{border-color:var(--acc)}
+.f-textarea{resize:vertical;min-height:90px;line-height:1.6;font-family:'Inter',sans-serif}
+.f-group{margin-bottom:16px}
+.f-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.btn{flex:1;padding:12px;border-radius:11px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--sub)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);color:var(--text)}
+.type-pick{display:flex;gap:8px}
+.type-pick-opt{flex:1;padding:10px;border-radius:10px;background:var(--s2);border:1px solid var(--b);text-align:center;font-size:12.5px;font-weight:700;color:var(--sub);cursor:pointer;transition:all .15s}
+.type-pick-opt.on{border-color:var(--acc);background:rgba(99,102,241,.14);color:#fff}
+.f-hint{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+
+/* NOTES MODAL */
+.nm-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--b);color:var(--sub);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nm-close:hover{background:rgba(255,255,255,.14);color:#fff}
+.nm-thumb{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--s2);margin-bottom:16px}
+.nm-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.nm-title{font-size:15.5px;font-weight:800;line-height:1.4;margin-bottom:10px;padding-right:30px}
+.nm-badges{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.nm-link{font-size:11.5px;color:var(--acc);text-decoration:none;font-weight:700}
+.nm-link:hover{text-decoration:underline}
+.nm-save-flag{font-size:10.5px;color:var(--grn);opacity:0;transition:opacity .3s}
+.nm-save-flag.show{opacity:1}
+.nm-del{margin-top:16px;width:100%;padding:11px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;color:var(--red);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.nm-del:hover{background:rgba(239,68,68,.18)}
+
+@media(max-width:560px){.v-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.tb-logo{display:none}}
+</style>
+</head>
+<body>
+
+<div class="tb">
+  <a href="index.html" class="tb-back">← Workspace</a>
+  <div class="tb-logo">Outlier <span>Finder</span></div>
+  <div class="tb-sp"></div>
+  <a href="tools.html" class="tb-back" style="border-left:1px solid var(--b);border-right:none">🧰 Tous les outils</a>
+  <button class="tb-add" id="btn-add-video" onclick="openVideoModal()" disabled>+ Ajouter une vidéo</button>
+</div>
+
+<div class="page-head">
+  <div class="page-title">Repère tes bombes 💣</div>
+  <div class="page-sub">Un lien de chaîne, un lien de vidéo, l'outlier que tu observes — et Outlier Finder classe tout par couleur. Zéro API, zéro friction, que des données qui restent dans ton navigateur.</div>
+</div>
+
+<div class="legend">
+  <div class="leg-chip"><span class="leg-dot gray"></span>0 – 1 : dans la norme</div>
+  <div class="leg-chip"><span class="leg-dot yellow"></span>1 – 10 : ça sort du lot</div>
+  <div class="leg-chip"><span class="leg-dot red"></span>10 – 100 : outlier confirmé</div>
+  <div class="leg-chip"><span class="leg-dot rainbow"></span>100+ : complètement dingue</div>
+</div>
+
+<div class="wrap">
+
+  <div class="ch-row" id="ch-row"></div>
+
+  <div id="channel-empty" class="empty" style="display:none">
+    <div class="empty-ico">📺</div>
+    <div class="empty-title">Aucune chaîne pour l'instant</div>
+    <div class="empty-sub">Colle juste le lien d'une chaîne YouTube — pas besoin de clé API. Ensuite tu logs tes vidéos et leurs outliers dedans.</div>
+    <button class="ch-add" onclick="openChannelModal()">+ Ajouter une chaîne</button>
+  </div>
+
+  <div id="channel-content" style="display:none">
+    <div class="type-tabs">
+      <button class="type-tab on" id="tab-long" onclick="setType('long')">🎬 Vidéos longues <span class="type-count" id="count-long">0</span></button>
+      <button class="type-tab" id="tab-short" onclick="setType('short')">⚡ Shorts <span class="type-count" id="count-short">0</span></button>
+    </div>
+    <div class="stat-line" id="stat-line"></div>
+    <div class="v-grid" id="v-grid"></div>
+    <div id="type-empty" class="empty" style="display:none">
+      <div class="empty-ico">📈</div>
+      <div class="empty-title" id="type-empty-title">Aucune vidéo ici</div>
+      <div class="empty-sub">Ajoute une vidéo, écris l'outlier que tu as repéré, et regarde la couleur faire le tri pour toi.</div>
+      <button class="ch-add" onclick="openVideoModal()">+ Ajouter une vidéo</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD CHANNEL MODAL -->
+<div class="ov" id="ov-channel" onclick="if(event.target===this)closeChannelModal()">
+  <div class="modal">
+    <div class="modal-title">Ajouter une chaîne</div>
+    <div class="modal-sub">Juste le lien — comme un profil. Pas de clé API, pas de connexion.</div>
+    <div class="f-group">
+      <label class="f-lbl">Lien de la chaîne</label>
+      <input class="f-inp" id="inp-ch-url" placeholder="https://youtube.com/@lachaine" autocomplete="off">
+    </div>
+    <div class="f-group">
+      <label class="f-lbl">Nom affiché (optionnel)</label>
+      <input class="f-inp" id="inp-ch-name" placeholder="Auto-détecté depuis le lien" autocomplete="off">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeChannelModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="submitChannel()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD VIDEO MODAL -->
+<div class="ov" id="ov-video" onclick="if(event.target===this)closeVideoModal()">
+  <div class="modal">
+    <div class="modal-title">Ajouter une vidéo</div>
+    <div class="modal-sub" id="video-modal-sub">Colle le lien, écris l'outlier que tu observes.</div>
+    <div class="f-group">
+      <label class="f-lbl">Format</label>
+      <div class="type-pick">
+        <div class="type-pick-opt on" id="pick-long" onclick="pickType('long')">🎬 Vidéo longue</div>
+        <div class="type-pick-opt" id="pick-short" onclick="pickType('short')">⚡ Short</div>
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-lbl">Lien de la vidéo</label>
+      <input class="f-inp" id="inp-v-url" placeholder="https://youtube.com/watch?v=..." autocomplete="off">
+    </div>
+    <div class="f-group">
+      <label class="f-lbl">Outlier observé (× moyenne de la chaîne)</label>
+      <input class="f-inp" id="inp-v-outlier" type="number" step="0.1" min="0" placeholder="ex: 23.5" autocomplete="off">
+      <div class="f-hint">0–1 gris · 1–10 jaune · 10–100 rouge · 100+ multicolore</div>
+    </div>
+    <div class="f-group">
+      <label class="f-lbl">Note rapide (optionnel)</label>
+      <textarea class="f-textarea" id="inp-v-note" style="min-height:60px" placeholder="Pourquoi ça a marché selon toi ?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeVideoModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="submitVideo()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES / DETAIL MODAL -->
+<div class="ov" id="ov-notes" onclick="if(event.target===this)closeNotesModal()">
+  <div class="modal wide" style="position:relative">
+    <button class="nm-close" onclick="closeNotesModal()" aria-label="Fermer">×</button>
+    <div class="nm-thumb" id="nm-thumb"></div>
+    <div class="nm-title" id="nm-title"></div>
+    <div class="nm-badges">
+      <span class="v-badge" id="nm-badge" style="position:static"></span>
+      <a class="nm-link" id="nm-link" href="#" target="_blank" rel="noopener">Voir sur YouTube ↗</a>
+    </div>
+    <div class="f-group">
+      <label class="f-lbl">Outlier observé</label>
+      <input class="f-inp" id="nm-outlier" type="number" step="0.1" min="0" oninput="updateActiveOutlier(this.value)">
+    </div>
+    <div class="f-group">
+      <label class="f-lbl">Notes <span class="nm-save-flag" id="nm-save-flag">✓ enregistré</span></label>
+      <textarea class="f-textarea" id="nm-notes" style="min-height:140px" placeholder="Hook, thumbnail, titre, timing de publication… note tout ce qui explique cet outlier." oninput="scheduleNoteSave()"></textarea>
+    </div>
+    <button class="nm-del" onclick="deleteActiveVideo()">🗑 Supprimer cette vidéo</button>
+  </div>
+</div>
+
+<script>
+const LS_CH='ws_outlier_channels', LS_VID='ws_outlier_videos', LS_ACTIVE='ws_outlier_active';
+
+function loadCh(){try{return JSON.parse(localStorage.getItem(LS_CH)||'[]');}catch(e){return [];}}
+function saveCh(v){try{localStorage.setItem(LS_CH,JSON.stringify(v));}catch(e){}}
+function loadVid(){try{return JSON.parse(localStorage.getItem(LS_VID)||'[]');}catch(e){return [];}}
+function saveVid(v){try{localStorage.setItem(LS_VID,JSON.stringify(v));}catch(e){}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+
+let channels=loadCh();
+let videos=loadVid();
+let activeChannelId=localStorage.getItem(LS_ACTIVE)||null;
+let activeType='long';
+let activeVideoId=null;
+let noteSaveTimer=null;
+
+function extractVideoId(url){
+  if(!url)return null;
+  try{
+    const patterns=[
+      /(?:youtube\.com\/watch\?v=)([\w-]{6,})/,
+      /(?:youtu\.be\/)([\w-]{6,})/,
+      /(?:youtube\.com\/shorts\/)([\w-]{6,})/,
+      /(?:youtube\.com\/embed\/)([\w-]{6,})/,
+      /(?:youtube\.com\/live\/)([\w-]{6,})/
+    ];
+    for(const p of patterns){const m=url.match(p);if(m)return m[1];}
+  }catch(e){}
+  return null;
+}
+
+function extractChannelName(url){
+  try{
+    const u=new URL(url.trim());
+    let path=u.pathname.replace(/^\/+|\/+$/g,'');
+    if(!path)return u.hostname.replace('www.','');
+    const parts=path.split('/');
+    let name=parts[parts.length-1];
+    if(['channel','c','user'].includes(parts[0])&&parts[1])name=parts[1];
+    return decodeURIComponent(name).replace(/^@/,'@');
+  }catch(e){
+    return url.trim().slice(0,24)||'Chaîne';
+  }
+}
+
+function normalizeUrl(url){
+  url=(url||'').trim();
+  if(!url)return '';
+  if(!/^https?:\/\//i.test(url))url='https://'+url;
+  return url;
+}
+
+function thumbUrl(vid){return `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`;}
+
+function fetchTitle(videoObjId,url){
+  fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`)
+    .then(r=>r.ok?r.json():null)
+    .then(data=>{
+      if(!data||!data.title)return;
+      const v=videos.find(x=>x.id===videoObjId);
+      if(v&&!v.titleManual){
+        v.title=data.title;
+        saveVid(videos);
+        render();
+      }
+    })
+    .catch(()=>{});
+}
+
+function colorClass(outlier){
+  if(outlier===null||outlier===undefined||isNaN(outlier))return 'oc-gray';
+  if(outlier>100)return 'oc-rainbow';
+  if(outlier>10)return 'oc-red';
+  if(outlier>1)return 'oc-yellow';
+  return 'oc-gray';
+}
+
+function fmtOutlier(o){
+  if(o===null||o===undefined||isNaN(o))return '—';
+  return '×'+(Math.round(o*10)/10).toString();
+}
+
+// ── Channels ──
+function openChannelModal(){
+  document.getElementById('inp-ch-url').value='';
+  document.getElementById('inp-ch-name').value='';
+  document.getElementById('ov-channel').classList.add('open');
+  setTimeout(()=>document.getElementById('inp-ch-url').focus(),50);
+}
+function closeChannelModal(){document.getElementById('ov-channel').classList.remove('open');}
+
+function submitChannel(){
+  const rawUrl=document.getElementById('inp-ch-url').value.trim();
+  if(!rawUrl){alert('Colle le lien de la chaîne.');return;}
+  const url=normalizeUrl(rawUrl);
+  const nameOverride=document.getElementById('inp-ch-name').value.trim();
+  const ch={id:uid(),url,name:nameOverride||extractChannelName(url),addedAt:Date.now()};
+  channels.push(ch);
+  saveCh(channels);
+  activeChannelId=ch.id;
+  localStorage.setItem(LS_ACTIVE,activeChannelId);
+  closeChannelModal();
+  render();
+}
+
+function selectChannel(id){
+  activeChannelId=id;
+  localStorage.setItem(LS_ACTIVE,id);
+  render();
+}
+
+function deleteChannel(id,ev){
+  ev.stopPropagation();
+  if(!confirm('Supprimer cette chaîne et toutes ses vidéos loggées ?'))return;
+  channels=channels.filter(c=>c.id!==id);
+  videos=videos.filter(v=>v.channelId!==id);
+  saveCh(channels);saveVid(videos);
+  if(activeChannelId===id){
+    activeChannelId=channels.length?channels[0].id:null;
+    localStorage.setItem(LS_ACTIVE,activeChannelId||'');
+  }
+  render();
+}
+
+// ── Type tabs ──
+function setType(t){activeType=t;render();}
+
+// ── Videos ──
+let pickedType='long';
+function pickType(t){
+  pickedType=t;
+  document.getElementById('pick-long').classList.toggle('on',t==='long');
+  document.getElementById('pick-short').classList.toggle('on',t==='short');
+}
+
+function openVideoModal(){
+  if(!activeChannelId)return;
+  document.getElementById('inp-v-url').value='';
+  document.getElementById('inp-v-outlier').value='';
+  document.getElementById('inp-v-note').value='';
+  pickType(activeType);
+  const ch=channels.find(c=>c.id===activeChannelId);
+  document.getElementById('video-modal-sub').textContent=ch?`Pour ${ch.name} — colle le lien, écris l'outlier que tu observes.`:'Colle le lien, écris l\'outlier que tu observes.';
+  document.getElementById('ov-video').classList.add('open');
+  setTimeout(()=>document.getElementById('inp-v-url').focus(),50);
+}
+function closeVideoModal(){document.getElementById('ov-video').classList.remove('open');}
+
+function submitVideo(){
+  if(!activeChannelId)return;
+  const rawUrl=document.getElementById('inp-v-url').value.trim();
+  const outlierRaw=document.getElementById('inp-v-outlier').value;
+  if(!rawUrl){alert('Colle le lien de la vidéo.');return;}
+  if(outlierRaw===''){alert('Écris l\'outlier que tu observes (ex: 23.5).');return;}
+  const url=normalizeUrl(rawUrl);
+  const vid=extractVideoId(url);
+  const outlier=parseFloat(outlierRaw);
+  const note=document.getElementById('inp-v-note').value.trim();
+  const v={
+    id:uid(),channelId:activeChannelId,type:pickedType,url,vid,
+    title:vid?'Récupération du titre…':'Vidéo',titleManual:false,
+    outlier:isNaN(outlier)?null:outlier,note,addedAt:Date.now()
+  };
+  videos.push(v);
+  saveVid(videos);
+  activeType=pickedType;
+  closeVideoModal();
+  render();
+  if(vid)fetchTitle(v.id,url);
+}
+
+function currentChannelVideos(){
+  return videos.filter(v=>v.channelId===activeChannelId&&v.type===activeType)
+    .sort((a,b)=>(b.outlier??-1)-(a.outlier??-1));
+}
+
+// ── Notes modal ──
+function openNotesModal(videoId){
+  activeVideoId=videoId;
+  const v=videos.find(x=>x.id===videoId);
+  if(!v)return;
+  const thumbEl=document.getElementById('nm-thumb');
+  thumbEl.innerHTML=v.vid?`<img src="${thumbUrl(v.vid)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+  document.getElementById('nm-title').textContent=v.title||'Sans titre';
+  const badge=document.getElementById('nm-badge');
+  badge.className='v-badge '+colorClass(v.outlier);
+  badge.textContent=fmtOutlier(v.outlier);
+  const link=document.getElementById('nm-link');
+  link.href=v.url;
+  document.getElementById('nm-outlier').value=v.outlier??'';
+  document.getElementById('nm-notes').value=v.note||'';
+  document.getElementById('nm-save-flag').classList.remove('show');
+  document.getElementById('ov-notes').classList.add('open');
+}
+function closeNotesModal(){
+  document.getElementById('ov-notes').classList.remove('open');
+  activeVideoId=null;
+}
+function updateActiveOutlier(val){
+  const v=videos.find(x=>x.id===activeVideoId);
+  if(!v)return;
+  const n=parseFloat(val);
+  v.outlier=isNaN(n)?null:n;
+  saveVid(videos);
+  const badge=document.getElementById('nm-badge');
+  badge.className='v-badge '+colorClass(v.outlier);
+  badge.textContent=fmtOutlier(v.outlier);
+  render();
+}
+function scheduleNoteSave(){
+  clearTimeout(noteSaveTimer);
+  noteSaveTimer=setTimeout(()=>{
+    const v=videos.find(x=>x.id===activeVideoId);
+    if(!v)return;
+    v.note=document.getElementById('nm-notes').value;
+    saveVid(videos);
+    const flag=document.getElementById('nm-save-flag');
+    flag.classList.add('show');
+    setTimeout(()=>flag.classList.remove('show'),1400);
+  },500);
+}
+function deleteActiveVideo(){
+  if(!activeVideoId)return;
+  if(!confirm('Supprimer cette vidéo de ton tracker ?'))return;
+  videos=videos.filter(v=>v.id!==activeVideoId);
+  saveVid(videos);
+  closeNotesModal();
+  render();
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeChannelModal();closeVideoModal();closeNotesModal();}
+});
+
+// ── Render ──
+function render(){
+  channels=loadCh();videos=loadVid();
+  if(activeChannelId&&!channels.find(c=>c.id===activeChannelId))activeChannelId=channels.length?channels[0].id:null;
+  if(!activeChannelId&&channels.length)activeChannelId=channels[0].id;
+
+  const chRow=document.getElementById('ch-row');
+  chRow.innerHTML='';
+  channels.forEach(c=>{
+    const chip=document.createElement('div');
+    chip.className='ch-chip'+(c.id===activeChannelId?' on':'');
+    chip.onclick=()=>selectChannel(c.id);
+    const initial=(c.name||'?').replace('@','').charAt(0).toUpperCase()||'?';
+    chip.innerHTML=`<div class="ch-avatar">${initial}</div><div class="ch-name">${escapeHtml(c.name)}</div><button class="ch-del" title="Supprimer la chaîne">×</button>`;
+    chip.querySelector('.ch-del').onclick=(ev)=>deleteChannel(c.id,ev);
+    chRow.appendChild(chip);
+  });
+  const addBtn=document.createElement('button');
+  addBtn.className='ch-add';
+  addBtn.textContent='+ Ajouter une chaîne';
+  addBtn.onclick=openChannelModal;
+  chRow.appendChild(addBtn);
+
+  const btnAddVideo=document.getElementById('btn-add-video');
+  btnAddVideo.disabled=!activeChannelId;
+
+  document.getElementById('channel-empty').style.display=channels.length?'none':'block';
+  document.getElementById('channel-content').style.display=channels.length?'block':'none';
+  if(!channels.length)return;
+
+  document.getElementById('tab-long').classList.toggle('on',activeType==='long');
+  document.getElementById('tab-short').classList.toggle('on',activeType==='short');
+  const longCount=videos.filter(v=>v.channelId===activeChannelId&&v.type==='long').length;
+  const shortCount=videos.filter(v=>v.channelId===activeChannelId&&v.type==='short').length;
+  document.getElementById('count-long').textContent=longCount;
+  document.getElementById('count-short').textContent=shortCount;
+
+  const list=currentChannelVideos();
+  const grid=document.getElementById('v-grid');
+  grid.innerHTML='';
+  document.getElementById('type-empty').style.display=list.length?'none':'block';
+  document.getElementById('type-empty-title').textContent=activeType==='long'?'Aucune vidéo longue loggée':'Aucun short loggé';
+
+  if(list.length){
+    const valid=list.filter(v=>v.outlier!==null&&!isNaN(v.outlier));
+    const best=valid.length?Math.max(...valid.map(v=>v.outlier)):null;
+    const avg=valid.length?(valid.reduce((a,v)=>a+v.outlier,0)/valid.length):null;
+    document.getElementById('stat-line').innerHTML=
+      `<b>${list.length}</b> vidéo${list.length>1?'s':''} loggée${list.length>1?'s':''}`+
+      (best!==null?` · meilleur outlier <b>${fmtOutlier(best)}</b>`:'')+
+      (avg!==null?` · moyenne <b>${fmtOutlier(avg)}</b>`:'');
+  }else{
+    document.getElementById('stat-line').textContent='';
+  }
+
+  list.forEach(v=>{
+    const cls=colorClass(v.outlier);
+    const card=document.createElement('div');
+    card.className='v-card '+cls;
+    card.onclick=()=>openNotesModal(v.id);
+    const thumbHtml=v.vid?`<img class="v-thumb" src="${thumbUrl(v.vid)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'v-thumb-fallback',textContent:'🎬'}))">`:`<div class="v-thumb-fallback">🎬</div>`;
+    card.innerHTML=`
+      <div class="v-card-inner">
+        <div class="v-thumb-wrap">
+          ${thumbHtml}
+          <div class="v-badge ${cls}">${fmtOutlier(v.outlier)}</div>
+          <div class="v-caption">${escapeHtml(v.title||'Sans titre')}</div>
+        </div>
+        <div class="v-meta">
+          <span>${new Date(v.addedAt).toLocaleDateString('fr-FR')}</span>
+          ${v.note?'<span class="note-flag">📝 note</span>':'<span></span>'}
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(s){
+  const d=document.createElement('div');
+  d.textContent=s??'';
+  return d.innerHTML;
+}
+
+render();
+</script>
+</body>
+</html>
