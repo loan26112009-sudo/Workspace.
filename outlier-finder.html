@@ -243,6 +243,9 @@ button,input,textarea{font-family:'Inter',sans-serif}
 .disc-results-count{font-size:11.5px;color:var(--dim)}
 .disc-results-head .sort-wrap select{width:auto;padding:9px 14px}
 .disc-load-more-note{font-size:11px;color:var(--dim);margin-top:8px}
+.disc-checkbox-row{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:12px;color:var(--sub);cursor:pointer;line-height:1.4}
+.disc-checkbox-row input{width:16px;height:16px;accent-color:var(--acc);flex-shrink:0;cursor:pointer}
+.disc-similar-tag{color:var(--acc2);font-weight:700}
 @media(max-width:640px){.disc-mode-tabs{flex-wrap:wrap}.disc-actions{flex-direction:column}.disc-actions .btn{width:100%}.disc-results-head{flex-direction:column;align-items:stretch}.disc-results-head .sort-wrap{justify-content:space-between}}
 
 @media(max-width:640px){
@@ -369,13 +372,18 @@ button,input,textarea{font-family:'Inter',sans-serif}
       </div>
 
       <div id="disc-form-niche" class="disc-form">
-        <label class="f-lbl">Décris la niche en une phrase</label>
-        <input class="f-inp" id="disc-inp-niche" placeholder="ex : vulgarisation d'astrophysique en français" autocomplete="off">
+        <label class="f-lbl">Décris ta niche — une phrase, ou même une vraie demande</label>
+        <input class="f-inp" id="disc-inp-niche" placeholder="ex : gta 6 va sortir et je dois faire les meilleurs outlier" autocomplete="off">
+        <div class="f-hint">Pas besoin de trouver le bon mot-clé — écris ta niche comme tu la penses, même si elle est difficile à résumer. Une phrase complète peut lancer 2 recherches pour mieux cerner le sujet.</div>
       </div>
 
       <div id="disc-form-creators" class="disc-form" style="display:none">
         <label class="f-lbl">Noms de créateurs (un par ligne, même inconnus)</label>
         <textarea class="f-textarea" id="disc-inp-creators" style="min-height:90px" placeholder="ex :&#10;@lachaine1&#10;Nom de créateur 2&#10;@petitecréatrice"></textarea>
+        <label class="disc-checkbox-row">
+          <input type="checkbox" id="disc-inp-similar" checked>
+          <span>Ajouter des chaînes et vidéos similaires à ces créateurs (variété, même niche)</span>
+        </label>
       </div>
 
       <div class="disc-actions">
@@ -1127,8 +1135,13 @@ function updateLoadMoreUI(){
   const note=document.getElementById('disc-load-more-note');
   if(!discoverResults.length||!discoverState){wrap.style.display='none';return;}
   let canLoadMore=false;
-  if(discoverState.mode==='niche')canLoadMore=!!discoverState.nichePageToken;
-  else if(discoverState.mode==='creators')canLoadMore=Object.values(discoverState.channels).some(c=>!c.exhausted);
+  if(discoverState.mode==='niche'){
+    canLoadMore=discoverState.queries.some(q=>!q.exhausted);
+  }else if(discoverState.mode==='creators'){
+    const seedMore=Object.values(discoverState.channels).some(c=>!c.exhausted);
+    const similarMore=!!(discoverState.similarEnabled&&discoverState.similar&&discoverState.similar.queries.some(q=>!q.exhausted));
+    canLoadMore=seedMore||similarMore;
+  }
   wrap.style.display='block';
   btn.style.display=canLoadMore?'inline-flex':'none';
   btn.disabled=!canLoadMore;
@@ -1206,6 +1219,47 @@ function parseISO8601Duration(iso){
   return h*3600+mi*60+s;
 }
 
+const DISC_STOPWORDS=new Set(['le','la','les','un','une','des','de','du','ce','cet','cette','ces','et','ou','mais','donc','or','ni','car','que','qu','qui','quoi','dont','où','je','j','tu','il','elle','on','nous','vous','ils','elles','me','m','te','t','se','s','lui','leur','leurs','mon','ma','mes','ton','ta','tes','son','sa','ses','notre','nos','votre','vos','pour','par','avec','sans','dans','sur','sous','vers','chez','entre','pendant','avant','après','doit','dois','doivent','devrait','faut','faille','fasse','faire','fais','fait','va','vais','vas','vont','veut','veux','veulent','voudrais','voudrait','être','est','suis','es','sommes','êtes','sont','a','ai','as','avons','avez','ont','au','aux','à','plus','très','trop','bien','comme','ça','cela','tout','tous','toute','toutes','meilleur','meilleurs','meilleure','meilleures','comment','pourquoi','quand','combien','the','a','an','and','or','to','of','in','on','for','with','my','i','is','are','be','am','do','does','did','best','make','need','needs','want','wants','going','gonna','will','how','what','why','when','where','who','which','that','this','these','those','there','here','about','get','gets','got','good','great','really','just','so','out','up','new',
+  'outlier','outliers','niche','sujet','sujets','vidéo','vidéos','video','videos','chaine','chaines','chaîne','chaînes','créateur','créateurs','creator','creators','youtuber','youtubeur','youtubeurs','youtubeuse','youtubeuses','contenu','contenus','content']);
+
+function extractKeywords(text){
+  return (text||'')
+    .normalize('NFC')
+    .replace(/[^\p{L}\p{N}\s]/gu,' ')
+    .split(/\s+/)
+    .map(w=>w.trim())
+    .filter(w=>(w.length>1||/\d/.test(w))&&!DISC_STOPWORDS.has(w.toLowerCase()));
+}
+
+function buildDiscoverQueries(rawText){
+  const raw=(rawText||'').trim();
+  if(!raw)return [];
+  const kws=extractKeywords(raw);
+  const condensed=kws.slice(0,8).join(' ').trim();
+  const isSentence=raw.split(/\s+/).filter(Boolean).length>=5;
+  if(!isSentence||!condensed||condensed.toLowerCase()===raw.toLowerCase()){
+    return [{q:raw,order:'viewCount',pageToken:null,exhausted:false}];
+  }
+  return [
+    {q:raw,order:'relevance',pageToken:null,exhausted:false},
+    {q:condensed,order:'viewCount',pageToken:null,exhausted:false}
+  ];
+}
+
+function deriveSimilarQuery(titles,excludeNames,extraKeywords){
+  const freq={};
+  const excludeSet=new Set((excludeNames||[]).flatMap(n=>extractKeywords(n).map(w=>w.toLowerCase())));
+  const bump=(w)=>{
+    const lw=w.toLowerCase();
+    if(excludeSet.has(lw))return;
+    freq[lw]=(freq[lw]||0)+1;
+  };
+  (titles||[]).forEach(t=>extractKeywords(t).forEach(bump));
+  (extraKeywords||[]).forEach(bump);
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([w])=>w);
+  return sorted.slice(0,6).join(' ').trim();
+}
+
 async function ytFetch(url){
   const r=await fetch(url);
   let d;
@@ -1259,6 +1313,65 @@ async function resolveChannelIdByName(key,name){
   return null;
 }
 
+async function runQueryBatch(key,queryStates,seenVideoIds,channelsState,more){
+  const combinedItems=[];
+  for(const qState of queryStates){
+    if(more&&qState.exhausted)continue;
+    const pageParam=qState.pageToken?`&pageToken=${encodeURIComponent(qState.pageToken)}`:'';
+    const searchData=await ytFetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=${qState.order}&maxResults=25&q=${encodeURIComponent(qState.q)}${pageParam}&key=${encodeURIComponent(key)}`);
+    qState.pageToken=searchData.nextPageToken||null;
+    if(!searchData.nextPageToken)qState.exhausted=true;
+    const items=(searchData.items||[]).filter(it=>it.id&&it.id.videoId&&!seenVideoIds.has(it.id.videoId));
+    items.forEach(it=>seenVideoIds.add(it.id.videoId));
+    combinedItems.push(...items);
+  }
+  if(!combinedItems.length)return [];
+
+  const videoIds=combinedItems.map(it=>it.id.videoId);
+  const newChannelIds=[...new Set(combinedItems.map(it=>it.snippet.channelId))].filter(cid=>!channelsState[cid]);
+  if(newChannelIds.length){
+    const channelDetails=await fetchChannelsByIds(key,newChannelIds);
+    for(const c of channelDetails){
+      const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
+      let sampleIds=[];
+      if(uploadsId){
+        try{sampleIds=(await fetchUploadsPlaylistPage(key,uploadsId,15)).videoIds;}catch(e){}
+      }
+      channelsState[c.id]={info:c,uploadsId,sampleIds};
+    }
+    newChannelIds.forEach(cid=>{if(!channelsState[cid])channelsState[cid]={info:null,uploadsId:null,sampleIds:[]};});
+  }
+
+  const sampleIdsAll=[...new Set(Object.values(channelsState).flatMap(c=>c.sampleIds||[]))];
+  const idsToFetch=[...new Set([...videoIds,...sampleIdsAll])];
+  const videoDetails=await fetchVideosByIds(key,idsToFetch);
+  const vidById={};
+  videoDetails.forEach(v=>vidById[v.id]=v);
+
+  const results=[];
+  for(const it of combinedItems){
+    const vid=it.id.videoId;
+    const vd=vidById[vid];
+    if(!vd)continue;
+    const cid=it.snippet.channelId;
+    const chState=channelsState[cid]||{};
+    const sampleIds=(chState.sampleIds||[]).filter(x=>vidById[x]&&x!==vid);
+    const sampleViews=sampleIds.map(x=>+vidById[x].statistics.viewCount||0);
+    const med=median(sampleViews);
+    const views=+vd.statistics.viewCount||0;
+    const outlier=(med&&med>0)?views/med:null;
+    const durSec=parseISO8601Duration(vd.contentDetails.duration);
+    const ch=chState.info;
+    results.push({
+      videoId:vid,title:vd.snippet.title,views,outlier,
+      type:(durSec>0&&durSec<=60)?'short':'long',
+      channelId:cid,channelName:ch?ch.snippet.title:it.snippet.channelTitle,
+      channelCustomUrl:ch?ch.snippet.customUrl:''
+    });
+  }
+  return results;
+}
+
 async function runDiscoverSearch(){
   const key=getApiKey();
   if(!key){alert('Clé API manquante.');return;}
@@ -1298,64 +1411,21 @@ async function loadMoreDiscoverResults(){
 async function runNicheSearch(key,more){
   const niche=document.getElementById('disc-inp-niche').value.trim();
   if(!niche){alert('Décris la niche en une phrase.');return;}
-  if(!more)discoverState={mode:'niche',nichePageToken:null,seenVideoIds:new Set(),channels:{}};
+  if(!more)discoverState={mode:'niche',queries:buildDiscoverQueries(niche),seenVideoIds:new Set(),channels:{}};
   const st=discoverState;
-  setDiscoverStatus(more?'Recherche d\'autres résultats…':'Recherche sur YouTube…');
-  const pageParam=st.nichePageToken?`&pageToken=${encodeURIComponent(st.nichePageToken)}`:'';
-  const searchData=await ytFetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=viewCount&maxResults=25&q=${encodeURIComponent(niche)}${pageParam}&key=${encodeURIComponent(key)}`);
-  st.nichePageToken=searchData.nextPageToken||null;
-  const items=(searchData.items||[]).filter(it=>it.id&&it.id.videoId&&!st.seenVideoIds.has(it.id.videoId));
-  items.forEach(it=>st.seenVideoIds.add(it.id.videoId));
-  if(!items.length){
+  setDiscoverStatus(more?'Recherche d\'autres résultats…':(st.queries.length>1?'Recherche sur YouTube (2 angles pour bien cerner le sujet)…':'Recherche sur YouTube…'));
+  let newResults;
+  try{
+    newResults=await runQueryBatch(key,st.queries,st.seenVideoIds,st.channels,more);
+  }catch(err){
+    setDiscoverStatus('');
+    throw err;
+  }
+  if(!newResults.length){
     setDiscoverStatus(more?'Aucun résultat supplémentaire trouvé.':'Aucun résultat pour cette niche.');
     if(!more)renderDiscoverResults();
     updateLoadMoreUI();
     return;
-  }
-  const videoIds=items.map(it=>it.id.videoId);
-  const newChannelIds=[...new Set(items.map(it=>it.snippet.channelId))].filter(cid=>!st.channels[cid]);
-
-  if(newChannelIds.length){
-    setDiscoverStatus(`${items.length} vidéo(s) trouvée(s), analyse de ${newChannelIds.length} nouvelle(s) chaîne(s)…`);
-    const channelDetails=await fetchChannelsByIds(key,newChannelIds);
-    for(const c of channelDetails){
-      const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
-      let sampleIds=[];
-      if(uploadsId){
-        try{sampleIds=(await fetchUploadsPlaylistPage(key,uploadsId,15)).videoIds;}catch(e){}
-      }
-      st.channels[c.id]={info:c,uploadsId,sampleIds};
-    }
-    newChannelIds.forEach(cid=>{if(!st.channels[cid])st.channels[cid]={info:null,uploadsId:null,sampleIds:[]};});
-  }
-
-  const sampleIdsAll=[...new Set(Object.values(st.channels).flatMap(c=>c.sampleIds||[]))];
-  const idsToFetch=[...new Set([...videoIds,...sampleIdsAll])];
-  setDiscoverStatus('Calcul des outliers…');
-  const videoDetails=await fetchVideosByIds(key,idsToFetch);
-  const vidById={};
-  videoDetails.forEach(v=>vidById[v.id]=v);
-
-  const newResults=[];
-  for(const it of items){
-    const vid=it.id.videoId;
-    const vd=vidById[vid];
-    if(!vd)continue;
-    const cid=it.snippet.channelId;
-    const chState=st.channels[cid]||{};
-    const sampleIds=(chState.sampleIds||[]).filter(x=>vidById[x]&&x!==vid);
-    const sampleViews=sampleIds.map(x=>+vidById[x].statistics.viewCount||0);
-    const med=median(sampleViews);
-    const views=+vd.statistics.viewCount||0;
-    const outlier=(med&&med>0)?views/med:null;
-    const durSec=parseISO8601Duration(vd.contentDetails.duration);
-    const ch=chState.info;
-    newResults.push({
-      videoId:vid,title:vd.snippet.title,views,outlier,
-      type:(durSec>0&&durSec<=60)?'short':'long',
-      channelId:cid,channelName:ch?ch.snippet.title:it.snippet.channelTitle,
-      channelCustomUrl:ch?ch.snippet.customUrl:''
-    });
   }
   discoverResults=discoverResults.concat(newResults);
   setDiscoverStatus('');
@@ -1366,6 +1436,8 @@ async function runNicheSearch(key,more){
 async function runCreatorsSearch(key,more){
   const raw=document.getElementById('disc-inp-creators').value.trim();
   if(!raw){alert('Écris au moins un nom de créateur.');return;}
+  const similarEnabled=document.getElementById('disc-inp-similar').checked;
+
   if(!more){
     const names=raw.split('\n').map(s=>s.trim()).filter(Boolean);
     setDiscoverStatus(`Résolution de ${names.length} créateur(s)…`);
@@ -1378,7 +1450,12 @@ async function runCreatorsSearch(key,more){
     if(!channelIds.length){setDiscoverStatus('Aucune chaîne trouvée pour ces noms.',true);discoverState=null;updateLoadMoreUI();return;}
     setDiscoverStatus(`Analyse de ${channelIds.length} chaîne(s)…`);
     const channelDetails=await fetchChannelsByIds(key,channelIds);
-    discoverState={mode:'creators',channels:{}};
+    discoverState={
+      mode:'creators',
+      channels:{},
+      similarEnabled,
+      similar:similarEnabled?{queries:[],seenVideoIds:new Set(),channels:{},ready:false}:null
+    };
     channelDetails.forEach(c=>{
       const uploadsId=c.contentDetails&&c.contentDetails.relatedPlaylists&&c.contentDetails.relatedPlaylists.uploads;
       discoverState.channels[c.id]={info:c,uploadsId,videoIds:[],pageToken:null,exhausted:!uploadsId};
@@ -1403,38 +1480,62 @@ async function runCreatorsSearch(key,more){
   }
 
   const allVideoIds=[...new Set(Object.values(st.channels).flatMap(c=>c.videoIds))];
-  if(!allVideoIds.length){
+  let seedResults=[];
+  let vidById={};
+  if(allVideoIds.length){
+    setDiscoverStatus('Calcul des outliers…');
+    const videoDetails=await fetchVideosByIds(key,allVideoIds);
+    videoDetails.forEach(v=>vidById[v.id]=v);
+
+    Object.keys(st.channels).forEach(cid=>{
+      const chState=st.channels[cid];
+      const viewsById={};
+      chState.videoIds.forEach(id=>{if(vidById[id])viewsById[id]=+vidById[id].statistics.viewCount||0;});
+      chState.videoIds.forEach(id=>{
+        const vd=vidById[id];
+        if(!vd)return;
+        const others=chState.videoIds.filter(x=>x!==id&&viewsById[x]!==undefined).map(x=>viewsById[x]);
+        const med=median(others);
+        const views=viewsById[id];
+        const outlier=(med&&med>0)?views/med:null;
+        const durSec=parseISO8601Duration(vd.contentDetails.duration);
+        seedResults.push({
+          videoId:id,title:vd.snippet.title,views,outlier,
+          type:(durSec>0&&durSec<=60)?'short':'long',
+          channelId:cid,channelName:chState.info.snippet.title,
+          channelCustomUrl:chState.info.snippet.customUrl,
+          similar:false
+        });
+      });
+    });
+  }
+
+  if(st.similarEnabled&&st.similar&&!st.similar.ready){
+    const seedNames=Object.values(st.channels).map(c=>c.info&&c.info.snippet.title).filter(Boolean);
+    const allTitles=Object.values(st.channels).flatMap(c=>c.videoIds.map(id=>vidById[id]&&vidById[id].snippet.title).filter(Boolean));
+    const descKeywords=Object.values(st.channels).flatMap(c=>c.info?extractKeywords((c.info.snippet.description||'').slice(0,200)):[]);
+    const query=deriveSimilarQuery(allTitles,seedNames,descKeywords);
+    if(query)st.similar.queries=[{q:query,order:'viewCount',pageToken:null,exhausted:false}];
+    else st.similarEnabled=false;
+    st.similar.ready=true;
+  }
+
+  let similarResults=[];
+  if(st.similarEnabled&&st.similar&&st.similar.queries.length){
+    setDiscoverStatus(more?'Recherche de chaînes similaires supplémentaires…':'Recherche de chaînes et vidéos similaires…');
+    try{
+      similarResults=await runQueryBatch(key,st.similar.queries,st.similar.seenVideoIds,st.similar.channels,more);
+      similarResults.forEach(r=>r.similar=true);
+    }catch(e){console.error(e);}
+  }
+
+  if(!seedResults.length&&!similarResults.length&&!discoverResults.some(r=>r.similar)){
     setDiscoverStatus('Aucune vidéo exploitable pour ces créateurs.',true);
     updateLoadMoreUI();
     return;
   }
-  setDiscoverStatus('Calcul des outliers…');
-  const videoDetails=await fetchVideosByIds(key,allVideoIds);
-  const vidById={};
-  videoDetails.forEach(v=>vidById[v.id]=v);
-
-  const newResults=[];
-  Object.keys(st.channels).forEach(cid=>{
-    const chState=st.channels[cid];
-    const viewsById={};
-    chState.videoIds.forEach(id=>{if(vidById[id])viewsById[id]=+vidById[id].statistics.viewCount||0;});
-    chState.videoIds.forEach(id=>{
-      const vd=vidById[id];
-      if(!vd)return;
-      const others=chState.videoIds.filter(x=>x!==id&&viewsById[x]!==undefined).map(x=>viewsById[x]);
-      const med=median(others);
-      const views=viewsById[id];
-      const outlier=(med&&med>0)?views/med:null;
-      const durSec=parseISO8601Duration(vd.contentDetails.duration);
-      newResults.push({
-        videoId:id,title:vd.snippet.title,views,outlier,
-        type:(durSec>0&&durSec<=60)?'short':'long',
-        channelId:cid,channelName:chState.info.snippet.title,
-        channelCustomUrl:chState.info.snippet.customUrl
-      });
-    });
-  });
-  discoverResults=newResults;
+  const existingSimilar=discoverResults.filter(r=>r.similar);
+  discoverResults=[...seedResults,...existingSimilar,...similarResults];
   setDiscoverStatus('');
   renderDiscoverResults();
   updateLoadMoreUI();
@@ -1468,7 +1569,7 @@ function renderDiscoverResults(){
           <button type="button" class="v-add-btn"${alreadyImported?' disabled':''}>${alreadyImported?'✓ Ajoutée':'+ Ajouter'}</button>
           <div class="v-caption">${escapeHtml(r.title||'Sans titre')}</div>
         </div>
-        <div class="disc-res-ch"><svg class="icon"><use href="icons.svg#i-users"/></svg> ${escapeHtml(r.channelName||'')} · ${r.type==='short'?'Short':'Vidéo longue'}</div>
+        <div class="disc-res-ch"><svg class="icon"><use href="icons.svg#i-users"/></svg> ${escapeHtml(r.channelName||'')} · ${r.type==='short'?'Short':'Vidéo longue'}${r.similar?' · <span class="disc-similar-tag">Similaire</span>':''}</div>
       </div>`;
     const addBtn=card.querySelector('.v-add-btn');
     addBtn.addEventListener('click',()=>importDiscoverResult(r.videoId,addBtn));
