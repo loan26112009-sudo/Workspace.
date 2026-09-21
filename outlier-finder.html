@@ -1272,9 +1272,12 @@ function extractReferenceCreatorName(text){
 
 async function buildNicheQueryPlan(key,rawText){
   const raw=(rawText||'').trim();
-  if(!raw)return [];
+  const baseKeywords=extractKeywords(raw);
+  if(!raw)return {queries:[],relevanceKeywords:[]};
   const isSentence=raw.split(/\s+/).filter(Boolean).length>=5;
-  if(!isSentence)return [{q:raw,order:'viewCount',pageToken:null,exhausted:false}];
+  if(!isSentence){
+    return {queries:[{q:raw,order:'viewCount',pageToken:null,exhausted:false}],relevanceKeywords:baseKeywords};
+  }
 
   const queries=[{q:raw,order:'relevance',pageToken:null,exhausted:false}];
   const refName=extractReferenceCreatorName(raw);
@@ -1298,10 +1301,11 @@ async function buildNicheQueryPlan(key,rawText){
     }catch(e){/* falls back to plain keyword variety below */}
   }
   if(!varietyWords||!varietyWords.length){
-    varietyWords=extractKeywords(raw).filter(w=>w.toLowerCase()!==(refName||'').toLowerCase());
+    varietyWords=baseKeywords.filter(w=>w.toLowerCase()!==(refName||'').toLowerCase());
   }
   chunkKeywords(varietyWords,3,3).forEach(c=>queries.push({q:c,order:'viewCount',pageToken:null,exhausted:false}));
-  return queries;
+  const relevanceKeywords=[...new Set([...baseKeywords,...varietyWords])];
+  return {queries,relevanceKeywords};
 }
 
 async function ytFetch(url){
@@ -1357,7 +1361,18 @@ async function resolveChannelIdByName(key,name){
   return null;
 }
 
-async function runQueryBatch(key,queryStates,seenVideoIds,channelsState,more){
+// A video only survives if it shares at least one real keyword with the niche/reference — cuts out
+// the "brainrot" false positives YouTube's fuzzy search matches on a short/loose query.
+function passesRelevanceFilter(vd,relevanceKeywords){
+  if(!relevanceKeywords||!relevanceKeywords.length)return true;
+  const haystack=new Set([
+    ...extractKeywords(vd.snippet.title||''),
+    ...extractKeywords((vd.snippet.description||'').slice(0,300))
+  ].map(w=>w.toLowerCase()));
+  return relevanceKeywords.some(k=>haystack.has(k.toLowerCase()));
+}
+
+async function runQueryBatch(key,queryStates,seenVideoIds,channelsState,more,relevanceKeywords){
   const combinedItems=[];
   for(const qState of queryStates){
     if(more&&qState.exhausted)continue;
@@ -1397,6 +1412,7 @@ async function runQueryBatch(key,queryStates,seenVideoIds,channelsState,more){
     const vid=it.id.videoId;
     const vd=vidById[vid];
     if(!vd)continue;
+    if(!passesRelevanceFilter(vd,relevanceKeywords))continue;
     const cid=it.snippet.channelId;
     const chState=channelsState[cid]||{};
     const sampleIds=(chState.sampleIds||[]).filter(x=>vidById[x]&&x!==vid);
@@ -1457,13 +1473,14 @@ async function runNicheSearch(key,more){
   if(!niche){alert('Décris ta niche.');return;}
   if(!more){
     setDiscoverStatus('Analyse de ta niche…');
-    discoverState={mode:'niche',queries:await buildNicheQueryPlan(key,niche),seenVideoIds:new Set(),channels:{}};
+    const plan=await buildNicheQueryPlan(key,niche);
+    discoverState={mode:'niche',queries:plan.queries,relevanceKeywords:plan.relevanceKeywords,seenVideoIds:new Set(),channels:{}};
   }
   const st=discoverState;
   setDiscoverStatus(more?'Recherche d\'autres résultats…':(st.queries.length>1?`Recherche sur YouTube (${st.queries.length} angles pour bien cerner le sujet, avec de la variété)…`:'Recherche sur YouTube…'));
   let newResults;
   try{
-    newResults=await runQueryBatch(key,st.queries,st.seenVideoIds,st.channels,more);
+    newResults=await runQueryBatch(key,st.queries,st.seenVideoIds,st.channels,more,st.relevanceKeywords);
   }catch(err){
     setDiscoverStatus('');
     throw err;
@@ -1562,8 +1579,10 @@ async function runCreatorsSearch(key,more){
     const allTitles=Object.values(st.channels).flatMap(c=>c.videoIds.map(id=>vidById[id]&&vidById[id].snippet.title).filter(Boolean));
     const descKeywords=Object.values(st.channels).flatMap(c=>c.info?extractKeywords((c.info.snippet.description||'').slice(0,200)):[]);
     const query=deriveSimilarQuery(allTitles,seedNames,descKeywords);
-    if(query)st.similar.queries=[{q:query,order:'viewCount',pageToken:null,exhausted:false}];
-    else st.similarEnabled=false;
+    if(query){
+      st.similar.queries=[{q:query,order:'viewCount',pageToken:null,exhausted:false}];
+      st.similar.relevanceKeywords=extractKeywords(query);
+    }else st.similarEnabled=false;
     st.similar.ready=true;
   }
 
@@ -1571,7 +1590,7 @@ async function runCreatorsSearch(key,more){
   if(st.similarEnabled&&st.similar&&st.similar.queries.length){
     setDiscoverStatus(more?'Recherche de chaînes similaires supplémentaires…':'Recherche de chaînes et vidéos similaires…');
     try{
-      similarResults=await runQueryBatch(key,st.similar.queries,st.similar.seenVideoIds,st.similar.channels,more);
+      similarResults=await runQueryBatch(key,st.similar.queries,st.similar.seenVideoIds,st.similar.channels,more,st.similar.relevanceKeywords);
       similarResults.forEach(r=>r.similar=true);
     }catch(e){console.error(e);}
   }
@@ -1606,7 +1625,7 @@ function renderDiscoverResults(){
     const cls=colorClass(r.outlier);
     const card=document.createElement('div');
     card.className='v-card '+cls;
-    card.style.cursor='default';
+    card.title='Voir sur YouTube';
     const alreadyImported=videos.some(v=>v.vid===r.videoId);
     card.innerHTML=`
       <div class="v-card-inner">
@@ -1618,8 +1637,12 @@ function renderDiscoverResults(){
         </div>
         <div class="disc-res-ch"><svg class="icon"><use href="icons.svg#i-users"/></svg> ${escapeHtml(r.channelName||'')} · ${r.type==='short'?'Short':'Vidéo longue'}${r.similar?' · <span class="disc-similar-tag">Similaire</span>':''}</div>
       </div>`;
+    card.addEventListener('click',()=>{
+      const url=`https://www.youtube.com/watch?v=${encodeURIComponent(r.videoId)}`;
+      if(isSafeUrl(url))window.open(url,'_blank','noopener,noreferrer');
+    });
     const addBtn=card.querySelector('.v-add-btn');
-    addBtn.addEventListener('click',()=>importDiscoverResult(r.videoId,addBtn));
+    addBtn.addEventListener('click',(ev)=>{ev.stopPropagation();importDiscoverResult(r.videoId,addBtn);});
     grid.appendChild(card);
   });
   updateLoadMoreUI();
