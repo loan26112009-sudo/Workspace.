@@ -72,6 +72,7 @@ button,input,textarea{font-family:'Inter',sans-serif}
 
 .bk-file-drop{border:1.5px dashed var(--bh);border-radius:12px;padding:22px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:14px}
 .bk-file-drop:hover,.bk-file-drop.drag{border-color:var(--acc);background:rgba(99,102,241,.06)}
+.bk-file-drop:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
 .bk-file-drop .icon{width:24px;height:24px;color:var(--dim);margin-bottom:8px}
 .bk-file-drop-txt{font-size:12.5px;font-weight:700;color:var(--sub)}
 .bk-file-drop-sub{font-size:11px;color:var(--dim);margin-top:4px}
@@ -135,12 +136,12 @@ button,input,textarea{font-family:'Inter',sans-serif}
     <div class="bk-card-title"><svg class="icon"><use href="icons.svg#i-upload"/></svg> Importer une sauvegarde</div>
     <div class="bk-card-sub">Sur ton téléphone (ou n'importe quel autre navigateur), restaure une sauvegarde exportée depuis un autre appareil. Ça complète tes données existantes ici — rien n'est perdu.</div>
 
-    <div class="bk-file-drop" id="bk-drop" onclick="document.getElementById('bk-file-input').click()">
+    <div class="bk-file-drop" id="bk-drop" tabindex="0" role="button" aria-label="Choisir un fichier de sauvegarde">
       <svg class="icon"><use href="icons.svg#i-upload"/></svg>
       <div class="bk-file-drop-txt">Choisis ton fichier de sauvegarde</div>
       <div class="bk-file-drop-sub">.json — ou dépose-le ici</div>
-      <input type="file" accept="application/json,.json" class="bk-file-input" id="bk-file-input" onchange="handleImportFile(event)">
     </div>
+    <input type="file" accept="application/json,.json" class="bk-file-input" id="bk-file-input" onchange="handleImportFile(event)">
 
     <div class="bk-divider">OU</div>
 
@@ -211,12 +212,12 @@ function refreshExportSummary(){
   document.getElementById('bk-export-copy-btn').disabled=keys.length===0;
 }
 
-function flashFlag(id,msg){
+function flashFlag(id,msg,duration){
   const el=document.getElementById(id);
   if(!el)return;
   el.textContent=msg;
   el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2200);
+  setTimeout(()=>el.classList.remove('show'),duration||2200);
 }
 
 function downloadExport(){
@@ -251,7 +252,13 @@ async function copyExportCode(){
     await navigator.clipboard.writeText(ta.value);
     flashFlag('bk-copy-flag','✓ Copié dans le presse-papiers');
   }catch(e){
-    try{ta.select();document.execCommand('copy');flashFlag('bk-copy-flag','✓ Copié');}catch(e2){}
+    try{
+      ta.select();
+      if(!document.execCommand('copy'))throw new Error('copy failed');
+      flashFlag('bk-copy-flag','✓ Copié');
+    }catch(e2){
+      flashFlag('bk-copy-flag','Copie impossible automatiquement — sélectionne le texte et fais Ctrl/Cmd+C',5000);
+    }
   }
 }
 
@@ -259,20 +266,32 @@ function restoreFromPayloadString(str){
   let payload;
   try{payload=JSON.parse(str);}
   catch(e){throw new Error('Ce texte n\'est pas une sauvegarde Workspace valide (JSON illisible).');}
-  if(!payload||typeof payload!=='object'||!payload.data||typeof payload.data!=='object'){
+  if(!payload||typeof payload!=='object'||Array.isArray(payload)||!payload.data||typeof payload.data!=='object'||Array.isArray(payload.data)){
     throw new Error('Format de sauvegarde non reconnu.');
   }
   const keys=Object.keys(payload.data);
   if(!keys.length)throw new Error('Cette sauvegarde est vide.');
   let count=0;
+  const failed=[];
   keys.forEach(k=>{
-    try{localStorage.setItem(k,payload.data[k]);count++;}catch(e){}
+    const raw=payload.data[k];
+    const val=(typeof raw==='string')?raw:JSON.stringify(raw);
+    try{localStorage.setItem(k,val);count++;}
+    catch(e){failed.push(k);}
   });
-  return count;
+  return {count,failed,total:keys.length};
 }
 
-function onImportSuccess(count){
+function onImportSuccess(result){
   const status=document.getElementById('bk-import-status');
+  const {count,failed,total}=result;
+  if(failed.length){
+    status.className='bk-status err';
+    status.style.display='flex';
+    status.textContent=`⚠ ${count}/${total} élément(s) restauré(s), ${failed.length} en échec (espace de stockage plein sur cet appareil). Libère de la place puis réessaie.`;
+    refreshExportSummary();
+    return;
+  }
   status.className='bk-status ok';
   status.style.display='flex';
   status.textContent=`✓ ${count} élément${count>1?'s':''} restauré${count>1?'s':''}. Rechargement…`;
@@ -290,8 +309,8 @@ function onImportError(msg){
 function confirmAndRestore(str){
   if(!confirm('Ça va remplacer, sur cet appareil, les données qui portent le même nom que celles de la sauvegarde (le reste ne bouge pas). Continuer ?'))return;
   try{
-    const count=restoreFromPayloadString(str);
-    onImportSuccess(count);
+    const result=restoreFromPayloadString(str);
+    onImportSuccess(result);
   }catch(e){
     onImportError(e.message);
   }
@@ -314,9 +333,14 @@ function importFromCode(){
 }
 
 const drop=document.getElementById('bk-drop');
-['dragenter','dragover'].forEach(evt=>drop.addEventListener(evt,e=>{e.preventDefault();drop.classList.add('drag');}));
-['dragleave','drop'].forEach(evt=>drop.addEventListener(evt,e=>{e.preventDefault();drop.classList.remove('drag');}));
+let dropDepth=0;
+drop.addEventListener('dragenter',e=>{e.preventDefault();dropDepth++;drop.classList.add('drag');});
+drop.addEventListener('dragover',e=>e.preventDefault());
+drop.addEventListener('dragleave',e=>{e.preventDefault();dropDepth=Math.max(0,dropDepth-1);if(dropDepth===0)drop.classList.remove('drag');});
 drop.addEventListener('drop',e=>{
+  e.preventDefault();
+  dropDepth=0;
+  drop.classList.remove('drag');
   const file=e.dataTransfer.files&&e.dataTransfer.files[0];
   if(!file)return;
   const reader=new FileReader();
@@ -324,6 +348,13 @@ drop.addEventListener('drop',e=>{
   reader.onerror=()=>onImportError('Impossible de lire ce fichier.');
   reader.readAsText(file);
 });
+function openBackupFilePicker(){document.getElementById('bk-file-input').click();}
+drop.addEventListener('click',openBackupFilePicker);
+drop.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();openBackupFilePicker();}
+});
+
+window.addEventListener('storage',()=>refreshExportSummary());
 
 refreshExportSummary();
 </script>
