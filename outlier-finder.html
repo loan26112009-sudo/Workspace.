@@ -373,8 +373,8 @@ button,input,textarea{font-family:'Inter',sans-serif}
 
       <div id="disc-form-niche" class="disc-form">
         <label class="f-lbl">Décris ta niche — une phrase, ou même une vraie demande</label>
-        <input class="f-inp" id="disc-inp-niche" placeholder="ex : gta 6 va sortir et je dois faire les meilleurs outlier" autocomplete="off">
-        <div class="f-hint">Pas besoin de trouver le bon mot-clé — écris ta niche comme tu la penses, même si elle est difficile à résumer. Une phrase complète peut lancer 2 recherches pour mieux cerner le sujet.</div>
+        <input class="f-inp" id="disc-inp-niche" placeholder="ex : je fais des défis comme MrBeast, ou : gta 6 va sortir je veux les meilleurs outlier" autocomplete="off">
+        <div class="f-hint">Pas besoin de trouver le bon mot-clé — écris ta niche comme tu la penses, même si elle est difficile à résumer. Astuce : "comme &lt;créateur&gt;" (ex : "je fais des défis comme MrBeast") va chercher la variété directement dans son univers. Une phrase complète peut lancer jusqu'à 4 recherches pour avoir de vrais sujets différents.</div>
       </div>
 
       <div id="disc-form-creators" class="disc-form" style="display:none">
@@ -1231,22 +1231,7 @@ function extractKeywords(text){
     .filter(w=>(w.length>1||/\d/.test(w))&&!DISC_STOPWORDS.has(w.toLowerCase()));
 }
 
-function buildDiscoverQueries(rawText){
-  const raw=(rawText||'').trim();
-  if(!raw)return [];
-  const kws=extractKeywords(raw);
-  const condensed=kws.slice(0,8).join(' ').trim();
-  const isSentence=raw.split(/\s+/).filter(Boolean).length>=5;
-  if(!isSentence||!condensed||condensed.toLowerCase()===raw.toLowerCase()){
-    return [{q:raw,order:'viewCount',pageToken:null,exhausted:false}];
-  }
-  return [
-    {q:raw,order:'relevance',pageToken:null,exhausted:false},
-    {q:condensed,order:'viewCount',pageToken:null,exhausted:false}
-  ];
-}
-
-function deriveSimilarQuery(titles,excludeNames,extraKeywords){
+function rankKeywords(titles,excludeNames,extraKeywords){
   const freq={};
   const excludeSet=new Set((excludeNames||[]).flatMap(n=>extractKeywords(n).map(w=>w.toLowerCase())));
   const bump=(w)=>{
@@ -1256,8 +1241,67 @@ function deriveSimilarQuery(titles,excludeNames,extraKeywords){
   };
   (titles||[]).forEach(t=>extractKeywords(t).forEach(bump));
   (extraKeywords||[]).forEach(bump);
-  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([w])=>w);
-  return sorted.slice(0,6).join(' ').trim();
+  return Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([w])=>w);
+}
+
+function deriveSimilarQuery(titles,excludeNames,extraKeywords){
+  return rankKeywords(titles,excludeNames,extraKeywords).slice(0,6).join(' ').trim();
+}
+
+function chunkKeywords(words,maxChunks,perChunk){
+  const chunks=[];
+  for(let i=0;i<words.length&&chunks.length<maxChunks;i+=perChunk){
+    const c=words.slice(i,i+perChunk).join(' ').trim();
+    if(c)chunks.push(c);
+  }
+  return chunks;
+}
+
+// Picks up on "comme X" / "façon X" / "style X" — X is treated as an example creator to draw real topic variety from, not searched for literally.
+function extractReferenceCreatorName(text){
+  const m=(text||'').match(/\b(?:comme|façon|style|genre|type)\s+([^\s,.;!?]+(?:\s+[^\s,.;!?]+)?)/i);
+  if(!m)return null;
+  const kept=[];
+  for(const w of m[1].trim().split(/\s+/)){
+    if(DISC_STOPWORDS.has(w.toLowerCase()))break;
+    kept.push(w);
+  }
+  const candidate=kept.join(' ');
+  return extractKeywords(candidate).length?candidate:null;
+}
+
+async function buildNicheQueryPlan(key,rawText){
+  const raw=(rawText||'').trim();
+  if(!raw)return [];
+  const isSentence=raw.split(/\s+/).filter(Boolean).length>=5;
+  if(!isSentence)return [{q:raw,order:'viewCount',pageToken:null,exhausted:false}];
+
+  const queries=[{q:raw,order:'relevance',pageToken:null,exhausted:false}];
+  const refName=extractReferenceCreatorName(raw);
+  let varietyWords=null;
+
+  if(refName){
+    try{
+      const refChanId=await resolveChannelIdByName(key,refName);
+      if(refChanId){
+        const chDetails=await fetchChannelsByIds(key,[refChanId]);
+        const ch=chDetails[0];
+        const uploadsId=ch&&ch.contentDetails&&ch.contentDetails.relatedPlaylists&&ch.contentDetails.relatedPlaylists.uploads;
+        if(ch&&uploadsId){
+          const sample=await fetchUploadsPlaylistPage(key,uploadsId,20);
+          const titleDetails=sample.videoIds.length?await fetchVideosByIds(key,sample.videoIds):[];
+          const titles=titleDetails.map(v=>v.snippet.title);
+          varietyWords=rankKeywords(titles,[ch.snippet.title,refName],extractKeywords((ch.snippet.description||'').slice(0,200)));
+          setDiscoverStatus(`Chaîne de référence trouvée : ${ch.snippet.title} — recherche de sujets variés dans son univers…`);
+        }
+      }
+    }catch(e){/* falls back to plain keyword variety below */}
+  }
+  if(!varietyWords||!varietyWords.length){
+    varietyWords=extractKeywords(raw).filter(w=>w.toLowerCase()!==(refName||'').toLowerCase());
+  }
+  chunkKeywords(varietyWords,3,3).forEach(c=>queries.push({q:c,order:'viewCount',pageToken:null,exhausted:false}));
+  return queries;
 }
 
 async function ytFetch(url){
@@ -1410,10 +1454,13 @@ async function loadMoreDiscoverResults(){
 
 async function runNicheSearch(key,more){
   const niche=document.getElementById('disc-inp-niche').value.trim();
-  if(!niche){alert('Décris la niche en une phrase.');return;}
-  if(!more)discoverState={mode:'niche',queries:buildDiscoverQueries(niche),seenVideoIds:new Set(),channels:{}};
+  if(!niche){alert('Décris ta niche.');return;}
+  if(!more){
+    setDiscoverStatus('Analyse de ta niche…');
+    discoverState={mode:'niche',queries:await buildNicheQueryPlan(key,niche),seenVideoIds:new Set(),channels:{}};
+  }
   const st=discoverState;
-  setDiscoverStatus(more?'Recherche d\'autres résultats…':(st.queries.length>1?'Recherche sur YouTube (2 angles pour bien cerner le sujet)…':'Recherche sur YouTube…'));
+  setDiscoverStatus(more?'Recherche d\'autres résultats…':(st.queries.length>1?`Recherche sur YouTube (${st.queries.length} angles pour bien cerner le sujet, avec de la variété)…`:'Recherche sur YouTube…'));
   let newResults;
   try{
     newResults=await runQueryBatch(key,st.queries,st.seenVideoIds,st.channels,more);
@@ -1422,7 +1469,7 @@ async function runNicheSearch(key,more){
     throw err;
   }
   if(!newResults.length){
-    setDiscoverStatus(more?'Aucun résultat supplémentaire trouvé.':'Aucun résultat pour cette niche.');
+    setDiscoverStatus(more?'Aucun résultat supplémentaire trouvé.':'Aucun résultat pour cette niche — essaie de la décrire autrement, ou donne un exemple de créateur avec "comme …".',true);
     if(!more)renderDiscoverResults();
     updateLoadMoreUI();
     return;
