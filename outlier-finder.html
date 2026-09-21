@@ -1244,10 +1244,6 @@ function rankKeywords(titles,excludeNames,extraKeywords){
   return Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([w])=>w);
 }
 
-function deriveSimilarQuery(titles,excludeNames,extraKeywords){
-  return rankKeywords(titles,excludeNames,extraKeywords).slice(0,6).join(' ').trim();
-}
-
 function chunkKeywords(words,maxChunks,perChunk){
   const chunks=[];
   for(let i=0;i<words.length&&chunks.length<maxChunks;i+=perChunk){
@@ -1578,10 +1574,14 @@ async function runCreatorsSearch(key,more){
     const seedNames=Object.values(st.channels).map(c=>c.info&&c.info.snippet.title).filter(Boolean);
     const allTitles=Object.values(st.channels).flatMap(c=>c.videoIds.map(id=>vidById[id]&&vidById[id].snippet.title).filter(Boolean));
     const descKeywords=Object.values(st.channels).flatMap(c=>c.info?extractKeywords((c.info.snippet.description||'').slice(0,200)):[]);
-    const query=deriveSimilarQuery(allTitles,seedNames,descKeywords);
-    if(query){
-      st.similar.queries=[{q:query,order:'viewCount',pageToken:null,exhausted:false}];
-      st.similar.relevanceKeywords=extractKeywords(query);
+    const ranked=rankKeywords(allTitles,seedNames,descKeywords);
+    // Chunked into several short queries rather than one long combined phrase — a single 6-word
+    // blob acts almost like an AND search and can return zero results when source titles are
+    // topically varied (e.g. a challenge channel where every video covers a different stunt).
+    const chunks=chunkKeywords(ranked,4,3);
+    if(chunks.length){
+      st.similar.queries=chunks.map(c=>({q:c,order:'viewCount',pageToken:null,exhausted:false}));
+      st.similar.relevanceKeywords=ranked.slice(0,12);
     }else st.similarEnabled=false;
     st.similar.ready=true;
   }
