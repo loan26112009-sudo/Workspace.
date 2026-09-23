@@ -369,41 +369,35 @@ document.querySelectorAll('.role-card').forEach(function(card){
   });
 });
 
-// ── Firebase Sync ──
-if (window.FBSYNC) {
-  FBSYNC.ready().then(function(user) {
-    var btn = document.getElementById('sync-btn');
-    if (user) {
-      btn.style.display = 'flex';
-      btn.classList.add('active');
-      if (user.photoURL) {
-        btn.innerHTML = '<img src="' + user.photoURL + '" alt="">';
-      } else {
-        btn.textContent = (user.displayName || user.email || 'G')[0].toUpperCase();
-      }
-      btn.title = (user.displayName || user.email) + ' — cliquer pour déconnecter la sync';
-      FBSYNC.loadSession().then(function(data) {
-        if (data && data.role && !selectedRole) {
-          document.getElementById('card-' + data.role).classList.add('active');
-          selectedRole = data.role;
-          var zone = document.getElementById('pwd-zone');
-          var label = document.getElementById('pwd-label');
-          var inp = document.getElementById('pwd-inp');
-          var btnE = document.getElementById('btn-enter');
-          label.textContent = data.role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
-          inp.className = 'pwd-inp ' + data.role;
-          btnE.className = 'btn-enter ' + data.role;
-          zone.classList.add('visible');
-          document.getElementById('footer-bar').classList.add('hidden');
-          setTimeout(function(){ inp.focus(); }, 80);
-        }
-      });
-    } else {
-      btn.style.display = 'flex';
-      btn.title = 'Connecter Google pour sync cross-device';
+// Au chargement : vérifier si on revient d'un redirect Google
+// ou si une session Firebase est déjà active
+FBSYNC.ready().then(function(user) {
+  if (!user) {
+    // Vérifier si on revient d'un redirect Google
+    return FBSYNC.getRedirectResult();
+  }
+  // Déjà connecté → restaurer la session
+  return FBSYNC.restoreSession().then(function(restored) {
+    if (restored) {
+      AUTH.goHome(); // redirige vers index.html ou worker-home.html
     }
   });
-}
+}).then(function(result) {
+  // result = résultat de getRedirectResult (si on est passé par ce chemin)
+  if (result && result.user) {
+    // On vient de signer avec Google → restaurer la session depuis Firestore
+    FBSYNC.restoreSession().then(function(restored) {
+      if (restored) {
+        AUTH.goHome();
+      } else {
+        // Ce compte Google n'a pas encore de session sauvegardée
+        // → l'utilisateur doit d'abord se connecter avec son mot de passe
+        alert("Compte Google reconnu, mais tu dois d'abord te connecter avec ton mot de passe au moins une fois.");
+        FBSYNC.signOut();
+      }
+    });
+  }
+}).catch(function() {});
 
 function onSyncClick() {
   if (!window.FBSYNC) return;
