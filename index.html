@@ -255,11 +255,20 @@ html,body{overflow-x:hidden;max-width:100%}
     <div class="nav-clock" id="app-clock">--:--</div>
     <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-settings"/></svg></button>
     <div id="creator-name-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:#a5b4fc;letter-spacing:.04em;display:none"></div>
+    <div id="nav-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid rgba(99,102,241,.3);box-shadow:0 0 0 2px rgba(99,102,241,.1);cursor:default"></div>
     <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" style="font-size:16px">☀️</button>
     <button class="icon-btn" onclick="AUTH.logout()" title="Se déconnecter" style="color:rgba(255,255,255,.3)"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-logout"/></svg></button>
   </div>
 </nav>
-<script>(function(){var n=AUTH.getName();var el=document.getElementById('creator-name-badge');if(el&&n){el.textContent='✦ '+n;el.style.display='';}})()</script>
+<script>(function(){
+  var n=AUTH.getName();
+  var badge=document.getElementById('creator-name-badge');
+  if(badge&&n){badge.textContent='✦ '+n;badge.style.display='';}
+  var greet=document.getElementById('hero-greeting');
+  if(greet&&n) greet.textContent='Bonjour '+n.split(' ')[0]+' !';
+  var av=document.getElementById('nav-avatar');
+  if(av&&n) av.textContent=n[0].toUpperCase();
+})()</script>
 
 <div id="yt-setup-zone" style="display:none">
   <div class="yt-setup-inner">
@@ -275,7 +284,7 @@ html,body{overflow-x:hidden;max-width:100%}
 <div class="hero">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="hero-grid" aria-hidden="true"></div>
-  <div class="hero-badge reveal"><div class="hero-badge-dot"></div>WORKSPACE — Actif</div>
+  <div class="hero-badge reveal"><div class="hero-badge-dot"></div><span id="hero-greeting">WORKSPACE — Actif</span></div>
   <div class="hero-title reveal">Ton studio YouTube<br><span class="acc">tout en un</span></div>
   <div class="hero-sub reveal">Projets, calendrier, école — tout centralisé pour créer sans friction.</div>
   <div class="hero-cta reveal">
@@ -499,6 +508,18 @@ html,body{overflow-x:hidden;max-width:100%}
 function toggleTheme(){var html=document.documentElement;var cur=html.getAttribute('data-theme')==='light'?'dark':'light';html.setAttribute('data-theme',cur);localStorage.setItem('ws_theme',cur);var btn=document.getElementById('theme-btn');if(btn)btn.textContent=cur==='light'?'🌙':'☀️';}
 
 // Google Sync
+function setNavAvatar(photoURL, name){
+  var el=document.getElementById('nav-avatar');
+  if(!el)return;
+  if(photoURL){
+    el.textContent='';
+    el.style.padding='0';
+    el.innerHTML='<img src="'+photoURL+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block">';
+  } else {
+    el.innerHTML='';
+    el.textContent=(name||'?')[0].toUpperCase();
+  }
+}
 function gsyncConnect(){
   var btn=document.getElementById('gsync-btn');
   if(btn){btn.textContent='Redirection Google...';btn.style.opacity='.7';btn.disabled=true;}
@@ -513,6 +534,7 @@ function gsyncShow(user){
   var ph=document.getElementById('gsync-avatar-ph');
   if(user.photoURL){av.src=user.photoURL;av.hidden=false;ph.hidden=true;}
   else{ph.textContent=first?first[0].toUpperCase():'?';ph.hidden=false;av.hidden=true;}
+  setNavAvatar(user.photoURL||null, first||AUTH.getName());
   document.getElementById('gsync-guest').hidden=true;
   document.getElementById('gsync-connected').hidden=false;
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
