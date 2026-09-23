@@ -227,9 +227,11 @@ html,body{overflow-x:hidden;max-width:100%}
   <div class="nav-right">
     <div class="nav-clock" id="app-clock">--:--</div>
     <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-settings"/></svg></button>
+    <div id="creator-name-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:#a5b4fc;letter-spacing:.04em;display:none"></div>
     <button class="icon-btn" onclick="AUTH.logout()" title="Se déconnecter" style="color:rgba(255,255,255,.3)"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-logout"/></svg></button>
   </div>
 </nav>
+<script>(function(){var n=AUTH.getName();var el=document.getElementById('creator-name-badge');if(el&&n){el.textContent='✦ '+n;el.style.display='';}})()</script>
 
 <div id="yt-setup-zone" style="display:none">
   <div class="yt-setup-inner">

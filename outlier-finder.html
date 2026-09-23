@@ -267,13 +267,15 @@ button,input,textarea{font-family:'Inter',sans-serif}
 <script>AUTH.require(['creator','worker']);</script>
 
 <div class="tb">
-  <a href="index.html" class="tb-back">← Workspace</a>
+  <a href="#" class="tb-back" onclick="event.preventDefault();AUTH.goHome()">← Workspace</a>
   <div class="tb-logo" style="display:flex;align-items:center;gap:9px"><img src="outlier-icon.png" alt="" style="width:24px;height:24px;object-fit:contain;border-radius:6px">Outlier <span>Finder</span></div>
   <div class="tb-sp"></div>
   <a href="backup.html" class="tb-back" style="border-left:1px solid var(--b);border-right:none"><svg class="icon"><use href="icons.svg#i-cloud-sync"/></svg> Sauvegarde</a>
   <a href="tools.html" class="tb-back" style="border-right:none"><svg class="icon"><use href="icons.svg#i-grid"/></svg> Tous les outils</a>
+  <div id="of-name-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:#a5b4fc;letter-spacing:.04em;display:none"></div>
   <button class="tb-add" id="btn-add-video" onclick="openVideoModal()" disabled>+ Ajouter une vidéo</button>
 </div>
+<script>(function(){var n=AUTH.getName();var r=AUTH.getRole();var el=document.getElementById('of-name-badge');if(el&&n){el.textContent='✦ '+n;el.style.display='';}else if(el&&r==='worker'){el.textContent='👥 Worker';el.style.display='';el.style.background='rgba(245,158,11,.1)';el.style.borderColor='rgba(245,158,11,.2)';el.style.color='#fbbf24';}})()</script>
 
 <div class="page-head">
   <img src="outlier-icon.png" alt="Outlier Finder" class="hero-icon">

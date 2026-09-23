@@ -1,30 +1,49 @@
 // ─── WORKSPACE AUTH ───────────────────────────────────────────────────────────
-// Change CREATOR_PWD and WORKER_PWD to your preferred passwords.
-// These are stored in plain text here — the site is for a trusted team only.
+// Three creator accounts + one worker account.
+// Passwords are stored in plain text — trusted team only, no backend.
 // ──────────────────────────────────────────────────────────────────────────────
 (function () {
-  var CREATOR_PWD = 'loan2024';   // creator password — change this
-  var WORKER_PWD  = 'team2024';   // worker  password — change this
-  var KEY = 'ws_role';
+  // Map password → creator name
+  var CREATORS = {
+    'loan2024':    'Loan',
+    'wondray2024': 'Wondray',
+    'ykud2024':    'Ykud',
+  };
+  var WORKER_PWD = 'team2024';
+  var ROLE_KEY = 'ws_role';
+  var NAME_KEY = 'ws_name';
 
   window.AUTH = {
     getRole: function () {
-      return localStorage.getItem(KEY); // 'creator' | 'worker' | null
+      return localStorage.getItem(ROLE_KEY); // 'creator' | 'worker' | null
+    },
+
+    getName: function () {
+      return localStorage.getItem(NAME_KEY) || '';
     },
 
     login: function (pwd) {
-      if (pwd === CREATOR_PWD) { localStorage.setItem(KEY, 'creator'); return 'creator'; }
-      if (pwd === WORKER_PWD)  { localStorage.setItem(KEY, 'worker');  return 'worker';  }
+      if (CREATORS[pwd]) {
+        localStorage.setItem(ROLE_KEY, 'creator');
+        localStorage.setItem(NAME_KEY, CREATORS[pwd]);
+        return 'creator';
+      }
+      if (pwd === WORKER_PWD) {
+        localStorage.setItem(ROLE_KEY, 'worker');
+        localStorage.removeItem(NAME_KEY);
+        return 'worker';
+      }
       return null;
     },
 
     logout: function () {
-      localStorage.removeItem(KEY);
+      localStorage.removeItem(ROLE_KEY);
+      localStorage.removeItem(NAME_KEY);
       window.location.href = 'login.html';
     },
 
     // allowed: array of roles, e.g. ['creator'] or ['creator','worker']
-    // fallback: where to redirect when role is set but not allowed (default: login.html)
+    // fallback: where to redirect when role is set but not allowed
     require: function (allowed, fallback) {
       var r = this.getRole();
       if (!r) { window.location.replace('login.html'); return false; }
@@ -33,6 +52,11 @@
         return false;
       }
       return true;
+    },
+
+    // Navigate to the right home page based on role
+    goHome: function () {
+      window.location.href = this.getRole() === 'worker' ? 'worker-home.html' : 'index.html';
     }
   };
 })();

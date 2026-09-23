@@ -190,9 +190,11 @@ main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;m
   var role = AUTH.getRole();
   var badge = document.getElementById('role-badge');
   var tag = document.getElementById('welcome-tag');
+  var name = AUTH.getName();
   if(role === 'creator'){
-    if(badge){ badge.style.background='rgba(99,102,241,.14)'; badge.style.borderColor='rgba(99,102,241,.28)'; badge.style.color='#a5b4fc'; badge.textContent='✦ Créateur'; }
-    if(tag){ tag.textContent='Espace Créateur'; }
+    var label = name ? '✦ '+name : '✦ Créateur';
+    if(badge){ badge.style.background='rgba(99,102,241,.14)'; badge.style.borderColor='rgba(99,102,241,.28)'; badge.style.color='#a5b4fc'; badge.textContent=label; }
+    if(tag){ tag.textContent=name ? 'Espace '+name : 'Espace Créateur'; }
   }
 })();
 
