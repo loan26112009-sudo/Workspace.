@@ -394,9 +394,14 @@ function showConnectedState(user){
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
 }
 
-// Check Firebase auth on load
+// Check Firebase auth on load — show the right hero only once Firebase knows
+var heroConnected=document.getElementById('hero-connected');
+var heroGuest=document.getElementById('hero-guest');
+heroConnected.hidden=true;
+heroGuest.hidden=true;
 FBSYNC.ready().then(function(user){
   if(user){ showConnectedState(user); }
+  else{ heroGuest.hidden=false; }
 });
 
 // Recent projects
