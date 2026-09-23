@@ -142,42 +142,39 @@ html,body{overflow-x:hidden;max-width:100%}
 
 /* TOOLS */
 .section{padding:0 24px;position:relative;z-index:1}
-.section-lbl{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-lbl{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:10px}
 .section-lbl::after{content:'';flex:1;height:1px;background:var(--b)}
-.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
-.tool-card{--tint:linear-gradient(90deg,var(--acc),var(--acc2));background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012));border:1px solid var(--b);border-radius:20px;padding:24px;cursor:pointer;transition:all .28s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:15px;text-decoration:none;color:inherit}
-.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .28s;border-radius:20px}
-.tool-card::after{content:'';position:absolute;top:0;left:24px;right:24px;height:2px;border-radius:0 0 3px 3px;background:var(--tint);opacity:0;transform:translateY(-2px);transition:all .28s}
-.tool-card:hover{transform:translateY(-5px)}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.tool-card{--tint:linear-gradient(90deg,var(--acc),var(--acc2));background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid var(--b);border-radius:16px;padding:16px;cursor:pointer;transition:all .24s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:9px;text-decoration:none;color:inherit}
+.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .24s;border-radius:16px}
+.tool-card::after{content:'';position:absolute;top:0;left:16px;right:16px;height:2px;border-radius:0 0 3px 3px;background:var(--tint);opacity:0;transform:translateY(-2px);transition:all .24s}
+.tool-card:hover{transform:translateY(-4px)}
 .tool-card:hover::before{opacity:1}
 .tool-card:hover::after{opacity:1;transform:translateY(0)}
 .tc-loop{--tint:linear-gradient(90deg,#6366f1,#818cf8)}
-.tc-loop::before{background:radial-gradient(ellipse at top left,rgba(99,102,241,.16),transparent 65%)}
-.tc-loop:hover{border-color:rgba(99,102,241,.4);box-shadow:0 18px 46px rgba(99,102,241,.16)}
+.tc-loop::before{background:radial-gradient(ellipse at top left,rgba(99,102,241,.14),transparent 65%)}
+.tc-loop:hover{border-color:rgba(99,102,241,.4);box-shadow:0 12px 32px rgba(99,102,241,.14)}
 .tc-cal{--tint:linear-gradient(90deg,#22c55e,#4ade80)}
-.tc-cal::before{background:radial-gradient(ellipse at top left,rgba(34,197,94,.12),transparent 65%)}
-.tc-cal:hover{border-color:rgba(34,197,94,.4);box-shadow:0 18px 46px rgba(34,197,94,.12)}
+.tc-cal::before{background:radial-gradient(ellipse at top left,rgba(34,197,94,.1),transparent 65%)}
+.tc-cal:hover{border-color:rgba(34,197,94,.4);box-shadow:0 12px 32px rgba(34,197,94,.1)}
 .tc-school{--tint:linear-gradient(90deg,#06b6d4,#22d3ee)}
-.tc-school::before{background:radial-gradient(ellipse at top left,rgba(6,182,212,.12),transparent 65%)}
-.tc-school:hover{border-color:rgba(6,182,212,.4);box-shadow:0 18px 46px rgba(6,182,212,.12)}
+.tc-school::before{background:radial-gradient(ellipse at top left,rgba(6,182,212,.1),transparent 65%)}
+.tc-school:hover{border-color:rgba(6,182,212,.4);box-shadow:0 12px 32px rgba(6,182,212,.1)}
 .tc-proj{--tint:linear-gradient(90deg,#a855f7,#c084fc)}
-.tc-proj::before{background:radial-gradient(ellipse at top left,rgba(168,85,247,.14),transparent 65%)}
-.tc-proj:hover{border-color:rgba(168,85,247,.4);box-shadow:0 18px 46px rgba(168,85,247,.13)}
+.tc-proj::before{background:radial-gradient(ellipse at top left,rgba(168,85,247,.12),transparent 65%)}
+.tc-proj:hover{border-color:rgba(168,85,247,.4);box-shadow:0 12px 32px rgba(168,85,247,.11)}
 .tc-outlier{--tint:linear-gradient(90deg,#ef4444,#f87171)}
-.tc-outlier::before{background:radial-gradient(ellipse at top left,rgba(239,68,68,.14),transparent 65%)}
-.tc-outlier:hover{border-color:rgba(239,68,68,.4);box-shadow:0 18px 46px rgba(239,68,68,.13)}
+.tc-outlier::before{background:radial-gradient(ellipse at top left,rgba(239,68,68,.12),transparent 65%)}
+.tc-outlier:hover{border-color:rgba(239,68,68,.4);box-shadow:0 12px 32px rgba(239,68,68,.11)}
 .tc-ideas{--tint:linear-gradient(90deg,#f59e0b,#fbbf24)}
-.tc-ideas::before{background:radial-gradient(ellipse at top left,rgba(245,158,11,.11),transparent 65%)}
-.tc-ideas:hover{border-color:rgba(245,158,11,.35);box-shadow:0 18px 46px rgba(245,158,11,.1)}
-.tool-icon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:transform .28s cubic-bezier(.16,1,.3,1)}
-.tool-card:hover .tool-icon{transform:scale(1.08) rotate(-3deg)}
-.tool-badge{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:.05em;width:fit-content}
-.tool-title{font-size:17.5px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.1}
-.tool-desc{font-size:12.5px;color:var(--sub);line-height:1.6;flex:1}
-.tool-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--b)}
-.tool-cta{font-size:12px;font-weight:700}
-.tool-arrow{font-size:16px;transition:transform .25s cubic-bezier(.16,1,.3,1)}
-.tool-card:hover .tool-arrow{transform:translateX(4px)}
+.tc-ideas::before{background:radial-gradient(ellipse at top left,rgba(245,158,11,.09),transparent 65%)}
+.tc-ideas:hover{border-color:rgba(245,158,11,.35);box-shadow:0 12px 32px rgba(245,158,11,.08)}
+.tc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.tool-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;transition:transform .24s cubic-bezier(.16,1,.3,1)}
+.tool-card:hover .tool-icon{transform:scale(1.1) rotate(-4deg)}
+.tool-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.05em;width:fit-content;flex-shrink:0;margin-top:2px}
+.tool-title{font-size:13.5px;font-weight:700;letter-spacing:-.02em;color:var(--text);line-height:1.15}
+.tool-desc{font-size:11px;color:var(--sub);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* LIENS IMPORTANTS */
 .imp-links{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding:16px 24px 20px}
@@ -202,7 +199,7 @@ html,body{overflow-x:hidden;max-width:100%}
 
 /* MOBILE */
 @media(max-width:640px){
-  .tools-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .tools-grid{grid-template-columns:1fr 1fr;gap:8px}
   .stat-strip{grid-template-columns:repeat(2,1fr);padding:0 14px}
   .hero{padding:44px 16px 28px}
   .hero-title{font-size:clamp(26px,9vw,40px)}
@@ -292,17 +289,19 @@ html,body{overflow-x:hidden;max-width:100%}
 <div class="gsync-strip" id="gsync-strip" hidden>
 
   <!-- État non connecté -->
-  <div class="gsync-guest" id="gsync-guest" style="position:relative">
-    <button onclick="document.getElementById('gsync-strip').hidden=true" style="position:absolute;top:10px;right:10px;z-index:3;width:26px;height:26px;border-radius:7px;background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);color:rgba(0,0,0,.3);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.color='rgba(0,0,0,.6)'" onmouseout="this.style.color='rgba(0,0,0,.3)'" title="Masquer">✕</button>
-    <div class="gsync-ico">☁️</div>
-    <div class="gsync-text">
-      <div class="gsync-title">Sync cross-device</div>
-      <div class="gsync-sub">Connecte ton compte Google pour retrouver ton espace sur téléphone, tablette et ordi.</div>
+  <div class="gsync-guest" id="gsync-guest">
+    <button onclick="document.getElementById('gsync-strip').hidden=true" style="position:absolute;top:14px;right:14px;z-index:4;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.color='rgba(255,255,255,.7)'" onmouseout="this.style.color='rgba(255,255,255,.3)'" title="Masquer">✕</button>
+    <div class="gsync-left">
+      <div class="gsync-badge"><div class="gsync-badge-dot"></div><span class="gsync-badge-txt">SYNC CROSS-DEVICE</span></div>
+      <div class="gsync-title">Accède à ton espace<br>partout, tout le temps</div>
+      <div class="gsync-sub">Connecte ton compte Google pour retrouver projets, planning et notes sur téléphone, tablette et ordi.</div>
     </div>
-    <button class="btn-google-sm" id="gsync-btn" onclick="gsyncConnect()">
-      <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      Connecter avec Google
-    </button>
+    <div class="gsync-right">
+      <button class="btn-google-sm" id="gsync-btn" onclick="gsyncConnect()">
+        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Connecter avec Google
+      </button>
+    </div>
   </div>
 
   <!-- État connecté -->
@@ -364,56 +363,56 @@ html,body{overflow-x:hidden;max-width:100%}
   <div class="section-lbl reveal">CONTENU</div>
   <div class="tools-grid">
     <a class="tool-card tc-outlier reveal" href="outlier-finder.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)"><img src="outlier-icon.png" alt="" style="width:28px;height:28px;object-fit:contain;border-radius:6px"></div>
+      <div class="tc-head">
+        <div class="tool-icon" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)"><img src="outlier-icon.png" alt="" style="width:20px;height:20px;object-fit:contain;border-radius:4px"></div>
         <div class="tool-badge" style="background:rgba(99,102,241,.15);color:var(--acc)">NOUVEAU</div>
       </div>
-      <div><div class="tool-title">Outlier Finder</div><div class="tool-desc">Log tes outliers par vidéo, couleur selon l'ampleur, séparé longs / Shorts.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#ef4444">Ouvrir</span><span class="tool-arrow" style="color:#ef4444">→</span></div>
+      <div class="tool-title">Outlier Finder</div>
+      <div class="tool-desc">Log tes outliers par vidéo, couleur selon l'ampleur, séparé longs / Shorts.</div>
     </a>
     <a class="tool-card tc-proj reveal" href="projets.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-folder"/></svg></div>
+      <div class="tc-head">
+        <div class="tool-icon" style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2)"><svg class="icon" style="width:18px;height:18px"><use href="icons.svg#i-folder"/></svg></div>
         <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
       </div>
-      <div><div class="tool-title">Mes Projets</div><div class="tool-desc">Gère tes vidéos avec miniatures, titres, A/B tests, captures annotées.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#a855f7">Ouvrir</span><span class="tool-arrow" style="color:#a855f7">→</span></div>
+      <div class="tool-title">Mes Projets</div>
+      <div class="tool-desc">Gère tes vidéos avec miniatures, titres, A/B tests, captures annotées.</div>
     </a>
     <a class="tool-card tc-loop reveal" href="loop-builder.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-repeat"/></svg></div>
+      <div class="tc-head">
+        <div class="tool-icon" style="background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)"><svg class="icon" style="width:18px;height:18px"><use href="icons.svg#i-repeat"/></svg></div>
         <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
       </div>
-      <div><div class="tool-title">Loop Builder</div><div class="tool-desc">Structure ta vidéo boucle par boucle. Timeline et courbe émotionnelle en direct.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:var(--acc)">Ouvrir</span><span class="tool-arrow" style="color:var(--acc)">→</span></div>
+      <div class="tool-title">Loop Builder</div>
+      <div class="tool-desc">Structure ta vidéo boucle par boucle. Timeline et courbe émotionnelle en direct.</div>
     </a>
   </div>
 
   <div class="section-lbl reveal" style="margin-top:28px">ORGANISATION</div>
   <div class="tools-grid">
     <a class="tool-card tc-cal reveal" href="planning.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-calendar"/></svg></div>
+      <div class="tc-head">
+        <div class="tool-icon" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)"><svg class="icon" style="width:18px;height:18px"><use href="icons.svg#i-calendar"/></svg></div>
         <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
       </div>
-      <div><div class="tool-title">Calendrier Éditorial</div><div class="tool-desc">Planifie ta stratégie de contenu. Deadlines et compte à rebours en direct.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#22c55e">Ouvrir</span><span class="tool-arrow" style="color:#22c55e">→</span></div>
+      <div class="tool-title">Calendrier Éditorial</div>
+      <div class="tool-desc">Planifie ta stratégie de contenu. Deadlines et compte à rebours en direct.</div>
     </a>
     <a class="tool-card tc-school reveal" href="school.html">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-cap"/></svg></div>
+      <div class="tc-head">
+        <div class="tool-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2)"><svg class="icon" style="width:18px;height:18px"><use href="icons.svg#i-cap"/></svg></div>
         <div class="tool-badge" style="background:rgba(34,197,94,.1);color:#22c55e">● LIVE</div>
       </div>
-      <div><div class="tool-title">Organisation Scolaire</div><div class="tool-desc">DST à venir, moyenne calculée, équilibre école / YouTube.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:#06b6d4">Ouvrir</span><span class="tool-arrow" style="color:#06b6d4">→</span></div>
+      <div class="tool-title">Organisation Scolaire</div>
+      <div class="tool-desc">DST à venir, moyenne calculée, équilibre école / YouTube.</div>
     </a>
     <a class="tool-card tc-ideas reveal" href="https://forms.gle/7ujaNXwwpGVXtPDC7" target="_blank" rel="noopener noreferrer">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="tool-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)"><svg class="icon" style="width:22px;height:22px"><use href="icons.svg#i-bulb"/></svg></div>
+      <div class="tc-head">
+        <div class="tool-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2)"><svg class="icon" style="width:18px;height:18px"><use href="icons.svg#i-bulb"/></svg></div>
         <div class="tool-badge" style="background:rgba(245,158,11,.1);color:var(--yel)">NOUVEAU</div>
       </div>
-      <div><div class="tool-title">Idées Workspace</div><div class="tool-desc">Propose une fonctionnalité ou une amélioration. Chaque suggestion est lue.</div></div>
-      <div class="tool-footer"><span class="tool-cta" style="color:var(--yel)">Soumettre</span><span class="tool-arrow" style="color:var(--yel)">→</span></div>
+      <div class="tool-title">Idées Workspace</div>
+      <div class="tool-desc">Propose une fonctionnalité ou une amélioration. Chaque suggestion est lue.</div>
     </a>
   </div>
 </div>
@@ -1175,45 +1174,59 @@ if('serviceWorker' in navigator){
 @keyframes dogPop{0%{transform:scale(.6) rotate(-4deg);opacity:0}40%{transform:scale(1.08) rotate(1.5deg)}70%{transform:scale(.98) rotate(-1deg)}100%{transform:scale(1.04) rotate(0);opacity:1}}
 
 /* ── GOOGLE SYNC STRIP ── */
-.gsync-strip{padding:0 24px 28px;max-width:100%}
+.gsync-strip{padding:0 24px 32px;max-width:100%}
 .gsync-guest{
-  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
-  padding:20px 28px;border-radius:18px;
-  border:1px solid rgba(99,102,241,.2);
-  background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(168,85,247,.05));
   position:relative;overflow:hidden;
+  padding:28px 32px;border-radius:22px;
+  border:1px solid rgba(99,102,241,.28);
+  background:linear-gradient(130deg,rgba(14,14,28,.95) 0%,rgba(20,16,40,.95) 55%,rgba(12,12,24,.95) 100%);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04) inset, 0 20px 60px rgba(99,102,241,.12);
+  display:flex;align-items:center;gap:28px;flex-wrap:wrap;
 }
-.gsync-guest::before{content:'';position:absolute;inset:0;background:radial-gradient(400px 200px at 100% 50%,rgba(99,102,241,.08),transparent 70%);pointer-events:none}
-.gsync-ico{font-size:28px;flex-shrink:0}
-.gsync-text{flex:1;min-width:160px}
-.gsync-title{font-size:14px;font-weight:800;letter-spacing:-.02em;color:var(--text);margin-bottom:3px}
-.gsync-sub{font-size:12px;color:var(--sub);line-height:1.5}
+.gsync-guest::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(520px 280px at 90% 50%,rgba(99,102,241,.14),transparent 65%),
+  radial-gradient(300px 200px at 10% 30%,rgba(168,85,247,.1),transparent 60%);
+  pointer-events:none}
+.gsync-guest::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='none'/%3E%3Cpath d='M0 0h40M0 0v40' stroke='rgba(255,255,255,.025)' stroke-width='1'/%3E%3C/svg%3E");pointer-events:none}
+.gsync-left{position:relative;z-index:1;flex:1;min-width:200px;display:flex;flex-direction:column;gap:12px}
+.gsync-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:100px;padding:4px 12px;width:fit-content}
+.gsync-badge-dot{width:5px;height:5px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,.8);animation:gsBadgePulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes gsBadgePulse{0%,100%{box-shadow:0 0 6px rgba(99,102,241,.6)}50%{box-shadow:0 0 14px rgba(99,102,241,.9)}}
+.gsync-badge-txt{font-size:10px;font-weight:700;color:#a5b4fc;letter-spacing:.07em}
+.gsync-title{font-size:20px;font-weight:900;letter-spacing:-.03em;line-height:1.1;
+  background:linear-gradient(90deg,#fff 35%,#a5b4fc 65%,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gsync-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6;max-width:380px}
+.gsync-right{position:relative;z-index:1;flex-shrink:0}
 .btn-google-sm{
-  display:inline-flex;align-items:center;gap:9px;
-  padding:10px 18px;border-radius:11px;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 22px;border-radius:13px;
   background:#fff;color:#1a1a1a;
   font-family:'Inter',sans-serif;font-size:13px;font-weight:700;
-  border:none;cursor:pointer;flex-shrink:0;
-  box-shadow:0 2px 12px rgba(0,0,0,.3);
-  transition:all .2s cubic-bezier(.16,1,.3,1);
+  border:none;cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.1);
+  transition:all .22s cubic-bezier(.16,1,.3,1);
 }
-.btn-google-sm:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.35)}
-.btn-google-sm svg{width:16px;height:16px;flex-shrink:0}
+.btn-google-sm:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.15)}
+.btn-google-sm:active{transform:translateY(-1px)}
+.btn-google-sm svg{width:17px;height:17px;flex-shrink:0}
 .gsync-connected{
   display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-  padding:14px 24px;border-radius:18px;
-  border:1px solid rgba(99,102,241,.18);
-  background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(168,85,247,.04));
+  padding:16px 28px;border-radius:22px;
+  border:1px solid rgba(99,102,241,.2);
+  background:linear-gradient(130deg,rgba(14,14,28,.9),rgba(20,16,40,.9));
+  box-shadow:0 8px 32px rgba(99,102,241,.08);
 }
-.gsync-avatar{width:44px;height:44px;border-radius:50%;border:2px solid rgba(99,102,241,.35);object-fit:cover;flex-shrink:0}
-.gsync-avatar-ph{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(168,85,247,.3));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0}
+.gsync-avatar{width:44px;height:44px;border-radius:50%;border:2px solid rgba(99,102,241,.4);object-fit:cover;flex-shrink:0}
+.gsync-avatar-ph{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(99,102,241,.35),rgba(168,85,247,.35));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0}
 .gsync-user-info{flex:1;min-width:0}
-.gsync-user-name{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gsync-user-email{font-size:11px;color:var(--sub)}
+.gsync-user-name{font-size:14px;font-weight:800;color:#f0f0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gsync-user-email{font-size:11px;color:rgba(255,255,255,.4)}
 .gsync-status{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#4ade80;margin-top:3px}
 .gsync-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:syncPulseIdx 2.5s ease-in-out infinite;flex-shrink:0}
 @keyframes syncPulseIdx{0%,100%{box-shadow:0 0 6px #4ade80}50%{box-shadow:0 0 14px #4ade80}}
-[data-theme="light"] .btn-google-sm{background:#f8f8f8;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+[data-theme="light"] .gsync-guest{background:linear-gradient(130deg,rgba(14,14,28,.92) 0%,rgba(20,16,40,.92) 55%,rgba(12,12,24,.92) 100%)}
+[data-theme="light"] .gsync-connected{background:linear-gradient(130deg,rgba(14,14,28,.88),rgba(20,16,40,.88))}
 </style>
 
 <script>
