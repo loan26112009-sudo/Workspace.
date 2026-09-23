@@ -13,6 +13,7 @@
 <script src="firebase-sync.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 :root{
   color-scheme:dark;
   --bg:#080808;--s1:#111;--s2:#181818;
@@ -401,13 +402,13 @@ var heroConnected=document.getElementById('hero-connected');
 var heroGuest=document.getElementById('hero-guest');
 heroConnected.hidden=true;
 heroGuest.hidden=true;
-FBSYNC.ready().then(function(user){
-  if(user){ showConnectedState(user); return; }
-  FBSYNC.getRedirectResult().then(function(res){
-    heroGuest.hidden=false;
-    if(res&&res.user) showConnectedState(res.user);
-  }).catch(function(){ heroGuest.hidden=false; });
+firebase.auth().onAuthStateChanged(function(user){
+  if(user){ showConnectedState(user); }
+  else{ heroGuest.hidden=false; }
 });
+FBSYNC.getRedirectResult().then(function(res){
+  if(res&&res.user) showConnectedState(res.user);
+}).catch(function(){});
 
 // Recent projects
 (function(){
