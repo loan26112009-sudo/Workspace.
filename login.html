@@ -416,31 +416,16 @@ function onSyncClick() {
       btn.title = 'Connecter Google pour sync cross-device';
     });
   } else {
-    var oldHtml = btn.innerHTML;
-    btn.innerHTML = '…';
-    FBSYNC.signIn().then(function(result) {
-      var u = result.user;
-      btn.classList.add('active');
-      if (u.photoURL) {
-        btn.innerHTML = '<img src="' + u.photoURL + '" alt="">';
-      } else {
-        btn.textContent = (u.displayName || u.email || 'G')[0].toUpperCase();
-      }
-      btn.title = (u.displayName || u.email) + ' — cliquer pour déconnecter la sync';
-      // Pre-fill role from saved session
-      FBSYNC.loadSession().then(function(data) {
-        if (data && data.role && !selectedRole) {
-          var card = document.getElementById('card-' + data.role);
-          if (card) card.click();
-        }
-      }).catch(function(){});
-    }).catch(function(err) {
-      btn.innerHTML = oldHtml;
+    btn.textContent = '…';
+    // signInWithRedirect navigue immédiatement si autorisé ;
+    // .catch() ne s'exécute que si Firebase refuse avant la redirection
+    FBSYNC.signIn().catch(function(err) {
+      btn.innerHTML = 'G';
       var code = err && err.code;
       if (code === 'auth/unauthorized-domain') {
-        alert('Domaine non autorisé Firebase.\n\nPour activer Google Sign-In :\nFirebase Console → Authentication → Settings → Authorized domains\n→ Ajouter : loan26112009-sudo.github.io');
-      } else if (code === 'auth/popup-blocked') {
-        alert('Popup bloquée par le navigateur.\nAutorise les popups pour ce site dans la barre d\'adresse, puis réessaie.');
+        alert('Domaine non autorisé Firebase.\n\n→ Firebase Console → Authentication → Settings → Authorized domains\n→ Ajouter : loan26112009-sudo.github.io');
+      } else if (code === 'auth/internal-error' || code === 'auth/operation-not-allowed') {
+        alert('Google Sign-In non activé.\n\n→ Firebase Console → Authentication → Sign-in methods\n→ Activer le fournisseur "Google"');
       } else {
         alert('Erreur Google Sign-In : ' + (err && (err.message || err.code) || 'inconnue'));
       }
