@@ -9,6 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080808">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="auth.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -188,6 +189,8 @@ html,body{overflow-x:hidden;max-width:100%}
 </head>
 <body>
 
+<script>AUTH.require(['creator'], 'loop-builder.html');</script>
+
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-head">
@@ -224,6 +227,7 @@ html,body{overflow-x:hidden;max-width:100%}
   <div class="nav-right">
     <div class="nav-clock" id="app-clock">--:--</div>
     <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-settings"/></svg></button>
+    <button class="icon-btn" onclick="AUTH.logout()" title="Se déconnecter" style="color:rgba(255,255,255,.3)"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-logout"/></svg></button>
   </div>
 </nav>
 

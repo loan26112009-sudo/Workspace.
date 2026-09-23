@@ -6,6 +6,7 @@
 <title>Loop Builder</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.ggpht.com https://*.googleusercontent.com https://i.ytimg.com; media-src 'self' data:; connect-src 'self' https://www.googleapis.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="auth.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -167,6 +168,33 @@ main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
 .exp-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--s2);border-bottom:1px solid var(--b)}
 .exp-hd span{font-size:11px;color:var(--sub)}
 #exp-cvs{display:block;width:100%;height:auto}
+
+/* ROLE BADGE */
+.role-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:5px;font-size:9.5px;font-weight:700;letter-spacing:.07em;flex-shrink:0}
+.role-badge.creator{background:rgba(99,102,241,.15);color:#818cf8}
+.role-badge.worker{background:rgba(245,158,11,.15);color:#fbbf24}
+.role-badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+
+/* SCRIPT TAB */
+.script-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 0 10px;flex-shrink:0;flex-wrap:wrap;gap:8px}
+.script-hint{font-size:11px;color:var(--sub)}
+.script-wc-total{font-size:11px;font-weight:600;color:var(--dim);font-variant-numeric:tabular-nums}
+.script-sections{display:flex;flex-direction:column;gap:10px}
+.script-sec{background:var(--s2);border:1px solid var(--b);border-radius:10px;overflow:hidden;transition:border-color .15s}
+.script-sec:hover{border-color:var(--bh)}
+.script-sec-hd{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--b)}
+.script-sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.script-sec-name{font-size:12px;font-weight:600;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.script-sec-time{font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;flex-shrink:0}
+.script-sec-wc{font-size:10px;color:var(--sub);font-variant-numeric:tabular-nums;flex-shrink:0;min-width:52px;text-align:right}
+.script-ta{display:block;width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.75;padding:12px;resize:none;min-height:120px;transition:background .15s}
+.script-ta:focus{background:rgba(255,255,255,.02)}
+.script-ta::placeholder{color:var(--dim)}
+.script-no-arcs{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:36px;text-align:center;color:var(--dim);border:1px dashed var(--b);border-radius:10px}
+.script-no-arcs p{font-size:12px;line-height:1.6}
+.script-foot{display:flex;align-items:center;justify-content:flex-end;padding-top:10px;flex-shrink:0}
+.btn-script-exp{padding:6px 14px;background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--sub);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-script-exp:hover{border-color:var(--bh);color:var(--text)}
 
 /* PROJECT SCREEN */
 #project-screen{position:fixed;inset:0;background:#0a0a0a;z-index:1000;display:flex;flex-direction:column;overflow:hidden}
@@ -402,6 +430,7 @@ main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
 </style>
 </head>
 <body>
+<script>AUTH.require(['creator','worker']);</script>
 
 <!-- Mobile warning -->
 <div id="mobile-warning" style="display:none;position:fixed;inset:0;z-index:99999;background:#07070a;color:#f0f0f8;font-family:Inter,sans-serif;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;gap:20px">
@@ -513,11 +542,14 @@ window.addEventListener("resize",()=>{
   <span class="proj-name-hdr" id="proj-name-hdr"></span>
   <div class="logo"><div class="logo-d"></div>Loop Builder</div>
   <div class="hdiv"></div>
+  <div id="role-badge-hdr"></div>
+  <div class="hdiv"></div>
   <div class="hfield dur">
     <label>DURÉE</label>
     <input id="total-dur" value="15:00" maxlength="5">
   </div>
   <button class="btn-exp" onclick="doExport()">Exporter PNG</button>
+  <button class="btn-g btn" onclick="AUTH.logout()" title="Se déconnecter" style="padding:6px 10px;font-size:11px;flex-shrink:0">↩</button>
 </header>
 
 <div class="wrap">
@@ -551,6 +583,7 @@ window.addEventListener("resize",()=>{
 <main>
   <div class="main-nav">
     <button class="mnav on" data-main="build">STRUCTURE</button>
+    <button class="mnav" data-main="script">SCRIPT</button>
     <button class="mnav" data-main="export">EXPORT</button>
   </div>
 
@@ -622,6 +655,22 @@ window.addEventListener("resize",()=>{
 
   </div>
 
+  <div class="main-pane" id="main-script">
+    <div class="card" style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div class="script-hdr">
+        <span class="script-hint">Écris le script section par section, basé sur tes boucles</span>
+        <span class="script-wc-total" id="script-wc">0 mot</span>
+      </div>
+      <div class="script-sections" id="script-sections"></div>
+      <div class="script-no-arcs" id="script-no-arcs" style="display:none">
+        <p>Ajoute des boucles dans <strong>STRUCTURE</strong><br>pour voir tes sections apparaître ici</p>
+      </div>
+      <div class="script-foot">
+        <button class="btn-script-exp" onclick="exportScript()">⬇ Exporter script (.txt)</button>
+      </div>
+    </div>
+  </div>
+
   <div class="main-pane" id="main-export">
     <div class="card">
       <div class="card-hd"><h2>EXPORT PNG</h2></div>
@@ -661,6 +710,7 @@ const TECHS=[
 ];
 
 let arcs=[], subs=[], markers=[], tools=[], emotions=[], emoStrokes=[];
+let scriptData={}; // {arcIndex: scriptText}
 let eraserMode=false;
 let _id=0; const uid=()=>'x'+(++_id);
 
@@ -1441,6 +1491,7 @@ document.querySelectorAll('[data-main]').forEach(btn=>{
     document.querySelectorAll('.main-pane').forEach(p=>p.classList.remove('on'));
     btn.classList.add('on');
     document.getElementById('main-'+btn.dataset.main).classList.add('on');
+    if(btn.dataset.main==='script') renderScriptTab();
   });
 });
 
@@ -1699,6 +1750,7 @@ function getStateSnapshot(){
     vidTitle:document.getElementById('vid-title').value,
     totalDur:document.getElementById('total-dur').value,
     fil:document.getElementById('fil-input').value,
+    script:{...scriptData},
     notes:{
       concept:document.getElementById('n-concept').value,
       obj:document.getElementById('n-obj').value,
@@ -1714,6 +1766,7 @@ function applyStateSnapshot(s){
   emotions=s.emotions||defaultEmotions();
   emoStrokes=s.emoStrokes||[];
   viewerPct=s.viewerPct??0.5;
+  scriptData=s.script||{};
   document.getElementById('vid-title').value=s.vidTitle||'';
   document.getElementById('total-dur').value=s.totalDur||'15:00';
   document.getElementById('fil-input').value=s.fil||'';
@@ -2113,6 +2166,96 @@ function wsdClose(){
   document.getElementById('wsd-overlay').classList.remove('open');
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')wsdClose();});
+
+// ═══════════════════════════════════════
+// SCRIPT TAB
+// ═══════════════════════════════════════
+function wc(text){return text.trim().split(/\s+/).filter(w=>w.length>0).length;}
+
+function renderScriptTab(){
+  const T=tot();
+  const container=document.getElementById('script-sections');
+  const noArcs=document.getElementById('script-no-arcs');
+  const wcEl=document.getElementById('script-wc');
+  if(!container)return;
+  if(!arcs||arcs.length===0){
+    container.innerHTML='';
+    if(noArcs)noArcs.style.display='flex';
+    if(wcEl)wcEl.textContent='0 mot';
+    return;
+  }
+  if(noArcs)noArcs.style.display='none';
+
+  // Preserve existing textareas values before re-render
+  container.querySelectorAll('.script-ta').forEach(ta=>{
+    scriptData[ta.dataset.idx]=ta.value;
+  });
+
+  container.innerHTML='';
+  let totalWords=0;
+  arcs.forEach((arc,i)=>{
+    const text=scriptData[i]||'';
+    const words=wc(text);
+    totalWords+=words;
+    const sec=document.createElement('div');
+    sec.className='script-sec';
+    sec.innerHTML=`
+      <div class="script-sec-hd">
+        <span class="script-sec-dot" style="background:${arc.color}"></span>
+        <span class="script-sec-name">${arc.label||'Arc '+(i+1)}</span>
+        <span class="script-sec-time">${fmt(arc.s*T)} → ${fmt(arc.e*T)}</span>
+        <span class="script-sec-wc" id="swc-${i}">${words} mot${words!==1?'s':''}</span>
+      </div>
+      <textarea class="script-ta" data-idx="${i}" placeholder="Écris le script pour cet arc…">${text}</textarea>`;
+    container.appendChild(sec);
+
+    sec.querySelector('.script-ta').addEventListener('input',function(){
+      scriptData[this.dataset.idx]=this.value;
+      const w=wc(this.value);
+      const wcel=document.getElementById('swc-'+this.dataset.idx);
+      if(wcel)wcel.textContent=w+' mot'+(w!==1?'s':'');
+      updateTotalWC();
+      saveCurrentProject();
+    });
+  });
+  if(wcEl)wcEl.textContent=totalWords+' mot'+(totalWords!==1?'s':'');
+}
+
+function updateTotalWC(){
+  let total=0;
+  Object.values(scriptData).forEach(t=>{total+=wc(t||'');});
+  const el=document.getElementById('script-wc');
+  if(el)el.textContent=total+' mot'+(total!==1?'s':'');
+}
+
+function exportScript(){
+  const title=document.getElementById('vid-title').value||'(sans titre)';
+  const T=tot();
+  const lines=['═══════════════════════════════════','LOOP BUILDER — SCRIPT','═══════════════════════════════════','Vidéo : '+title,''];
+  arcs.forEach((arc,i)=>{
+    const text=scriptData[i]||'';
+    lines.push('── '+( arc.label||'Arc '+(i+1))+' ['+fmt(arc.s*T)+' → '+fmt(arc.e*T)+'] ──');
+    lines.push(text||'(vide)');
+    lines.push('');
+  });
+  const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(title.replace(/[^a-z0-9]/gi,'_').slice(0,40)||'script')+'_script.txt';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+// ═══════════════════════════════════════
+// ROLE BADGE
+// ═══════════════════════════════════════
+(function initRoleBadge(){
+  const el=document.getElementById('role-badge-hdr');
+  if(!el)return;
+  const role=AUTH.getRole();
+  if(role==='creator'){el.innerHTML='<span class="role-badge creator">✦ Créateur</span>';}
+  else if(role==='worker'){el.innerHTML='<span class="role-badge worker">👥 Worker</span>';}
+})();
 
 </script>
 </body>
