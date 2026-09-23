@@ -11,179 +11,233 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#080808;--s1:#111;--s2:#181818;--s3:#222;
-  --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.16);
+  --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.14);
   --text:#f0f0f0;--sub:rgba(255,255,255,.42);--dim:rgba(255,255,255,.18);
   --acc:#6366f1;--acc2:#818cf8;
   --worker:#f59e0b;--worker2:#fbbf24;
 }
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;max-width:100%}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 
-/* Background glow */
-.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+/* ── LAYOUT ── */
+.page{display:flex;height:100%;overflow:hidden}
+
+/* ── LEFT PANEL ── */
+.left{flex:0 0 58%;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:48px 56px;overflow:hidden;border-right:1px solid var(--b)}
+.left-bg{position:absolute;inset:0;pointer-events:none;
   background:
-    radial-gradient(500px 380px at 20% 20%,rgba(99,102,241,.13),transparent 60%),
-    radial-gradient(420px 320px at 80% 10%,rgba(168,85,247,.09),transparent 60%),
-    radial-gradient(460px 360px at 50% 80%,rgba(99,102,241,.07),transparent 65%);
-  filter:blur(4px)}
-.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    radial-gradient(600px 500px at 10% 15%,rgba(99,102,241,.14),transparent 65%),
+    radial-gradient(500px 400px at 90% 80%,rgba(168,85,247,.09),transparent 65%),
+    radial-gradient(300px 300px at 60% 40%,rgba(99,102,241,.06),transparent 60%);
+}
+.left-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
   background-size:44px 44px;
-  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000 10%,transparent 80%);
-  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000 10%,transparent 80%)}
-
-/* Main container */
-.wrap{position:relative;z-index:1;width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:32px}
+  -webkit-mask-image:radial-gradient(ellipse 90% 90% at 30% 50%,#000 10%,transparent 75%);
+  mask-image:radial-gradient(ellipse 90% 90% at 30% 50%,#000 10%,transparent 75%)}
 
 /* Logo */
-.logo{display:flex;align-items:center;gap:10px;flex-direction:column;text-align:center;gap:12px}
-.logo-mark{display:flex;align-items:center;gap:10px}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 4px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.6);animation:dotPulse 3s ease-in-out infinite;flex-shrink:0}
-@keyframes dotPulse{0%,100%{box-shadow:0 0 0 4px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.6)}50%{box-shadow:0 0 0 6px rgba(99,102,241,.08),0 0 28px rgba(99,102,241,.85)}}
-.logo-name{font-size:24px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(90deg,#fff 30%,var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.logo-sub{font-size:13px;color:var(--sub);font-weight:500}
+.logo{display:flex;align-items:center;gap:10px;position:relative;z-index:1}
+.logo-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 16px rgba(99,102,241,.6);animation:dotPulse 3s ease-in-out infinite;flex-shrink:0}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 16px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 5px rgba(99,102,241,.08),0 0 24px rgba(99,102,241,.8)}}
+.logo-name{font-size:18px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(90deg,#fff 40%,var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Hero text */
+.hero{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 0}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--acc2);text-transform:uppercase;margin-bottom:16px}
+.hero-title{font-size:clamp(32px,3.5vw,48px);font-weight:900;letter-spacing:-.04em;line-height:1.1;color:#fff;margin-bottom:14px}
+.hero-title span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:15px;color:var(--sub);line-height:1.65;max-width:420px;margin-bottom:40px}
+
+/* Tool cards */
+.tools{display:flex;flex-direction:column;gap:12px;max-width:460px}
+.tool-row{display:flex;align-items:flex-start;gap:16px;padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--b);transition:border-color .2s}
+.tool-row:hover{border-color:var(--bh)}
+.tool-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:1px}
+.tool-icon.creator{background:rgba(99,102,241,.14);border:1px solid rgba(99,102,241,.22)}
+.tool-icon.worker{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2)}
+.tool-txt{}
+.tool-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
+.tool-desc{font-size:12px;color:var(--sub);line-height:1.5}
+.tool-tag{display:inline-block;margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.07em;padding:2px 8px;border-radius:20px}
+.tool-tag.creator-only{background:rgba(99,102,241,.15);color:var(--acc2)}
+.tool-tag.all-access{background:rgba(245,158,11,.12);color:var(--worker2)}
+
+/* Footer */
+.left-footer{position:relative;z-index:1;font-size:11.5px;color:var(--dim)}
+
+/* ── RIGHT PANEL ── */
+.right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 48px;gap:28px;overflow:auto}
+.right-head{text-align:center}
+.right-head h2{font-size:22px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.right-head p{font-size:13px;color:var(--sub)}
 
 /* Role cards */
-.cards{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.role-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--b);border-radius:20px;padding:24px 20px;cursor:pointer;transition:all .28s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;user-select:none}
-.role-card::after{content:'';position:absolute;top:0;left:24px;right:24px;height:2px;border-radius:0 0 3px 3px;opacity:0;transform:translateY(-2px);transition:all .28s}
-.role-card:hover{transform:translateY(-3px)}
-.role-card.active{border-color:rgba(99,102,241,.5);transform:translateY(-3px)}
+.cards{width:100%;max-width:360px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.role-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--b);border-radius:18px;padding:22px 18px;cursor:pointer;transition:all .28s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;user-select:none}
+.role-card::after{content:'';position:absolute;top:0;left:20px;right:20px;height:2px;border-radius:0 0 3px 3px;opacity:0;transform:translateY(-2px);transition:all .28s}
+.role-card:hover{transform:translateY(-2px)}
+.role-card.active{transform:translateY(-2px)}
 .role-card.active::after{opacity:1;transform:translateY(0)}
 
-/* Creator card accent */
 .rc-creator::after{background:linear-gradient(90deg,var(--acc),var(--acc2))}
-.rc-creator.active{border-color:rgba(99,102,241,.5);box-shadow:0 12px 36px rgba(99,102,241,.18)}
-.rc-creator:hover:not(.active){border-color:rgba(99,102,241,.25);box-shadow:0 8px 24px rgba(99,102,241,.1)}
+.rc-creator.active{border-color:rgba(99,102,241,.5);box-shadow:0 10px 32px rgba(99,102,241,.18)}
+.rc-creator:hover:not(.active){border-color:rgba(99,102,241,.22);box-shadow:0 6px 20px rgba(99,102,241,.1)}
 
-/* Worker card accent */
 .rc-worker::after{background:linear-gradient(90deg,var(--worker),var(--worker2))}
-.rc-worker.active{border-color:rgba(245,158,11,.5);box-shadow:0 12px 36px rgba(245,158,11,.15)}
-.rc-worker:hover:not(.active){border-color:rgba(245,158,11,.2);box-shadow:0 8px 24px rgba(245,158,11,.08)}
+.rc-worker.active{border-color:rgba(245,158,11,.5);box-shadow:0 10px 32px rgba(245,158,11,.14)}
+.rc-worker:hover:not(.active){border-color:rgba(245,158,11,.18);box-shadow:0 6px 20px rgba(245,158,11,.07)}
 
-.role-ico{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .28s cubic-bezier(.16,1,.3,1)}
-.role-card:hover .role-ico,.role-card.active .role-ico{transform:scale(1.08) rotate(-4deg)}
+.role-ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .28s cubic-bezier(.16,1,.3,1)}
+.role-card:hover .role-ico,.role-card.active .role-ico{transform:scale(1.1) rotate(-4deg)}
 .rc-creator .role-ico{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2)}
 .rc-worker .role-ico{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2)}
 
-.role-name{font-size:17px;font-weight:800;letter-spacing:-.02em}
-.rc-creator .role-name{color:#fff}
-.rc-worker .role-name{color:#fff}
-.role-desc{font-size:12px;color:var(--sub);line-height:1.6}
-
-.role-perms{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left}
-.role-perm{font-size:10.5px;color:var(--sub);display:flex;align-items:center;gap:6px;padding:3px 0}
-.role-perm::before{content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.role-name{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.role-perms{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left}
+.role-perm{font-size:10px;color:var(--sub);display:flex;align-items:center;gap:5px;padding:2px 0}
+.role-perm::before{content:'';width:3px;height:3px;border-radius:50%;flex-shrink:0}
 .rc-creator .role-perm::before{background:var(--acc2)}
 .rc-worker .role-perm::before{background:var(--worker2)}
 
 /* Password zone */
-.pwd-zone{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;animation:slideIn .25s cubic-bezier(.16,1,.3,1)}
-@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-.pwd-label{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.08em}
+.pwd-zone{width:100%;max-width:360px;background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;animation:slideIn .25s cubic-bezier(.16,1,.3,1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.pwd-label{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.08em}
 .pwd-row{display:flex;gap:8px}
-.pwd-inp{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:15px;padding:12px 16px;outline:none;transition:border-color .2s;letter-spacing:.06em}
+.pwd-inp{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .2s;letter-spacing:.06em}
 .pwd-inp:focus{border-color:var(--acc)}
 .pwd-inp.worker:focus{border-color:var(--worker)}
 .pwd-inp::placeholder{color:var(--dim);letter-spacing:0;font-size:13px}
-.btn-enter{padding:12px 20px;border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-enter{padding:11px 18px;border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
 .btn-enter.creator{background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 4px 14px rgba(99,102,241,.35)}
 .btn-enter.creator:hover{box-shadow:0 6px 20px rgba(99,102,241,.55);transform:translateY(-1px)}
 .btn-enter.worker{background:linear-gradient(135deg,var(--worker),var(--worker2));box-shadow:0 4px 14px rgba(245,158,11,.3)}
 .btn-enter.worker:hover{box-shadow:0 6px 20px rgba(245,158,11,.45);transform:translateY(-1px)}
-
-.err-msg{font-size:12px;color:#ef4444;text-align:center;min-height:18px;transition:opacity .2s}
+.err-msg{font-size:12px;color:#ef4444;text-align:center;min-height:16px;transition:opacity .2s}
 .err-msg:empty{opacity:0}
 
 @keyframes shake{0%,100%{transform:translateX(0)}15%,55%,85%{transform:translateX(-5px)}35%,70%{transform:translateX(5px)}}
 .shaking{animation:shake .4s ease-in-out}
 
-/* Mobile */
-@media(max-width:460px){
-  .cards{grid-template-columns:1fr}
-  .logo-name{font-size:20px}
-  body{overflow:auto}
-  html,body{height:auto;min-height:100%}
-  .wrap{gap:24px;padding:20px 0}
+/* ── MOBILE ── */
+@media(max-width:700px){
+  html,body{overflow:auto;height:auto}
+  .page{flex-direction:column}
+  .left{flex:none;padding:32px 24px;border-right:none;border-bottom:1px solid var(--b)}
+  .hero{padding:16px 0}
+  .hero-title{font-size:28px}
+  .hero-sub{display:none}
+  .tools{display:none}
+  .left-footer{display:none}
+  .right{padding:32px 24px;flex:none}
+  .cards{max-width:100%}
+  .pwd-zone{max-width:100%}
 }
 </style>
 </head>
 <body>
 
-<div class="bg-glow" aria-hidden="true"></div>
-<div class="bg-grid" aria-hidden="true"></div>
+<div class="page">
 
-<div class="wrap">
+  <!-- ── LEFT ── -->
+  <div class="left">
+    <div class="left-bg" aria-hidden="true"></div>
+    <div class="left-grid" aria-hidden="true"></div>
 
-  <div class="logo">
-    <div class="logo-mark">
+    <div class="logo">
       <div class="logo-dot"></div>
       <div class="logo-name">Workspace</div>
     </div>
-    <div class="logo-sub">Choisis ton espace pour commencer</div>
-  </div>
 
-  <div class="cards">
-    <div class="role-card rc-creator" id="card-creator" onclick="selectRole('creator')" role="button" tabindex="0" aria-label="Espace Créateur">
-      <div class="role-ico">✦</div>
-      <div class="role-name">Créateur</div>
-      <div class="role-perms">
-        <div class="role-perm">Outlier Finder</div>
-        <div class="role-perm">Loop Builder</div>
-        <div class="role-perm">Tous les outils</div>
+    <div class="hero">
+      <div class="hero-label">Plateforme de création YouTube</div>
+      <h1 class="hero-title">Tes outils pour<br><span>créer plus vite.</span></h1>
+      <p class="hero-sub">Un seul endroit pour analyser les meilleures vidéos, construire tes boucles narratives et écrire tes scripts — en équipe.</p>
+
+      <div class="tools">
+        <div class="tool-row">
+          <div class="tool-icon creator">✦</div>
+          <div class="tool-txt">
+            <div class="tool-name">Outlier Finder</div>
+            <div class="tool-desc">Découvre les vidéos qui surperforment sur ta niche. Analyse les patterns de rétention des meilleurs créateurs.</div>
+            <span class="tool-tag creator-only">✦ Créateur uniquement</span>
+          </div>
+        </div>
+        <div class="tool-row">
+          <div class="tool-icon worker">⟲</div>
+          <div class="tool-txt">
+            <div class="tool-name">Loop Builder</div>
+            <div class="tool-desc">Structure tes boucles narratives, visualise la rétention et écris le script section par section avec ton équipe.</div>
+            <span class="tool-tag all-access">👥 Toute l'équipe</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="role-card rc-worker" id="card-worker" onclick="selectRole('worker')" role="button" tabindex="0" aria-label="Espace Worker">
-      <div class="role-ico">👥</div>
-      <div class="role-name">Worker</div>
-      <div class="role-perms">
-        <div class="role-perm">Loop Builder</div>
-        <div class="role-perm">Écriture de script</div>
-        <div class="role-perm">Tes projets</div>
-      </div>
-    </div>
+
+    <div class="left-footer">© Workspace — Usage interne équipe</div>
   </div>
 
-  <div class="pwd-zone" id="pwd-zone" style="display:none">
-    <div class="pwd-label" id="pwd-label">MOT DE PASSE CRÉATEUR</div>
-    <div class="pwd-row">
-      <input class="pwd-inp" id="pwd-inp" type="password" placeholder="Mot de passe…" autocomplete="current-password" autofocus>
-      <button class="btn-enter creator" id="btn-enter" onclick="doLogin()">Entrer →</button>
+  <!-- ── RIGHT ── -->
+  <div class="right">
+    <div class="right-head">
+      <h2>Choisis ton espace</h2>
+      <p>Sélectionne ton rôle pour continuer</p>
     </div>
-    <div class="err-msg" id="err-msg"></div>
+
+    <div class="cards">
+      <div class="role-card rc-creator" id="card-creator" onclick="selectRole('creator')" role="button" tabindex="0" aria-label="Espace Créateur">
+        <div class="role-ico">✦</div>
+        <div class="role-name">Créateur</div>
+        <div class="role-perms">
+          <div class="role-perm">Outlier Finder</div>
+          <div class="role-perm">Loop Builder</div>
+          <div class="role-perm">Tous les outils</div>
+        </div>
+      </div>
+      <div class="role-card rc-worker" id="card-worker" onclick="selectRole('worker')" role="button" tabindex="0" aria-label="Espace Worker">
+        <div class="role-ico">👥</div>
+        <div class="role-name">Worker</div>
+        <div class="role-perms">
+          <div class="role-perm">Loop Builder</div>
+          <div class="role-perm">Écriture script</div>
+          <div class="role-perm">Tes projets</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pwd-zone" id="pwd-zone" style="display:none">
+      <div class="pwd-label" id="pwd-label">MOT DE PASSE CRÉATEUR</div>
+      <div class="pwd-row">
+        <input class="pwd-inp" id="pwd-inp" type="password" placeholder="Mot de passe…" autocomplete="current-password" autofocus>
+        <button class="btn-enter creator" id="btn-enter" onclick="doLogin()">Entrer →</button>
+      </div>
+      <div class="err-msg" id="err-msg"></div>
+    </div>
   </div>
 
 </div>
 
 <script>
-// Redirect if already logged in
 (function(){
   var r = AUTH.getRole();
   if(r === 'creator') { location.replace('index.html'); return; }
-  if(r === 'worker')  { location.replace('loop-builder.html'); return; }
+  if(r === 'worker')  { location.replace('worker-home.html'); return; }
 })();
 
 var selectedRole = null;
 
 function selectRole(role) {
   selectedRole = role;
-
-  // Update cards
   document.getElementById('card-creator').classList.toggle('active', role === 'creator');
   document.getElementById('card-worker').classList.toggle('active', role === 'worker');
-
-  // Show password zone
   var zone = document.getElementById('pwd-zone');
   var label = document.getElementById('pwd-label');
   var inp = document.getElementById('pwd-inp');
   var btn = document.getElementById('btn-enter');
-
   label.textContent = role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
   inp.value = '';
   inp.className = 'pwd-inp ' + role;
   btn.className = 'btn-enter ' + role;
-
   document.getElementById('err-msg').textContent = '';
   zone.style.display = 'flex';
   zone.style.flexDirection = 'column';
@@ -193,15 +247,9 @@ function selectRole(role) {
 function doLogin() {
   var pwd = document.getElementById('pwd-inp').value;
   var role = AUTH.login(pwd);
-  if (!role) {
-    showError('Mot de passe incorrect');
-    return;
-  }
-  if (role === 'worker') {
-    location.href = 'loop-builder.html';
-  } else {
-    location.href = 'index.html';
-  }
+  if (!role) { showError('Mot de passe incorrect'); return; }
+  if (role === 'worker') { location.href = 'worker-home.html'; }
+  else { location.href = 'index.html'; }
 }
 
 function showError(msg) {
@@ -214,7 +262,6 @@ function showError(msg) {
   inp.focus();
 }
 
-// Keyboard: Enter submits, Escape deselects
 document.addEventListener('keydown', function(e){
   if (e.key === 'Enter' && selectedRole) { doLogin(); }
   if (e.key === 'Escape') {
@@ -224,14 +271,9 @@ document.addEventListener('keydown', function(e){
     document.getElementById('pwd-zone').style.display = 'none';
   }
 });
-
-// Card keyboard activation
 document.querySelectorAll('.role-card').forEach(function(card){
   card.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      card.click();
-    }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
   });
 });
 </script>

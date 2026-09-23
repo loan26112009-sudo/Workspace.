@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accueil — Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="auth.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--s1:#111;--s2:#181818;
+  --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.14);
+  --text:#f0f0f0;--sub:rgba(255,255,255,.42);--dim:rgba(255,255,255,.18);
+  --acc:#6366f1;--acc2:#818cf8;
+  --worker:#f59e0b;--worker2:#fbbf24;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;min-height:100%;overflow-x:hidden}
+
+/* BG */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(600px 500px at 5% 10%,rgba(99,102,241,.1),transparent 65%),
+    radial-gradient(500px 400px at 90% 5%,rgba(168,85,247,.07),transparent 65%),
+    radial-gradient(400px 400px at 80% 90%,rgba(245,158,11,.06),transparent 65%)}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 20%,#000 10%,transparent 80%);
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 20%,#000 10%,transparent 80%)}
+
+/* NAV */
+nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid var(--b)}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 12px rgba(99,102,241,.6);animation:dotPulse 3s ease-in-out infinite;flex-shrink:0}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 12px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 4px rgba(99,102,241,.08),0 0 20px rgba(99,102,241,.8)}}
+.nav-name{font-size:16px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(90deg,#fff 40%,var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-right{display:flex;align-items:center;gap:12px}
+.worker-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 12px;border-radius:20px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--worker2)}
+.btn-logout{background:none;border:1px solid var(--b);border-radius:8px;color:var(--sub);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;cursor:pointer;transition:all .2s}
+.btn-logout:hover{border-color:var(--bh);color:var(--text)}
+
+/* MAIN */
+main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;margin:0 auto;width:100%}
+
+/* HERO */
+.welcome{margin-bottom:48px}
+.welcome-tag{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--worker2);text-transform:uppercase;margin-bottom:12px}
+.welcome-title{font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-.04em;color:#fff;margin-bottom:10px}
+.welcome-sub{font-size:14px;color:var(--sub);line-height:1.65;max-width:500px}
+
+/* SECTION HEADER */
+.sec-hd{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--dim);text-transform:uppercase;margin-bottom:16px}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:48px}
+
+.tool-card{border-radius:20px;padding:28px;border:1px solid var(--b);position:relative;overflow:hidden;transition:all .3s cubic-bezier(.16,1,.3,1)}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;opacity:0;transition:opacity .3s}
+.tool-card.enabled::before{opacity:1}
+.tool-card.enabled{background:linear-gradient(160deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.02) 100%);cursor:pointer}
+.tool-card.enabled:hover{transform:translateY(-4px);border-color:var(--bh)}
+.tool-card.locked{background:rgba(255,255,255,.015);cursor:default;opacity:.7}
+
+/* Loop Builder card */
+.tool-card.lb::before{background:linear-gradient(90deg,var(--worker),var(--worker2))}
+.tool-card.lb.enabled:hover{border-color:rgba(245,158,11,.3);box-shadow:0 16px 48px rgba(245,158,11,.1)}
+
+/* Outlier Finder card */
+.tool-card.of::before{background:linear-gradient(90deg,var(--acc),var(--acc2))}
+
+.tc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.tc-ico{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.tc-ico.lb{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22)}
+.tc-ico.of{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.18)}
+.tc-badge{font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:20px}
+.tc-badge.open{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.2)}
+.tc-badge.locked{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--b)}
+
+.tc-name{font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
+.tc-desc{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:20px}
+
+.tc-features{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
+.tc-feat{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:8px}
+.tc-feat-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.tc-feat-dot.lb{background:var(--worker2)}
+.tc-feat-dot.of{background:var(--acc2)}
+
+.tc-cta{display:inline-flex;align-items:center;gap:6px;padding:11px 20px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+.tc-cta.lb{background:linear-gradient(135deg,var(--worker),var(--worker2));color:#000;box-shadow:0 4px 16px rgba(245,158,11,.3)}
+.tc-cta.lb:hover{box-shadow:0 6px 22px rgba(245,158,11,.5);transform:translateY(-1px)}
+.tc-cta.locked-cta{background:rgba(255,255,255,.06);color:var(--dim);border:1px solid var(--b);cursor:default;pointer-events:none}
+
+/* Lock icon */
+.lock-icon{font-size:13px;margin-right:2px}
+
+/* RECENT PROJECTS */
+.recent-section{}
+.recent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.recent-card{padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--b);cursor:pointer;transition:all .2s;text-decoration:none;display:block}
+.recent-card:hover{border-color:var(--bh);background:rgba(255,255,255,.05)}
+.rc-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-meta{font-size:11px;color:var(--dim)}
+.rc-loops{font-size:10px;font-weight:700;color:var(--worker2);margin-top:6px}
+.no-projects{font-size:13px;color:var(--dim);padding:16px 0}
+
+/* MOBILE */
+@media(max-width:600px){
+  nav{padding:16px 20px}
+  main{padding:36px 20px 48px}
+  .tools-grid{grid-template-columns:1fr}
+  .welcome-title{font-size:26px}
+}
+</style>
+</head>
+<body>
+<script>AUTH.require(['creator','worker']);</script>
+
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-dot"></div>
+    <div class="nav-name">Workspace</div>
+  </div>
+  <div class="nav-right">
+    <div class="worker-badge" id="role-badge">👥 Worker</div>
+    <button class="btn-logout" onclick="AUTH.logout()">Déconnexion</button>
+  </div>
+</nav>
+
+<main>
+  <div class="welcome">
+    <div class="welcome-tag" id="welcome-tag">Espace Worker</div>
+    <h1 class="welcome-title">Prêt à travailler ?</h1>
+    <p class="welcome-sub">Accède à tes outils, ouvre un projet et commence à construire.</p>
+  </div>
+
+  <div class="sec-hd">Tes outils</div>
+  <div class="tools-grid">
+
+    <!-- LOOP BUILDER -->
+    <div class="tool-card lb enabled" onclick="location.href='loop-builder.html'">
+      <div class="tc-top">
+        <div class="tc-ico lb">⟲</div>
+        <span class="tc-badge open">Accès ouvert</span>
+      </div>
+      <div class="tc-name">Loop Builder</div>
+      <div class="tc-desc">Construis la structure narrative de tes vidéos boucle par boucle. Écris le script section par section, exporte les notes.</div>
+      <div class="tc-features">
+        <div class="tc-feat"><div class="tc-feat-dot lb"></div>Structure des boucles de rétention</div>
+        <div class="tc-feat"><div class="tc-feat-dot lb"></div>Onglet Script intégré</div>
+        <div class="tc-feat"><div class="tc-feat-dot lb"></div>Projets sauvegardés</div>
+        <div class="tc-feat"><div class="tc-feat-dot lb"></div>Export PNG + TXT</div>
+      </div>
+      <button class="tc-cta lb">Ouvrir Loop Builder →</button>
+    </div>
+
+    <!-- OUTLIER FINDER -->
+    <div class="tool-card of locked">
+      <div class="tc-top">
+        <div class="tc-ico of">✦</div>
+        <span class="tc-badge locked">🔒 Créateur uniquement</span>
+      </div>
+      <div class="tc-name">Outlier Finder</div>
+      <div class="tc-desc">Découvre les vidéos qui surperforment sur ta niche. Analyse les patterns des meilleurs créateurs de ta catégorie.</div>
+      <div class="tc-features">
+        <div class="tc-feat"><div class="tc-feat-dot of"></div>Recherche par mot-clé ou chaîne</div>
+        <div class="tc-feat"><div class="tc-feat-dot of"></div>Score de sur-performance</div>
+        <div class="tc-feat"><div class="tc-feat-dot of"></div>Analyse des patterns de titre</div>
+        <div class="tc-feat"><div class="tc-feat-dot of"></div>Mode similaire &amp; découverte</div>
+      </div>
+      <button class="tc-cta locked-cta"><span class="lock-icon">🔒</span>Réservé au Créateur</button>
+    </div>
+
+  </div>
+
+  <!-- PROJETS RÉCENTS -->
+  <div class="recent-section">
+    <div class="sec-hd">Projets récents</div>
+    <div class="recent-grid" id="recent-grid"></div>
+  </div>
+</main>
+
+<script>
+// Role badge
+(function(){
+  var role = AUTH.getRole();
+  var badge = document.getElementById('role-badge');
+  var tag = document.getElementById('welcome-tag');
+  if(role === 'creator'){
+    if(badge){ badge.style.background='rgba(99,102,241,.14)'; badge.style.borderColor='rgba(99,102,241,.28)'; badge.style.color='#a5b4fc'; badge.textContent='✦ Créateur'; }
+    if(tag){ tag.textContent='Espace Créateur'; }
+    // Creators can access outlier finder — unlock card
+    var ofCard = document.querySelector('.tool-card.of');
+    if(ofCard){
+      ofCard.classList.remove('locked'); ofCard.classList.add('enabled');
+      ofCard.style.opacity='1'; ofCard.style.cursor='pointer';
+      ofCard.onclick = function(){ location.href='outlier-finder.html'; };
+      var ofBadge = ofCard.querySelector('.tc-badge'); if(ofBadge){ ofBadge.className='tc-badge open'; ofBadge.textContent='Accès ouvert'; }
+      var ofCta = ofCard.querySelector('.tc-cta'); if(ofCta){ ofCta.className='tc-cta'; ofCta.style.background='linear-gradient(135deg,#6366f1,#818cf8)'; ofCta.style.color='#fff'; ofCta.style.boxShadow='0 4px 16px rgba(99,102,241,.3)'; ofCta.style.cursor='pointer'; ofCta.style.pointerEvents='auto'; ofCta.innerHTML='Ouvrir Outlier Finder →'; ofCta.onclick=function(e){e.stopPropagation();location.href='outlier-finder.html';}; }
+    }
+  }
+})();
+
+// Recent projects
+(function(){
+  var grid = document.getElementById('recent-grid');
+  if(!grid) return;
+  try{
+    var list = JSON.parse(localStorage.getItem('loopbuilder_projects_v1')||'[]');
+    list.sort(function(a,b){return b.updated-a.updated;});
+    list = list.slice(0,6);
+    if(!list.length){
+      grid.innerHTML='<div class="no-projects">Aucun projet — ouvre Loop Builder pour commencer.</div>';
+      return;
+    }
+    list.forEach(function(p){
+      var d = new Date(p.updated).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+      var loops = p.state&&p.state.arcs?p.state.arcs.length:0;
+      var card = document.createElement('a');
+      card.className = 'recent-card';
+      card.href = 'loop-builder.html?p='+p.id;
+      card.innerHTML = '<div class="rc-name">'+escHtml(p.name)+'</div>'
+        +'<div class="rc-meta">Modifié le '+d+'</div>'
+        +'<div class="rc-loops">'+loops+' boucle'+(loops!==1?'s':'')+'</div>';
+      grid.appendChild(card);
+    });
+  }catch(e){ grid.innerHTML='<div class="no-projects">Ouvre Loop Builder pour voir tes projets.</div>'; }
+})();
+
+function escHtml(s){ var d=document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+</script>
+</body>
+</html>
