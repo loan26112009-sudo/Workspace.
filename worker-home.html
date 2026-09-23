@@ -7,10 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){var t=localStorage.getItem('ws_theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="firebase-sync.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -60,95 +56,6 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 /* MAIN */
 main{position:relative;z-index:1;flex:1;padding:44px 40px 60px;max-width:980px;margin:0 auto;width:100%}
 
-/* ═══════════════════════════════════════════
-   HERO SYNC — état CONNECTÉ
-   ═══════════════════════════════════════════ */
-.hero-connected{
-  display:flex;align-items:center;gap:28px;
-  padding:32px 36px;
-  border-radius:24px;
-  border:1px solid rgba(99,102,241,.22);
-  background:linear-gradient(135deg,rgba(99,102,241,.08) 0%,rgba(168,85,247,.05) 50%,rgba(245,158,11,.05) 100%);
-  position:relative;overflow:hidden;
-  margin-bottom:40px;
-}
-.hero-connected::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(600px 300px at 10% 50%,rgba(99,102,241,.12),transparent 70%);
-  pointer-events:none;
-}
-.hc-avatar{
-  width:88px;height:88px;border-radius:50%;
-  border:3px solid rgba(99,102,241,.4);
-  box-shadow:0 0 0 6px rgba(99,102,241,.08),0 8px 32px rgba(0,0,0,.4);
-  object-fit:cover;flex-shrink:0;
-  background:rgba(99,102,241,.15);
-}
-.hc-avatar-placeholder{
-  width:88px;height:88px;border-radius:50%;
-  border:3px solid rgba(99,102,241,.3);
-  background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(168,85,247,.2));
-  display:flex;align-items:center;justify-content:center;
-  font-size:36px;flex-shrink:0;
-}
-.hc-info{flex:1;min-width:0}
-.hc-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--acc2);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px}
-.hc-dot-green{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:syncPulse 2.5s ease-in-out infinite}
-@keyframes syncPulse{0%,100%{box-shadow:0 0 6px #4ade80}50%{box-shadow:0 0 14px #4ade80,0 0 22px rgba(74,222,128,.4)}}
-.hc-name{font-size:clamp(26px,2.8vw,38px);font-weight:900;letter-spacing:-.04em;color:#fff;margin-bottom:6px;text-wrap:balance}
-.hc-email{font-size:13px;color:var(--sub)}
-.hc-devices{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
-.hc-device-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid var(--b);color:var(--sub);display:flex;align-items:center;gap:5px}
-
-/* ═══════════════════════════════════════════
-   HERO SYNC — état GUEST (pas connecté)
-   ═══════════════════════════════════════════ */
-.hero-guest{
-  padding:40px;
-  border-radius:24px;
-  border:1px solid rgba(245,158,11,.2);
-  background:linear-gradient(140deg,rgba(245,158,11,.07) 0%,rgba(251,191,36,.04) 40%,rgba(99,102,241,.06) 100%);
-  position:relative;overflow:hidden;
-  margin-bottom:40px;
-  display:flex;gap:36px;align-items:center;
-}
-.hero-guest::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(500px 300px at 90% 50%,rgba(245,158,11,.06),transparent 70%);
-  pointer-events:none;
-}
-.hg-left{flex:1;min-width:0;position:relative;z-index:1}
-.hg-tag{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--worker2);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.hg-tag-dot{width:6px;height:6px;border-radius:50%;background:var(--worker2)}
-.hg-title{font-size:clamp(24px,2.6vw,34px);font-weight:900;letter-spacing:-.04em;color:#fff;margin-bottom:12px;text-wrap:balance}
-.hg-desc{font-size:14px;color:var(--sub);line-height:1.7;margin-bottom:28px;max-width:420px}
-.hg-steps{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap}
-.hg-step{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--sub);padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--b)}
-.hg-step-n{width:18px;height:18px;border-radius:50%;background:rgba(245,158,11,.2);border:1px solid rgba(245,158,11,.3);color:var(--worker2);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.btn-google{
-  display:inline-flex;align-items:center;gap:12px;
-  padding:14px 24px;border-radius:13px;
-  background:#fff;color:#1a1a1a;
-  font-family:'Inter',sans-serif;font-size:14px;font-weight:700;
-  border:none;cursor:pointer;
-  box-shadow:0 4px 20px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.1);
-  transition:all .2s cubic-bezier(.16,1,.3,1);
-  text-decoration:none;
-}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.15)}
-.btn-google:active{transform:translateY(0)}
-.btn-google-icon{width:20px;height:20px;flex-shrink:0}
-.hg-note{font-size:11px;color:var(--dim);margin-top:10px}
-
-.hg-right{flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
-.hg-devices-art{display:flex;flex-direction:column;align-items:center;gap:8px}
-.hg-device{border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative}
-.hg-device.phone{width:56px;height:90px;border-radius:14px}
-.hg-device.tablet{width:100px;height:72px;border-radius:10px}
-.hg-device.laptop{width:120px;height:76px;border-radius:10px}
-.hg-sync-line{width:2px;height:16px;background:linear-gradient(to bottom,transparent,rgba(245,158,11,.5),transparent)}
-.hg-sync-dot{width:8px;height:8px;border-radius:50%;background:var(--worker2);box-shadow:0 0 10px var(--worker2);animation:syncFloat 2s ease-in-out infinite}
-@keyframes syncFloat{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-5px);opacity:.7}}
 
 /* SECTION HEADER */
 .sec-hd{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--dim);text-transform:uppercase;margin-bottom:16px}
@@ -232,61 +139,11 @@ main{position:relative;z-index:1;flex:1;padding:44px 40px 60px;max-width:980px;m
 
 <main>
 
-  <!-- ── HERO : état CONNECTÉ ── -->
-  <div class="hero-connected" id="hero-connected" hidden>
-    <img class="hc-avatar" id="hc-avatar" src="" alt="">
-    <div class="hc-info">
-      <div class="hc-label">
-        <span class="hc-dot-green"></span>
-        Synchronisé sur tous tes appareils
-      </div>
-      <div class="hc-name" id="hc-name">Bonjour !</div>
-      <div class="hc-email" id="hc-email"></div>
-      <div class="hc-devices">
-        <div class="hc-device-pill">📱 Téléphone</div>
-        <div class="hc-device-pill">📲 Tablette</div>
-        <div class="hc-device-pill">💻 Ordinateur</div>
-        <div class="hc-device-pill" style="color:#4ade80;border-color:rgba(74,222,128,.25)">✓ Projets sauvegardés</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── HERO : état GUEST ── -->
-  <div class="hero-guest" id="hero-guest">
-    <div class="hg-left">
-      <div class="hg-tag"><span class="hg-tag-dot"></span>Sync cross-device</div>
-      <h1 class="hg-title">Tes projets te suivent<br>partout où tu travailles</h1>
-      <p class="hg-desc">Connecte ton compte Google une seule fois. Loop Builder, tes scripts, tes analyses — tout se synchronise automatiquement entre ton téléphone, ta tablette et ton ordi.</p>
-      <div class="hg-steps">
-        <div class="hg-step"><div class="hg-step-n">1</div>Un clic pour connecter</div>
-        <div class="hg-step"><div class="hg-step-n">2</div>Travaille sur n'importe quel appareil</div>
-        <div class="hg-step"><div class="hg-step-n">3</div>Tout est là, toujours à jour</div>
-      </div>
-      <button class="btn-google" id="btn-google-signin" onclick="connectGoogle()">
-        <svg class="btn-google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Connecter avec Google
-      </button>
-      <div class="hg-note">Le mot de passe reste obligatoire · Google sert uniquement à la sync</div>
-    </div>
-
-    <div class="hg-right" aria-hidden="true">
-      <div class="hg-devices-art">
-        <div class="hg-device phone">📱</div>
-        <div class="hg-sync-line"></div>
-        <div class="hg-sync-dot"></div>
-        <div class="hg-sync-line"></div>
-        <div class="hg-device tablet">📲</div>
-        <div class="hg-sync-line"></div>
-        <div class="hg-sync-dot" style="animation-delay:.8s"></div>
-        <div class="hg-sync-line"></div>
-        <div class="hg-device laptop">💻</div>
-      </div>
-    </div>
+  <!-- ── BIENVENUE ── -->
+  <div style="margin-bottom:36px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--dim);text-transform:uppercase;margin-bottom:12px">Workspace · Worker</div>
+    <h1 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-.045em;color:var(--text);margin-bottom:8px">Bienvenue 👋</h1>
+    <p style="font-size:14px;color:var(--sub);line-height:1.6">Tous tes outils de production, au même endroit.</p>
   </div>
 
   <!-- ── OUTILS ── -->
@@ -361,46 +218,6 @@ function toggleTheme(){
   }
 })();
 
-// Google Sign-In
-function connectGoogle(){
-  var btn = document.getElementById('btn-google-signin');
-  if(btn){ btn.textContent='Redirection Google...'; btn.style.opacity='.7'; btn.disabled=true; }
-  FBSYNC.signIn();
-}
-
-function showConnectedState(user){
-  if(!user) return;
-  var firstName = (user.displayName||'').split(' ')[0] || user.email || 'toi';
-  document.getElementById('hc-name').textContent = 'Bonjour, ' + firstName + ' 👋';
-  document.getElementById('hc-email').textContent = user.email || '';
-  var av = document.getElementById('hc-avatar');
-  if(user.photoURL){
-    av.src = user.photoURL;
-    av.hidden = false;
-  } else {
-    av.hidden = true;
-    var ph = document.createElement('div');
-    ph.className = 'hc-avatar-placeholder';
-    ph.textContent = firstName[0].toUpperCase();
-    av.parentNode.insertBefore(ph, av);
-  }
-  document.getElementById('hero-guest').hidden = true;
-  document.getElementById('hero-connected').hidden = false;
-  FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
-}
-
-// Check Firebase auth on load — show the right hero only once Firebase knows
-var heroConnected=document.getElementById('hero-connected');
-var heroGuest=document.getElementById('hero-guest');
-heroConnected.hidden=true;
-heroGuest.hidden=true;
-FBSYNC.ready().then(function(user){
-  if(user){ showConnectedState(user); return; }
-  FBSYNC.getRedirectResult().then(function(res){
-    heroGuest.hidden=false;
-    if(res&&res.user) showConnectedState(res.user);
-  }).catch(function(){ heroGuest.hidden=false; });
-});
 
 // Recent projects
 (function(){

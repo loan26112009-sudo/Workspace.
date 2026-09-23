@@ -39,7 +39,6 @@
     logout: function () {
       localStorage.removeItem(ROLE_KEY);
       localStorage.removeItem(NAME_KEY);
-      if (window.FBSYNC) { FBSYNC.signOut(); }
       window.location.href = 'login.html';
     },
 
