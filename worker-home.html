@@ -397,11 +397,17 @@ function showConnectedState(user){
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
 }
 
-// Check Firebase auth on load — show the right hero only once Firebase knows
+// Affiche la carte "Bonjour" immédiatement avec le nom password (toujours visible)
 var heroConnected=document.getElementById('hero-connected');
 var heroGuest=document.getElementById('hero-guest');
-heroConnected.hidden=true;
-heroGuest.hidden=true;
+(function(){
+  var n=AUTH.getName();
+  var first=(n||'').split(' ')[0]||'';
+  document.getElementById('hc-name').textContent='Bonjour'+(first?' '+first:'')+' !';
+  heroConnected.hidden=false;
+  heroGuest.hidden=true; // caché par défaut, montré seulement si pas connecté Google
+})();
+// Firebase : met à jour avec nom/photo Google si connecté, sinon montre l'offre de sync
 firebase.auth().onAuthStateChanged(function(user){
   if(user){ showConnectedState(user); }
   else{ heroGuest.hidden=false; }
