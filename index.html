@@ -4,20 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Workspace — Loan</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.ggpht.com https://*.googleusercontent.com https://i.ytimg.com; media-src 'self' data:; connect-src 'self' https://www.googleapis.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.ggpht.com https://*.googleusercontent.com https://i.ytimg.com; media-src 'self' data:; connect-src 'self' https://www.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://*.firebaseio.com; frame-src https://accounts.google.com https://workspace-60d4e.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080808">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('ws_theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="firebase-sync.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+  color-scheme:dark;
   --bg:#080808;--s1:#0f0f0f;--s2:#161616;
   --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.14);
   --text:#f0f0f0;--sub:rgba(255,255,255,.42);--dim:rgba(255,255,255,.18);
   --acc:#6366f1;--acc2:#818cf8;--grn:#22c55e;--red:#ef4444;--yel:#f59e0b;--pink:#f472b6;
 }
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f0f2f8;--s1:#e8eaf1;--s2:#dfe1ea;
+  --b:rgba(0,0,0,.09);--bh:rgba(0,0,0,.2);
+  --text:#0f1023;--sub:rgba(15,16,35,.55);--dim:rgba(15,16,35,.34);
+  --acc:#4f52d8;--acc2:#6366f1;
+  --grn:#16a34a;--red:#dc2626;--yel:#d97706;--pink:#db2777;
+}
+[data-theme="light"] .nav{background:rgba(240,242,248,.92)!important}
+[data-theme="light"] .nav-logo span{background:linear-gradient(90deg,var(--text) 30%,var(--acc));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+[data-theme="light"] .hero-title{color:var(--text)}
+[data-theme="light"] .stat-tile{background:rgba(255,255,255,.75)}
+[data-theme="light"] .stat-tile-val{color:var(--text)}
+[data-theme="light"] .tool-card{background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.4))}
+[data-theme="light"] .tool-title{color:var(--text)}
+[data-theme="light"] .drawer{background:#f0f2f8;border-right-color:var(--b)}
+[data-theme="light"] .drawer-overlay{background:rgba(0,0,0,.35)}
+[data-theme="light"] .btn-ghost{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--sub)}
+[data-theme="light"] .btn-ghost:hover{background:rgba(0,0,0,.09);color:var(--text)}
+[data-theme="light"] .imp-link{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.45)}
+[data-theme="light"] .imp-link:hover{background:rgba(0,0,0,.09);border-color:rgba(0,0,0,.16);color:rgba(0,0,0,.75)}
+[data-theme="light"] .footer{border-top-color:var(--b)}
+[data-theme="light"] .hero-glow{opacity:.5}
+[data-theme="light"] .yt-setup-inner{background:rgba(255,255,255,.8)}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
 html,body{overflow-x:hidden;max-width:100%}
 ::selection{background:rgba(99,102,241,.35);color:#fff}
@@ -228,6 +258,7 @@ html,body{overflow-x:hidden;max-width:100%}
     <div class="nav-clock" id="app-clock">--:--</div>
     <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-settings"/></svg></button>
     <div id="creator-name-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:#a5b4fc;letter-spacing:.04em;display:none"></div>
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" style="font-size:16px">☀️</button>
     <button class="icon-btn" onclick="AUTH.logout()" title="Se déconnecter" style="color:rgba(255,255,255,.3)"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-logout"/></svg></button>
   </div>
 </nav>
@@ -428,6 +459,10 @@ html,body{overflow-x:hidden;max-width:100%}
 </div>
 
 <script>
+// ── Theme ──
+(function(){var t=localStorage.getItem('ws_theme')||'dark';var btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='light'?'🌙':'☀️';})();
+function toggleTheme(){var html=document.documentElement;var cur=html.getAttribute('data-theme')==='light'?'dark':'light';html.setAttribute('data-theme',cur);localStorage.setItem('ws_theme',cur);var btn=document.getElementById('theme-btn');if(btn)btn.textContent=cur==='light'?'🌙':'☀️';}
+
 // ── Clock ──
 function tickClock(){const d=new Date();document.getElementById('app-clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 tickClock();setInterval(tickClock,10000);

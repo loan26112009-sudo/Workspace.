@@ -5,15 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Accueil — Workspace</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('ws_theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="firebase-sync.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+  color-scheme:dark;
   --bg:#080808;--s1:#111;--s2:#181818;
   --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.14);
   --text:#f0f0f0;--sub:rgba(255,255,255,.42);--dim:rgba(255,255,255,.18);
   --acc:#6366f1;--acc2:#818cf8;
   --worker:#f59e0b;--worker2:#fbbf24;
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f0f2f8;--s1:#e8eaf1;--s2:#dfe1ea;
+  --b:rgba(0,0,0,.09);--bh:rgba(0,0,0,.2);
+  --text:#0f1023;--sub:rgba(15,16,35,.55);--dim:rgba(15,16,35,.34);
+  --acc:#4f52d8;--acc2:#6366f1;
+  --worker:#c07a04;--worker2:#d98f0a;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
 body{display:flex;flex-direction:column;min-height:100%;overflow-x:hidden}
@@ -40,6 +54,13 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 .worker-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 12px;border-radius:20px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--worker2)}
 .btn-logout{background:none;border:1px solid var(--b);border-radius:8px;color:var(--sub);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;cursor:pointer;transition:all .2s}
 .btn-logout:hover{border-color:var(--bh);color:var(--text)}
+.theme-btn{width:34px;height:34px;border-radius:9px;background:none;border:1px solid var(--b);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.theme-btn:hover{border-color:var(--bh);transform:scale(1.06)}
+[data-theme="light"] .bg-glow{background:radial-gradient(600px 500px at 5% 10%,rgba(99,102,241,.06),transparent 65%),radial-gradient(500px 400px at 90% 5%,rgba(168,85,247,.04),transparent 65%),radial-gradient(400px 400px at 80% 90%,rgba(245,158,11,.04),transparent 65%)}
+[data-theme="light"] .nav-name{background:linear-gradient(90deg,var(--text) 40%,var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+[data-theme="light"] .recent-card{background:rgba(255,255,255,.6)}
+[data-theme="light"] .tool-card.enabled{background:linear-gradient(160deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.35) 100%)}
+[data-theme="light"] .tool-card.locked{background:rgba(255,255,255,.25)}
 
 /* MAIN */
 main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;margin:0 auto;width:100%}
@@ -127,6 +148,7 @@ main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;m
   </div>
   <div class="nav-right">
     <div class="worker-badge" id="role-badge">👥 Worker</div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre">☀️</button>
     <button class="btn-logout" onclick="AUTH.logout()">Déconnexion</button>
   </div>
 </nav>
@@ -185,6 +207,20 @@ main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;m
 </main>
 
 <script>
+// Theme
+(function(){
+  var t = localStorage.getItem('ws_theme') || 'dark';
+  var btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+})();
+function toggleTheme(){
+  var html = document.documentElement;
+  var cur = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', cur);
+  localStorage.setItem('ws_theme', cur);
+  document.getElementById('theme-btn').textContent = cur === 'light' ? '🌙' : '☀️';
+}
+
 // Role badge
 (function(){
   var role = AUTH.getRole();
