@@ -159,10 +159,10 @@ main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;m
     </div>
 
     <!-- OUTLIER FINDER -->
-    <div class="tool-card of locked">
+    <div class="tool-card of enabled" onclick="location.href='outlier-finder.html'">
       <div class="tc-top">
         <div class="tc-ico of">✦</div>
-        <span class="tc-badge locked">🔒 Créateur uniquement</span>
+        <span class="tc-badge open">Accès ouvert</span>
       </div>
       <div class="tc-name">Outlier Finder</div>
       <div class="tc-desc">Découvre les vidéos qui surperforment sur ta niche. Analyse les patterns des meilleurs créateurs de ta catégorie.</div>
@@ -172,7 +172,7 @@ main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;m
         <div class="tc-feat"><div class="tc-feat-dot of"></div>Analyse des patterns de titre</div>
         <div class="tc-feat"><div class="tc-feat-dot of"></div>Mode similaire &amp; découverte</div>
       </div>
-      <button class="tc-cta locked-cta"><span class="lock-icon">🔒</span>Réservé au Créateur</button>
+      <button class="tc-cta" style="background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.3)" onclick="event.stopPropagation();location.href='outlier-finder.html'">Ouvrir Outlier Finder →</button>
     </div>
 
   </div>
@@ -193,15 +193,6 @@ main{position:relative;z-index:1;flex:1;padding:52px 40px 60px;max-width:960px;m
   if(role === 'creator'){
     if(badge){ badge.style.background='rgba(99,102,241,.14)'; badge.style.borderColor='rgba(99,102,241,.28)'; badge.style.color='#a5b4fc'; badge.textContent='✦ Créateur'; }
     if(tag){ tag.textContent='Espace Créateur'; }
-    // Creators can access outlier finder — unlock card
-    var ofCard = document.querySelector('.tool-card.of');
-    if(ofCard){
-      ofCard.classList.remove('locked'); ofCard.classList.add('enabled');
-      ofCard.style.opacity='1'; ofCard.style.cursor='pointer';
-      ofCard.onclick = function(){ location.href='outlier-finder.html'; };
-      var ofBadge = ofCard.querySelector('.tc-badge'); if(ofBadge){ ofBadge.className='tc-badge open'; ofBadge.textContent='Accès ouvert'; }
-      var ofCta = ofCard.querySelector('.tc-cta'); if(ofCta){ ofCta.className='tc-cta'; ofCta.style.background='linear-gradient(135deg,#6366f1,#818cf8)'; ofCta.style.color='#fff'; ofCta.style.boxShadow='0 4px 16px rgba(99,102,241,.3)'; ofCta.style.cursor='pointer'; ofCta.style.pointerEvents='auto'; ofCta.innerHTML='Ouvrir Outlier Finder →'; ofCta.onclick=function(e){e.stopPropagation();location.href='outlier-finder.html';}; }
-    }
   }
 })();
 
