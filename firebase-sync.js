@@ -40,6 +40,11 @@
     },
 
     signOut: function () {
+      try {
+        localStorage.removeItem('ws_gphoto');
+        localStorage.removeItem('ws_gname');
+        localStorage.removeItem('ws_gemail');
+      } catch (e) {}
       return auth.signOut();
     },
 

@@ -557,12 +557,38 @@ function gsyncShow(user){
   setNavAvatar(user.photoURL||null, first||AUTH.getName());
   document.getElementById('gsync-guest').hidden=true;
   document.getElementById('gsync-connected').hidden=false;
+  document.getElementById('gsync-strip').hidden=false;
+  // Cache Google info → photo s'affiche instantanément au prochain chargement
+  try{
+    localStorage.setItem('ws_gphoto',user.photoURL||'');
+    localStorage.setItem('ws_gname',user.displayName||'');
+    localStorage.setItem('ws_gemail',user.email||'');
+  }catch(e){}
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
 }
-// Listener persistant — capture l'état initial ET la restauration du cache Firebase
+// Affiche depuis le cache immédiatement — photo visible avant même la restauration Firebase
+(function(){
+  var p,n,e;
+  try{p=localStorage.getItem('ws_gphoto');n=localStorage.getItem('ws_gname');e=localStorage.getItem('ws_gemail');}catch(x){}
+  if(p||n){gsyncShow({photoURL:p||null,displayName:n||'',email:e||''});}
+})();
+// Listener persistant — met à jour avec les données live et gère la déconnexion réelle
+var _gAuthKnown=false;
 firebase.auth().onAuthStateChanged(function(user){
-  document.getElementById('gsync-strip').hidden=false;
-  if(user) gsyncShow(user);
+  if(user){
+    _gAuthKnown=true;
+    gsyncShow(user);
+  } else if(_gAuthKnown){
+    // Déconnexion réelle (pas le null initial)
+    try{localStorage.removeItem('ws_gphoto');localStorage.removeItem('ws_gname');localStorage.removeItem('ws_gemail');}catch(x){}
+    document.getElementById('gsync-connected').hidden=true;
+    document.getElementById('gsync-guest').hidden=false;
+    document.getElementById('gsync-strip').hidden=false;
+  } else {
+    // Premier null avant restauration Firebase — si aucun cache, montrer le strip guest
+    var c;try{c=localStorage.getItem('ws_gphoto');}catch(x){}
+    if(!c){document.getElementById('gsync-strip').hidden=false;}
+  }
 });
 // Résultat du redirect Google (retour après signInWithRedirect)
 FBSYNC.getRedirectResult().then(function(res){
