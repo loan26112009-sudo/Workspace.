@@ -292,7 +292,8 @@ html,body{overflow-x:hidden;max-width:100%}
 <div class="gsync-strip" id="gsync-strip" hidden>
 
   <!-- État non connecté -->
-  <div class="gsync-guest" id="gsync-guest">
+  <div class="gsync-guest" id="gsync-guest" style="position:relative">
+    <button onclick="document.getElementById('gsync-strip').hidden=true" style="position:absolute;top:10px;right:10px;z-index:3;width:26px;height:26px;border-radius:7px;background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);color:rgba(0,0,0,.3);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.color='rgba(0,0,0,.6)'" onmouseout="this.style.color='rgba(0,0,0,.3)'" title="Masquer">✕</button>
     <div class="gsync-ico">☁️</div>
     <div class="gsync-text">
       <div class="gsync-title">Sync cross-device</div>
