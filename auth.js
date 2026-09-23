@@ -5,11 +5,11 @@
 (function () {
   // Map password → creator name
   var CREATORS = {
-    'loan2024':    'Loan',
-    'wondray2024': 'Wondray',
-    'ykud2024':    'Ykud',
+    'loanacces':    'Loan',
+    'wondrayacces': 'Wondray',
+    'ykudacces':    'Ykud',
   };
-  var WORKER_PWD = 'team2024';
+  var WORKER_PWD = 'teamaccesworker';
   var ROLE_KEY = 'ws_role';
   var NAME_KEY = 'ws_name';
 
