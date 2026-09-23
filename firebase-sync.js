@@ -1,6 +1,10 @@
+// ── FIREBASE SYNC ─────────────────────────────────────────────────────────────
+// Gère l'authentification Google et la synchronisation Firestore.
+// Dépend des scripts Firebase compat SDK chargés avant ce fichier.
+// ──────────────────────────────────────────────────────────────────────────────
 (function () {
   var cfg = {
-    apiKey:            'AIzaSyBn•••••••••••••••••••••••••••••••',
+    apiKey:            'AIzaSyBnDobdEig7sM1_PEfApRtQEHmxwk_s9eU',
     authDomain:        'workspace-60d4e.firebaseapp.com',
     projectId:         'workspace-60d4e',
     storageBucket:     'workspace-60d4e.firebasestorage.app',
@@ -14,6 +18,7 @@
 
   window.FBSYNC = {
 
+    // Résout quand l'état auth initial est connu (user | null)
     ready: function () {
       return new Promise(function (resolve) {
         var unsub = auth.onAuthStateChanged(function (user) {
@@ -23,11 +28,13 @@
       });
     },
 
+    // Redirect Google Sign-In (redirige vers Google puis revient sur la page)
     signIn: function () {
       var provider = new firebase.auth.GoogleAuthProvider();
       return auth.signInWithRedirect(provider);
     },
 
+    // À appeler au chargement pour récupérer le résultat du redirect Google
     getRedirectResult: function () {
       return auth.getRedirectResult();
     },
@@ -40,7 +47,7 @@
       return auth.currentUser;
     },
 
-    // Sauvegarde role + name dans Firestore
+    // Sauvegarde {role, name} dans Firestore après login par mot de passe
     saveSession: function (role, name) {
       var u = auth.currentUser;
       if (!u) return Promise.resolve();
@@ -51,25 +58,12 @@
       }, { merge: true });
     },
 
-    // Lit role + name depuis Firestore → retourne { role, name } ou null
+    // Charge la session depuis Firestore → {role, name} | null
     loadSession: function () {
       var u = auth.currentUser;
       if (!u) return Promise.resolve(null);
       return db.collection('users').doc(u.uid).get().then(function (doc) {
         return doc.exists ? doc.data() : null;
-      });
-    },
-
-    // Restaure la session depuis Firestore dans localStorage
-    // Retourne true si la session a été restaurée, false sinon
-    restoreSession: function () {
-      return this.loadSession().then(function (session) {
-        if (session && session.role) {
-          localStorage.setItem('ws_role', session.role);
-          if (session.name) localStorage.setItem('ws_name', session.name);
-          return true;
-        }
-        return false;
       });
     }
   };
