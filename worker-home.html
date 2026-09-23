@@ -54,6 +54,8 @@ nav{position:relative;z-index:10;display:flex;align-items:center;justify-content
 .worker-badge{font-size:11px;font-weight:700;letter-spacing:.06em;padding:4px 12px;border-radius:20px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--worker2)}
 .btn-logout{background:none;border:1px solid var(--b);border-radius:8px;color:var(--sub);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;cursor:pointer;transition:all .2s}
 .btn-logout:hover{border-color:var(--bh);color:var(--text)}
+.btn-report{background:none;border:1px solid rgba(239,68,68,.25);border-radius:8px;color:rgba(239,68,68,.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.btn-report:hover{border-color:rgba(239,68,68,.6);color:rgb(239,68,68);background:rgba(239,68,68,.06)}
 .theme-btn{width:34px;height:34px;border-radius:9px;background:none;border:1px solid var(--b);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .theme-btn:hover{border-color:var(--bh);transform:scale(1.06)}
 
@@ -225,6 +227,10 @@ main{position:relative;z-index:1;flex:1;padding:44px 40px 60px;max-width:980px;m
   </div>
   <div class="nav-right">
     <div class="worker-badge" id="role-badge">👥 Worker</div>
+    <a class="btn-report" href="https://docs.google.com/forms/d/VOTRE_ID_FORM/viewform" target="_blank" rel="noopener" title="Signaler un problème">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Signaler
+    </a>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre">☀️</button>
     <button class="btn-logout" onclick="AUTH.logout()">Déconnexion</button>
   </div>
