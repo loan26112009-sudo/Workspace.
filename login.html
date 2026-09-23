@@ -4,10 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connexion — Workspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.googleusercontent.com; connect-src https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://*.googleapis.com https://*.firebaseio.com; frame-src https://accounts.google.com https://workspace-60d4e.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){var t=localStorage.getItem('ws_theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="firebase-sync.js"></script>
 <style>
 /* ── DARK (défaut) ── */
 :root{
@@ -63,9 +67,9 @@ body{display:flex;flex-direction:column;position:relative}
 @keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 5px rgba(99,102,241,.08),0 0 28px rgba(99,102,241,.8)}}
 .logo-name{font-size:17px;font-weight:900;letter-spacing:-.04em;color:var(--text)}
 
-/* ── THEME TOGGLE (fixed top-right) ── */
-.theme-btn{
-  position:fixed;top:16px;right:20px;z-index:100;
+/* ── CTRL BUTTONS (fixed top-right) ── */
+.ctrl-row{position:fixed;top:16px;right:20px;z-index:100;display:flex;gap:8px}
+.theme-btn,.sync-btn{
   width:42px;height:42px;border-radius:12px;
   background:var(--card-bg);border:1px solid var(--b);
   color:var(--text);font-size:18px;cursor:pointer;
@@ -74,7 +78,10 @@ body{display:flex;flex-direction:column;position:relative}
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   box-shadow:0 2px 12px var(--shadow)
 }
-.theme-btn:hover{border-color:var(--bh);transform:scale(1.06)}
+.theme-btn:hover,.sync-btn:hover{border-color:var(--bh);transform:scale(1.06)}
+.sync-btn{font-size:14px;display:none}
+.sync-btn.active{border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.08)}
+.sync-btn img{width:26px;height:26px;border-radius:50%;pointer-events:none}
 
 /* ── CARDS — plein écran 50/50 ── */
 .cards{position:relative;z-index:1;display:flex;flex:1;height:100%}
@@ -218,8 +225,11 @@ body{display:flex;flex-direction:column;position:relative}
   <div class="logo-name">Workspace</div>
 </div>
 
-<!-- Theme toggle -->
-<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" aria-label="Basculer thème">☀️</button>
+<!-- Ctrl buttons -->
+<div class="ctrl-row">
+  <button class="sync-btn" id="sync-btn" onclick="onSyncClick()" title="Sync Google" aria-label="Sync Google">G</button>
+  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" aria-label="Basculer thème">☀️</button>
+</div>
 
 <!-- Role cards – full screen -->
 <div class="cards">
@@ -325,10 +335,12 @@ function doLogin() {
     showError('Mot de passe incorrect');
     return;
   }
-  if (role === 'worker') {
-    location.href = 'loop-builder.html';
+  // Sync to Firebase if user is signed in with Google
+  var dest = role === 'worker' ? 'loop-builder.html' : 'index.html';
+  if (window.FBSYNC && FBSYNC.getUser()) {
+    FBSYNC.saveSession(role, AUTH.getName()).finally(function(){ location.href = dest; });
   } else {
-    location.href = 'index.html';
+    location.href = dest;
   }
 }
 
@@ -363,6 +375,73 @@ document.querySelectorAll('.role-card').forEach(function(card){
     }
   });
 });
+
+// ── Firebase Sync ──
+if (window.FBSYNC) {
+  FBSYNC.ready().then(function(user) {
+    var btn = document.getElementById('sync-btn');
+    if (user) {
+      // Already signed in — show avatar
+      btn.style.display = 'flex';
+      btn.classList.add('active');
+      if (user.photoURL) {
+        btn.innerHTML = '<img src="' + user.photoURL + '" alt="">';
+      } else {
+        btn.textContent = (user.displayName || user.email || 'G')[0].toUpperCase();
+      }
+      btn.title = (user.displayName || user.email) + ' — cliquer pour déconnecter la sync';
+      // Restore role pre-selection from Firestore
+      FBSYNC.loadSession().then(function(data) {
+        if (data && data.role && !selectedRole) {
+          // Pre-select their card so they just need to enter the password
+          document.getElementById('card-' + data.role).classList.add('active');
+          selectedRole = data.role;
+          var zone = document.getElementById('pwd-zone');
+          var label = document.getElementById('pwd-label');
+          var inp = document.getElementById('pwd-inp');
+          var btnE = document.getElementById('btn-enter');
+          label.textContent = data.role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
+          inp.className = 'pwd-inp ' + data.role;
+          btnE.className = 'btn-enter ' + data.role;
+          zone.classList.add('visible');
+          document.getElementById('footer-bar').classList.add('hidden');
+          setTimeout(function(){ inp.focus(); }, 80);
+        }
+      });
+    } else {
+      // Not signed in — show sync button
+      btn.style.display = 'flex';
+      btn.title = 'Connecter Google pour sync cross-device';
+    }
+  });
+}
+
+function onSyncClick() {
+  if (!window.FBSYNC) return;
+  var user = FBSYNC.getUser();
+  if (user) {
+    // Already signed in → sign out of Google sync
+    FBSYNC.signOut().then(function() {
+      var btn = document.getElementById('sync-btn');
+      btn.classList.remove('active');
+      btn.innerHTML = 'G';
+      btn.title = 'Connecter Google pour sync cross-device';
+    });
+  } else {
+    // Sign in with Google
+    FBSYNC.signIn().then(function(result) {
+      var btn = document.getElementById('sync-btn');
+      var u = result.user;
+      btn.classList.add('active');
+      if (u.photoURL) {
+        btn.innerHTML = '<img src="' + u.photoURL + '" alt="">';
+      } else {
+        btn.textContent = (u.displayName || u.email || 'G')[0].toUpperCase();
+      }
+      btn.title = (u.displayName || u.email) + ' — cliquer pour déconnecter la sync';
+    }).catch(function(){});
+  }
+}
 </script>
 </body>
 </html>
