@@ -4,10 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Connexion — Workspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.googleusercontent.com; connect-src https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://*.googleapis.com https://*.firebaseio.com; frame-src https://accounts.google.com https://workspace-60d4e.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){var t=localStorage.getItem('ws_theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="firebase-sync.js"></script>
 <style>
 /* ── DARK (défaut) ── */
 :root{
@@ -223,6 +227,7 @@ body{display:flex;flex-direction:column;position:relative}
 
 <!-- Ctrl buttons -->
 <div class="ctrl-row">
+  <button class="sync-btn" id="sync-btn" onclick="onSyncClick()" title="Sync Google" aria-label="Sync Google">G</button>
   <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" aria-label="Basculer thème">☀️</button>
 </div>
 
@@ -329,7 +334,11 @@ function doLogin() {
     return;
   }
   var dest = role === 'worker' ? 'worker-home.html' : 'index.html';
-  location.href = dest;
+  if (window.FBSYNC && FBSYNC.getUser()) {
+    FBSYNC.saveSession(role, AUTH.getName()).finally(function(){ location.href = dest; });
+  } else {
+    location.href = dest;
+  }
 }
 
 function showError(msg) {
@@ -360,6 +369,66 @@ document.querySelectorAll('.role-card').forEach(function(card){
   });
 });
 
+// ── Firebase Sync ──
+if (window.FBSYNC) {
+  FBSYNC.ready().then(function(user) {
+    var btn = document.getElementById('sync-btn');
+    if (user) {
+      btn.style.display = 'flex';
+      btn.classList.add('active');
+      if (user.photoURL) {
+        btn.innerHTML = '<img src="' + user.photoURL + '" alt="">';
+      } else {
+        btn.textContent = (user.displayName || user.email || 'G')[0].toUpperCase();
+      }
+      btn.title = (user.displayName || user.email) + ' — cliquer pour déconnecter la sync';
+      FBSYNC.loadSession().then(function(data) {
+        if (data && data.role && !selectedRole) {
+          document.getElementById('card-' + data.role).classList.add('active');
+          selectedRole = data.role;
+          var zone = document.getElementById('pwd-zone');
+          var label = document.getElementById('pwd-label');
+          var inp = document.getElementById('pwd-inp');
+          var btnE = document.getElementById('btn-enter');
+          label.textContent = data.role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
+          inp.className = 'pwd-inp ' + data.role;
+          btnE.className = 'btn-enter ' + data.role;
+          zone.classList.add('visible');
+          document.getElementById('footer-bar').classList.add('hidden');
+          setTimeout(function(){ inp.focus(); }, 80);
+        }
+      });
+    } else {
+      btn.style.display = 'flex';
+      btn.title = 'Connecter Google pour sync cross-device';
+    }
+  });
+}
+
+function onSyncClick() {
+  if (!window.FBSYNC) return;
+  var user = FBSYNC.getUser();
+  if (user) {
+    FBSYNC.signOut().then(function() {
+      var btn = document.getElementById('sync-btn');
+      btn.classList.remove('active');
+      btn.innerHTML = 'G';
+      btn.title = 'Connecter Google pour sync cross-device';
+    });
+  } else {
+    FBSYNC.signIn().then(function(result) {
+      var btn = document.getElementById('sync-btn');
+      var u = result.user;
+      btn.classList.add('active');
+      if (u.photoURL) {
+        btn.innerHTML = '<img src="' + u.photoURL + '" alt="">';
+      } else {
+        btn.textContent = (u.displayName || u.email || 'G')[0].toUpperCase();
+      }
+      btn.title = (u.displayName || u.email) + ' — cliquer pour déconnecter la sync';
+    }).catch(function(){});
+  }
+}
 </script>
 </body>
 </html>
