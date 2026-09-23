@@ -558,13 +558,15 @@ function gsyncShow(user){
   document.getElementById('gsync-connected').hidden=false;
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
 }
-FBSYNC.ready().then(function(user){
-  if(user){ document.getElementById('gsync-strip').hidden=false; gsyncShow(user); return; }
-  FBSYNC.getRedirectResult().then(function(res){
-    document.getElementById('gsync-strip').hidden=false;
-    if(res&&res.user) gsyncShow(res.user);
-  }).catch(function(){ document.getElementById('gsync-strip').hidden=false; });
+// Listener persistant — capture l'état initial ET la restauration du cache Firebase
+firebase.auth().onAuthStateChanged(function(user){
+  document.getElementById('gsync-strip').hidden=false;
+  if(user) gsyncShow(user);
 });
+// Résultat du redirect Google (retour après signInWithRedirect)
+FBSYNC.getRedirectResult().then(function(res){
+  if(res&&res.user) gsyncShow(res.user);
+}).catch(function(){});
 
 // ── Clock ──
 function tickClock(){const d=new Date();document.getElementById('app-clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
