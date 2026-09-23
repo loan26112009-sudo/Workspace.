@@ -2,300 +2,207 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connexion — Workspace</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.googleusercontent.com; connect-src https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://*.googleapis.com https://*.firebaseio.com; frame-src https://accounts.google.com https://workspace-60d4e.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script>(function(){var t=localStorage.getItem('ws_theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="firebase-sync.js"></script>
 <style>
-/* ── DARK (défaut) ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  color-scheme:dark;
   --bg:#080808;
-  --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.16);
+  --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.15);
   --text:#f0f0f0;--sub:rgba(255,255,255,.45);--dim:rgba(255,255,255,.18);
   --acc:#6366f1;--acc2:#818cf8;
   --worker:#f59e0b;--worker2:#fbbf24;
-  --card-bg:rgba(255,255,255,.03);--card-hover:rgba(255,255,255,.06);
-  --inp-bg:rgba(255,255,255,.07);--inp-border:rgba(255,255,255,.12);
-  --pwd-bg:rgba(14,14,20,.92);
-  --footer:rgba(255,255,255,.2);
-  --shadow:rgba(0,0,0,.6);
-  --glow-c:rgba(99,102,241,.12);--glow-w:rgba(245,158,11,.07);
 }
-/* ── LIGHT ── */
-:root[data-theme="light"]{
-  color-scheme:light;
-  --bg:#f0f2f8;
-  --b:rgba(0,0,0,.09);--bh:rgba(0,0,0,.2);
-  --text:#0f1023;--sub:rgba(15,16,35,.55);--dim:rgba(15,16,35,.36);
-  --acc:#4f52d8;--acc2:#6366f1;
-  --worker:#c87c06;--worker2:#e28d0a;
-  --card-bg:rgba(255,255,255,.75);--card-hover:rgba(255,255,255,.95);
-  --inp-bg:rgba(255,255,255,.95);--inp-border:rgba(0,0,0,.14);
-  --pwd-bg:rgba(245,246,252,.96);
-  --footer:rgba(15,16,35,.35);
-  --shadow:rgba(0,0,0,.2);
-  --glow-c:rgba(99,102,241,.1);--glow-w:rgba(245,158,11,.08);
-}
-
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
-body{display:flex;flex-direction:column;position:relative}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;gap:0}
 
-/* ── BG ── */
+/* BG */
 .bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(900px 800px at 25% 0%,var(--glow-c),transparent 65%),
-    radial-gradient(800px 700px at 75% 0%,rgba(168,85,247,.06),transparent 65%),
-    radial-gradient(600px 600px at 50% 100%,var(--glow-w),transparent 65%);
-  filter:blur(3px)}
+    radial-gradient(700px 600px at 15% 20%,rgba(99,102,241,.13),transparent 65%),
+    radial-gradient(600px 500px at 85% 10%,rgba(168,85,247,.08),transparent 65%),
+    radial-gradient(500px 500px at 50% 85%,rgba(99,102,241,.07),transparent 65%);
+  filter:blur(2px)}
 .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(rgba(128,128,128,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(128,128,128,.04) 1px,transparent 1px);
-  background-size:52px 52px;
-  -webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 0%,#000 5%,transparent 75%);
-  mask-image:radial-gradient(ellipse 100% 100% at 50% 0%,#000 5%,transparent 75%)}
+  background-image:linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,#000 5%,transparent 80%);
+  mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,#000 5%,transparent 80%)}
 
-/* ── LOGO (fixed top-left) ── */
-.logo{position:fixed;top:22px;left:26px;z-index:100;display:flex;align-items:center;gap:9px}
-.logo-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.55);animation:dotPulse 3s ease-in-out infinite}
-@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 5px rgba(99,102,241,.08),0 0 28px rgba(99,102,241,.8)}}
-.logo-name{font-size:17px;font-weight:900;letter-spacing:-.04em;color:var(--text)}
+/* WRAP */
+.wrap{position:relative;z-index:1;width:100%;max-width:800px;display:flex;flex-direction:column;align-items:center;gap:36px}
 
-/* ── CTRL BUTTONS (fixed top-right) ── */
-.ctrl-row{position:fixed;top:16px;right:20px;z-index:100;display:flex;gap:8px}
-.theme-btn,.sync-btn{
-  width:42px;height:42px;border-radius:12px;
-  background:var(--card-bg);border:1px solid var(--b);
-  color:var(--text);font-size:18px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 2px 12px var(--shadow)
-}
-.theme-btn:hover,.sync-btn:hover{border-color:var(--bh);transform:scale(1.06)}
-.sync-btn{font-size:14px;display:none}
-.sync-btn.active{border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.08)}
-.sync-btn img{width:26px;height:26px;border-radius:50%;pointer-events:none}
+/* LOGO */
+.logo{display:flex;align-items:center;gap:10px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 4px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.6);animation:dotPulse 3s ease-in-out infinite;flex-shrink:0}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 4px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 6px rgba(99,102,241,.08),0 0 32px rgba(99,102,241,.85)}}
+.logo-name{font-size:20px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(90deg,#fff 40%,var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-/* ── CARDS — plein écran 50/50 ── */
-.cards{position:relative;z-index:1;display:flex;flex:1;height:100%}
+/* HEADLINE */
+.headline{text-align:center}
+.headline h1{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.04em;color:#fff;margin-bottom:8px}
+.headline p{font-size:14px;color:var(--sub)}
+
+/* CARDS */
+.cards{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
 .role-card{
-  flex:1;position:relative;overflow:hidden;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:100px 48px 120px;
-  cursor:pointer;user-select:none;
-  transition:background .35s cubic-bezier(.16,1,.3,1);
+  background:linear-gradient(175deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,.018) 100%);
+  border:1px solid var(--b);border-radius:24px;
+  padding:36px 28px 32px;
+  cursor:pointer;
+  transition:all .3s cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;gap:0;
+  user-select:none;
+  min-height:320px;justify-content:flex-start
 }
-.rc-creator{background:linear-gradient(165deg,rgba(99,102,241,.12) 0%,var(--card-bg) 55%);border-right:1px solid var(--b)}
-.rc-worker{background:linear-gradient(165deg,rgba(245,158,11,.09) 0%,var(--card-bg) 55%)}
 
-/* accent stripe top */
-.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:.4;transition:opacity .35s;border-radius:0}
+/* top accent bar */
+.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:24px 24px 0 0;opacity:.5;transition:opacity .3s}
 .rc-creator::before{background:linear-gradient(90deg,transparent,var(--acc),var(--acc2),transparent)}
 .rc-worker::before{background:linear-gradient(90deg,transparent,var(--worker),var(--worker2),transparent)}
 
 /* hover */
-.rc-creator:hover{background:linear-gradient(165deg,rgba(99,102,241,.2) 0%,var(--card-hover) 55%)}
-.rc-worker:hover{background:linear-gradient(165deg,rgba(245,158,11,.16) 0%,var(--card-hover) 55%)}
+.role-card:hover{transform:translateY(-5px)}
+.rc-creator:hover{border-color:rgba(99,102,241,.3);box-shadow:0 20px 60px rgba(99,102,241,.14),inset 0 1px 0 rgba(99,102,241,.1)}
+.rc-worker:hover{border-color:rgba(245,158,11,.25);box-shadow:0 20px 60px rgba(245,158,11,.1),inset 0 1px 0 rgba(245,158,11,.08)}
 .role-card:hover::before{opacity:1}
 
-/* active (selected) */
-.rc-creator.active{background:linear-gradient(165deg,rgba(99,102,241,.25) 0%,var(--card-hover) 45%)}
-.rc-worker.active{background:linear-gradient(165deg,rgba(245,158,11,.2) 0%,var(--card-hover) 45%)}
+/* active */
+.role-card.active{transform:translateY(-5px)}
+.rc-creator.active{border-color:rgba(99,102,241,.55);box-shadow:0 24px 70px rgba(99,102,241,.22),inset 0 1px 0 rgba(99,102,241,.15)}
+.rc-worker.active{border-color:rgba(245,158,11,.5);box-shadow:0 24px 70px rgba(245,158,11,.16),inset 0 1px 0 rgba(245,158,11,.12)}
 .rc-creator.active::before,.rc-worker.active::before{opacity:1}
 
-/* ── ICO ── */
-.role-ico{
-  width:96px;height:96px;border-radius:26px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:44px;margin-bottom:28px;
-  transition:transform .35s cubic-bezier(.16,1,.3,1)
-}
-.role-card:hover .role-ico,.role-card.active .role-ico{transform:scale(1.1) rotate(-6deg)}
-.rc-creator .role-ico{background:rgba(99,102,241,.13);border:1px solid rgba(99,102,241,.28)}
-.rc-worker .role-ico{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.24)}
+/* icon */
+.role-ico{width:76px;height:76px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:22px;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.role-card:hover .role-ico,.role-card.active .role-ico{transform:scale(1.08) rotate(-5deg)}
+.rc-creator .role-ico{background:rgba(99,102,241,.13);border:1px solid rgba(99,102,241,.25)}
+.rc-worker .role-ico{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22)}
 
-/* ── TEXTE ── */
-.role-name{font-size:38px;font-weight:900;letter-spacing:-.04em;margin-bottom:10px;color:var(--text);text-align:center}
-.role-tagline{font-size:15px;color:var(--sub);text-align:center;line-height:1.65;margin-bottom:32px;max-width:270px}
+/* name */
+.role-name{font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:6px;color:#fff}
 
-/* ── SEPARATOR ── */
-.role-divider{width:72px;height:1px;background:var(--b);margin-bottom:24px}
+/* tagline */
+.role-tagline{font-size:12.5px;color:var(--sub);text-align:center;line-height:1.55;margin-bottom:22px;max-width:200px}
 
-/* ── PERMS ── */
-.role-perms{display:flex;flex-direction:column;gap:11px;min-width:190px}
-.role-perm{font-size:14px;color:var(--sub);display:flex;align-items:center;gap:10px}
-.perm-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+/* divider */
+.role-divider{width:100%;height:1px;background:var(--b);margin-bottom:18px}
+
+/* perms */
+.role-perms{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left;flex:1}
+.role-perm{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:8px}
+.perm-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .rc-creator .perm-dot{background:var(--acc2)}
 .rc-worker .perm-dot{background:var(--worker2)}
 
-/* ── CTA HINT ── */
-.corner-hint{
-  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
-  font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--dim);
-  text-transform:uppercase;white-space:nowrap;
-  transition:color .25s
-}
-.role-card:hover .corner-hint{color:var(--sub)}
-
-/* ── PASSWORD ZONE (slide from bottom) ── */
+/* PASSWORD */
 .pwd-zone{
-  position:fixed;bottom:0;left:50%;
-  transform:translateX(-50%) translateY(110%);
-  z-index:200;
-  width:100%;max-width:500px;
-  background:var(--pwd-bg);
-  border:1px solid var(--b);border-bottom:none;
-  border-radius:22px 22px 0 0;
-  padding:20px 28px 36px;
+  width:100%;max-width:480px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--b);border-radius:18px;
+  padding:22px 24px;
   display:flex;flex-direction:column;gap:14px;
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  transition:transform .38s cubic-bezier(.16,1,.3,1);
-  box-shadow:0 -16px 56px var(--shadow)
+  animation:slideIn .3s cubic-bezier(.16,1,.3,1)
 }
-.pwd-zone.visible{transform:translateX(-50%) translateY(0)}
-.pwd-handle{width:34px;height:4px;border-radius:2px;background:var(--dim);margin:0 auto 4px}
-.pwd-label{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.1em;text-transform:uppercase}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.pwd-label{font-size:10.5px;font-weight:700;color:var(--sub);letter-spacing:.09em}
 .pwd-row{display:flex;gap:10px}
 .pwd-inp{
-  flex:1;background:var(--inp-bg);border:1px solid var(--inp-border);
-  border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;
-  font-size:15px;padding:14px 16px;outline:none;
-  transition:border-color .2s,box-shadow .2s;letter-spacing:.05em
+  flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  border-radius:11px;color:#fff;font-family:'Inter',sans-serif;font-size:15px;
+  padding:13px 16px;outline:none;transition:border-color .2s,box-shadow .2s;letter-spacing:.06em
 }
-.pwd-inp::placeholder{color:var(--dim);letter-spacing:0;font-size:13px}
 .pwd-inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
 .pwd-inp.worker:focus{border-color:var(--worker);box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+.pwd-inp::placeholder{color:var(--dim);letter-spacing:0;font-size:13px}
 .btn-enter{
-  padding:14px 22px;border:none;border-radius:12px;
+  padding:13px 22px;border:none;border-radius:11px;color:#fff;
   font-family:'Inter',sans-serif;font-size:13px;font-weight:700;
   cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0
 }
-.btn-enter.creator{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.35)}
-.btn-enter.creator:hover{box-shadow:0 6px 22px rgba(99,102,241,.55);transform:translateY(-1px)}
-.btn-enter.worker{background:linear-gradient(135deg,var(--worker),var(--worker2));color:#000;box-shadow:0 4px 16px rgba(245,158,11,.3)}
-.btn-enter.worker:hover{box-shadow:0 6px 22px rgba(245,158,11,.48);transform:translateY(-1px)}
-
+.btn-enter.creator{background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 4px 16px rgba(99,102,241,.38)}
+.btn-enter.creator:hover{box-shadow:0 6px 22px rgba(99,102,241,.6);transform:translateY(-1px)}
+.btn-enter.worker{background:linear-gradient(135deg,var(--worker),var(--worker2));box-shadow:0 4px 16px rgba(245,158,11,.32);color:#000}
+.btn-enter.worker:hover{box-shadow:0 6px 22px rgba(245,158,11,.5);transform:translateY(-1px)}
 .err-msg{font-size:12px;color:#ef4444;text-align:center;min-height:18px}
 .err-msg:empty{display:none}
+
 @keyframes shake{0%,100%{transform:translateX(0)}15%,55%,85%{transform:translateX(-6px)}35%,70%{transform:translateX(6px)}}
 .shaking{animation:shake .38s ease-in-out}
 
-/* ── FOOTER ── */
-.footer-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:50;
-  padding:10px 24px;text-align:center;
-  font-size:11px;color:var(--footer);
-  pointer-events:none;
-  transition:opacity .3s
-}
-.footer-bar.hidden{opacity:0}
-.footer-bar a{color:var(--footer);text-decoration:none;pointer-events:all;transition:color .15s}
-.footer-bar a:hover{color:var(--sub)}
-
-/* ── MOBILE ── */
-@media(max-width:640px){
-  .cards{flex-direction:column}
-  .rc-creator{border-right:none;border-bottom:1px solid var(--b)}
-  .role-card{padding:52px 32px 80px;justify-content:flex-start}
-  .role-ico{width:72px;height:72px;font-size:32px;margin-bottom:18px}
-  .role-name{font-size:26px}
-  .role-tagline{font-size:13px;margin-bottom:22px}
-  .corner-hint{display:none}
-  html,body{overflow:auto}
-  .pwd-zone{max-width:100%;border-radius:18px 18px 0 0}
+/* MOBILE */
+@media(max-width:520px){
+  html,body{overflow:auto;height:auto}
+  .cards{grid-template-columns:1fr}
+  .role-card{min-height:260px;padding:28px 22px 24px}
+  .role-ico{width:60px;height:60px;font-size:26px;margin-bottom:16px}
+  .role-name{font-size:18px}
 }
 </style>
 </head>
 <body>
-
 <div class="bg-glow" aria-hidden="true"></div>
 <div class="bg-grid" aria-hidden="true"></div>
 
-<!-- Logo -->
-<div class="logo" aria-label="Workspace">
-  <div class="logo-dot"></div>
-  <div class="logo-name">Workspace</div>
-</div>
+<div class="wrap">
 
-<!-- Ctrl buttons -->
-<div class="ctrl-row">
-  <button class="sync-btn" id="sync-btn" onclick="onSyncClick()" title="Sync Google" aria-label="Sync Google">G</button>
-  <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" aria-label="Basculer thème">☀️</button>
-</div>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-name">Workspace</div>
+  </div>
 
-<!-- Role cards – full screen -->
-<div class="cards">
+  <div class="headline">
+    <h1>Choisis ton espace</h1>
+    <p>Sélectionne ton rôle pour accéder à tes outils</p>
+  </div>
 
-  <div class="role-card rc-creator" id="card-creator" onclick="selectRole('creator')" role="button" tabindex="0" aria-label="Espace Créateur">
-    <div class="role-ico">✦</div>
-    <div class="role-name">Créateur</div>
-    <div class="role-tagline">Accès complet à tous les outils et analyses de ta chaîne</div>
-    <div class="role-divider"></div>
-    <div class="role-perms">
-      <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Dashboard &amp; analytics</div>
-      <div class="role-perm"><span class="perm-dot"></span>Tous les outils</div>
+  <div class="cards">
+
+    <div class="role-card rc-creator" id="card-creator" onclick="selectRole('creator')" role="button" tabindex="0" aria-label="Espace Créateur">
+      <div class="role-ico">✦</div>
+      <div class="role-name">Créateur</div>
+      <div class="role-tagline">Accès complet à tous les outils et analyses</div>
+      <div class="role-divider"></div>
+      <div class="role-perms">
+        <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Dashboard &amp; analytics</div>
+        <div class="role-perm"><span class="perm-dot"></span>Tous les outils</div>
+      </div>
     </div>
-    <div class="corner-hint">APPUIE POUR ENTRER</div>
-  </div>
 
-  <div class="role-card rc-worker" id="card-worker" onclick="selectRole('worker')" role="button" tabindex="0" aria-label="Espace Worker">
-    <div class="role-ico">👥</div>
-    <div class="role-name">Worker</div>
-    <div class="role-tagline">Outils de production pour l'équipe de création</div>
-    <div class="role-divider"></div>
-    <div class="role-perms">
-      <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Écriture de script</div>
-      <div class="role-perm"><span class="perm-dot"></span>Tes projets</div>
+    <div class="role-card rc-worker" id="card-worker" onclick="selectRole('worker')" role="button" tabindex="0" aria-label="Espace Worker">
+      <div class="role-ico">👥</div>
+      <div class="role-name">Worker</div>
+      <div class="role-tagline">Outils de production pour l'équipe de création</div>
+      <div class="role-divider"></div>
+      <div class="role-perms">
+        <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Écriture de script</div>
+        <div class="role-perm"><span class="perm-dot"></span>Tes projets</div>
+      </div>
     </div>
-    <div class="corner-hint">APPUIE POUR ENTRER</div>
+
+  </div>
+
+  <div class="pwd-zone" id="pwd-zone" style="display:none">
+    <div class="pwd-label" id="pwd-label">MOT DE PASSE CRÉATEUR</div>
+    <div class="pwd-row">
+      <input class="pwd-inp" id="pwd-inp" type="password" placeholder="Mot de passe…" autocomplete="current-password">
+      <button class="btn-enter creator" id="btn-enter" onclick="doLogin()">Entrer →</button>
+    </div>
+    <div class="err-msg" id="err-msg"></div>
   </div>
 
 </div>
-
-<!-- Password zone (slide-up panel) -->
-<div class="pwd-zone" id="pwd-zone">
-  <div class="pwd-handle"></div>
-  <div class="pwd-label" id="pwd-label">MOT DE PASSE CRÉATEUR</div>
-  <div class="pwd-row">
-    <input class="pwd-inp" id="pwd-inp" type="password" placeholder="Mot de passe…" autocomplete="current-password">
-    <button class="btn-enter creator" id="btn-enter" onclick="doLogin()">Entrer →</button>
-  </div>
-  <div class="err-msg" id="err-msg"></div>
-</div>
-
-<!-- Footer -->
-<footer class="footer-bar" id="footer-bar">
-  Créé par Loan &middot; Workspace. &middot; <a href="cgu.html">Conditions générales</a>
-</footer>
 
 <script>
-// ── Theme ──
-(function(){
-  var t = localStorage.getItem('ws_theme') || 'dark';
-  document.getElementById('theme-btn').textContent = t === 'light' ? '🌙' : '☀️';
-})();
-
-function toggleTheme(){
-  var html = document.documentElement;
-  var cur = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', cur);
-  localStorage.setItem('ws_theme', cur);
-  document.getElementById('theme-btn').textContent = cur === 'light' ? '🌙' : '☀️';
-}
-
-// ── Auth redirect ──
 (function(){
   var r = AUTH.getRole();
   if(r === 'creator') { location.replace('index.html'); return; }
@@ -306,129 +213,54 @@ var selectedRole = null;
 
 function selectRole(role) {
   selectedRole = role;
-
   document.getElementById('card-creator').classList.toggle('active', role === 'creator');
   document.getElementById('card-worker').classList.toggle('active', role === 'worker');
-
   var zone = document.getElementById('pwd-zone');
   var label = document.getElementById('pwd-label');
   var inp = document.getElementById('pwd-inp');
   var btn = document.getElementById('btn-enter');
-
   label.textContent = role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
   inp.value = '';
   inp.className = 'pwd-inp ' + role;
   btn.className = 'btn-enter ' + role;
-
   document.getElementById('err-msg').textContent = '';
-  zone.classList.add('visible');
-  document.getElementById('footer-bar').classList.add('hidden');
-  setTimeout(function(){ inp.focus(); }, 80);
+  zone.style.display = 'flex';
+  zone.style.flexDirection = 'column';
+  setTimeout(function(){ inp.focus(); }, 50);
 }
 
 function doLogin() {
   var pwd = document.getElementById('pwd-inp').value;
   var role = AUTH.login(pwd);
-  if (!role) {
-    showError('Mot de passe incorrect');
-    return;
-  }
-  var dest = role === 'worker' ? 'worker-home.html' : 'index.html';
-  if (window.FBSYNC && FBSYNC.getUser()) {
-    FBSYNC.saveSession(role, AUTH.getName()).finally(function(){ location.href = dest; });
-  } else {
-    location.href = dest;
-  }
+  if (!role) { showError('Mot de passe incorrect'); return; }
+  location.href = role === 'worker' ? 'worker-home.html' : 'index.html';
 }
 
 function showError(msg) {
   var el = document.getElementById('err-msg');
   var inp = document.getElementById('pwd-inp');
   el.textContent = msg;
+  el.style.display = '';
   inp.value = '';
   inp.classList.add('shaking');
   inp.addEventListener('animationend', function(){ inp.classList.remove('shaking'); }, {once:true});
   inp.focus();
 }
 
-// Keyboard: Enter submits, Escape deselects
 document.addEventListener('keydown', function(e){
   if (e.key === 'Enter' && selectedRole) { doLogin(); }
   if (e.key === 'Escape') {
     selectedRole = null;
     document.getElementById('card-creator').classList.remove('active');
     document.getElementById('card-worker').classList.remove('active');
-    document.getElementById('pwd-zone').classList.remove('visible');
-    document.getElementById('footer-bar').classList.remove('hidden');
+    document.getElementById('pwd-zone').style.display = 'none';
   }
 });
-
 document.querySelectorAll('.role-card').forEach(function(card){
   card.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
   });
 });
-
-// ── Firebase Sync ──
-if (window.FBSYNC) {
-  FBSYNC.ready().then(function(user) {
-    var btn = document.getElementById('sync-btn');
-    if (user) {
-      btn.style.display = 'flex';
-      btn.classList.add('active');
-      if (user.photoURL) {
-        btn.innerHTML = '<img src="' + user.photoURL + '" alt="">';
-      } else {
-        btn.textContent = (user.displayName || user.email || 'G')[0].toUpperCase();
-      }
-      btn.title = (user.displayName || user.email) + ' — cliquer pour déconnecter la sync';
-      FBSYNC.loadSession().then(function(data) {
-        if (data && data.role && !selectedRole) {
-          document.getElementById('card-' + data.role).classList.add('active');
-          selectedRole = data.role;
-          var zone = document.getElementById('pwd-zone');
-          var label = document.getElementById('pwd-label');
-          var inp = document.getElementById('pwd-inp');
-          var btnE = document.getElementById('btn-enter');
-          label.textContent = data.role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
-          inp.className = 'pwd-inp ' + data.role;
-          btnE.className = 'btn-enter ' + data.role;
-          zone.classList.add('visible');
-          document.getElementById('footer-bar').classList.add('hidden');
-          setTimeout(function(){ inp.focus(); }, 80);
-        }
-      });
-    } else {
-      btn.style.display = 'flex';
-      btn.title = 'Connecter Google pour sync cross-device';
-    }
-  });
-}
-
-function onSyncClick() {
-  if (!window.FBSYNC) return;
-  var user = FBSYNC.getUser();
-  if (user) {
-    FBSYNC.signOut().then(function() {
-      var btn = document.getElementById('sync-btn');
-      btn.classList.remove('active');
-      btn.innerHTML = 'G';
-      btn.title = 'Connecter Google pour sync cross-device';
-    });
-  } else {
-    FBSYNC.signIn().then(function(result) {
-      var btn = document.getElementById('sync-btn');
-      var u = result.user;
-      btn.classList.add('active');
-      if (u.photoURL) {
-        btn.innerHTML = '<img src="' + u.photoURL + '" alt="">';
-      } else {
-        btn.textContent = (u.displayName || u.email || 'G')[0].toUpperCase();
-      }
-      btn.title = (u.displayName || u.email) + ' — cliquer pour déconnecter la sync';
-    }).catch(function(){});
-  }
-}
 </script>
 </body>
 </html>

@@ -64,15 +64,6 @@ aside{width:200px;flex-shrink:0;background:var(--s1);border-right:1px solid var(
 .notes-inner textarea{background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;line-height:1.6;padding:8px;outline:none;resize:none;transition:border-color .2s;min-height:70px;width:100%}
 .notes-inner textarea:focus{border-color:var(--bh)}
 .notes-inner textarea::placeholder{color:var(--dim)}
-.notes-inner input[type=text]{background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:8px 10px;outline:none;transition:border-color .2s;width:100%}
-.notes-inner input[type=text]:focus{border-color:var(--bh)}
-.notes-inner input[type=text]::placeholder{color:var(--dim)}
-.thumb-up-zone{border:1px dashed var(--b);border-radius:8px;cursor:pointer;overflow:hidden;transition:border-color .2s;position:relative;display:flex;align-items:center;justify-content:center;min-height:52px}
-.thumb-up-zone:hover{border-color:var(--bh)}
-.thumb-up-add{display:flex;align-items:center;gap:7px;padding:10px 14px;color:var(--sub);font-size:11px;font-weight:600}
-.thumb-up-add span:first-child{font-size:16px}
-.thumb-up-img{width:100%;max-height:110px;object-fit:cover;display:block}
-.thumb-up-clr{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.15);color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;line-height:1}
 .notes-footer{padding:9px 12px;border-top:1px solid var(--b);flex-shrink:0}
 .btn-nexp{width:100%;padding:7px;background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--sub);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
 .btn-nexp:hover{border-color:var(--bh);color:var(--text)}
@@ -436,53 +427,6 @@ main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
 .wsd-link-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex-shrink:0}
 
-/* ── UX IMPROVEMENTS — plus d'espace, plus lisible ── */
-html,body{font-size:14px}
-header{height:64px;padding:0 26px;gap:22px}
-.logo{font-size:14px;gap:9px}
-.logo-d{width:9px;height:9px}
-.hfield input{font-size:16px}
-aside{width:240px}
-.anav{padding:11px 6px;font-size:11px}
-.tp-head{padding:12px 14px}
-.btn-nt{padding:9px;font-size:12px;border-radius:8px}
-.tools-list{padding:10px;gap:5px}
-.tool-item{padding:10px 11px;gap:9px;border-radius:8px}
-.tname{font-size:13px}
-.aside-foot{padding:11px 14px;font-size:11px}
-.notes-inner{padding:12px 14px;gap:10px}
-.notes-inner label{font-size:11px}
-.notes-inner textarea{font-size:13px;padding:10px;min-height:90px;border-radius:8px}
-.tech-pane{padding:10px;gap:7px}
-.tech-item{padding:11px 13px;border-radius:10px}
-.tech-item h4{font-size:12px;margin-bottom:4px}
-.tech-item p{font-size:11px}
-.mnav{padding:12px 16px;font-size:12px}
-.main-pane{padding:20px 24px;gap:16px}
-.card{padding:16px 18px;border-radius:14px}
-.card-hd{margin-bottom:12px}
-.card-hd h2{font-size:11px}
-.arc-row{padding:10px 13px;gap:9px;border-radius:10px;margin-bottom:5px}
-.sub-row{padding:9px 13px;gap:9px;border-radius:10px;margin-bottom:5px}
-.albl{font-size:13px}
-.sub-row .albl{font-size:12px}
-.atime{font-size:12px}
-.abtn{width:24px;height:24px;font-size:13px}
-.empty-st{padding:26px;font-size:13px}
-.script-ta{font-size:13.5px;padding:14px;min-height:140px;line-height:1.8}
-.script-sec-hd{padding:11px 14px}
-.script-sec-name{font-size:13px}
-.script-sec-time{font-size:11px}
-.script-no-arcs{padding:44px;gap:10px}
-.script-no-arcs p{font-size:13px}
-.btn-script-exp{padding:8px 16px;font-size:12px}
-.btn-back{padding:7px 14px;font-size:12px}
-.btn{padding:8px 15px;font-size:12px}
-.btn-sm{padding:5px 11px;font-size:11px}
-.fil-bar{padding:10px 20px}
-.fil-input{font-size:14px}
-.fil-label{font-size:11px}
-
 </style>
 </head>
 <body>
@@ -626,17 +570,7 @@ window.addEventListener("resize",()=>{
         <label>CONCEPT</label><textarea id="n-concept" placeholder="Idée centrale, angle unique…" rows="4"></textarea>
         <label>OBJECTIF</label><textarea id="n-obj" placeholder="1M views, CTR, rétention…" rows="3"></textarea>
         <label>AUDIENCE</label><textarea id="n-aud" placeholder="Qui regarde, pourquoi…" rows="3"></textarea>
-        <label>TITRE VIDÉO</label>
-        <input type="text" id="n-title" placeholder="Titre de la vidéo…">
-        <label>MINIATURE</label>
-        <div class="thumb-up-zone" id="thumb-up-zone" onclick="document.getElementById('n-thumb-file').click()">
-          <input type="file" id="n-thumb-file" accept="image/*" style="display:none" onchange="thumbNoteChange(this)">
-          <div class="thumb-up-add" id="thumb-up-add"><span>🖼</span><span>Miniature simple — jpg, png…</span></div>
-          <img id="thumb-up-img" class="thumb-up-img" src="" alt="" hidden>
-          <button class="thumb-up-clr" id="thumb-up-clr" hidden onclick="event.stopPropagation();clearThumbNote()">✕</button>
-        </div>
-        <label style="margin-top:2px">NOTES MINIATURE</label>
-        <textarea id="n-thumb" placeholder="Couleurs, textes, concept visuel…" rows="2"></textarea>
+        <label>THUMBNAIL / TITRE</label><textarea id="n-thumb" placeholder="Idées de miniatures…" rows="3"></textarea>
       </div>
       <div class="notes-footer"><button class="btn-nexp" onclick="exportNotes()">⬇ Exporter les notes (.txt)</button></div>
     </div>
@@ -1564,30 +1498,6 @@ document.querySelectorAll('[data-main]').forEach(btn=>{
 // ═══════════════════════════════════════
 // NOTES EXPORT
 // ═══════════════════════════════════════
-function thumbNoteChange(inp){
-  if(!inp.files||!inp.files[0]) return;
-  var r=new FileReader();
-  r.onload=function(ev){
-    var img=document.getElementById('thumb-up-img');
-    var add=document.getElementById('thumb-up-add');
-    var clr=document.getElementById('thumb-up-clr');
-    if(img){img.src=ev.target.result;img.hidden=false;}
-    if(add) add.hidden=true;
-    if(clr) clr.hidden=false;
-    saveCurrentProject();
-  };
-  r.readAsDataURL(inp.files[0]);
-}
-function clearThumbNote(){
-  var img=document.getElementById('thumb-up-img');
-  var add=document.getElementById('thumb-up-add');
-  var clr=document.getElementById('thumb-up-clr');
-  var fi=document.getElementById('n-thumb-file');
-  if(img){img.src='';img.hidden=true;}
-  if(add) add.hidden=false;
-  if(clr) clr.hidden=true;
-  if(fi) fi.value='';
-}
 function exportNotes(){
   const title=document.getElementById('vid-title').value||'(sans titre)';
   const dur=document.getElementById('total-dur').value;
@@ -1598,8 +1508,7 @@ function exportNotes(){
     '── CONCEPT ──',document.getElementById('n-concept').value||'(vide)','',
     '── OBJECTIF ──',document.getElementById('n-obj').value||'(vide)','',
     '── AUDIENCE ──',document.getElementById('n-aud').value||'(vide)','',
-    '── TITRE VIDÉO ──',(document.getElementById('n-title')?document.getElementById('n-title').value:'')||'(vide)','',
-    '── MINIATURE ──',document.getElementById('n-thumb').value||'(vide)','',
+    '── THUMBNAIL ──',document.getElementById('n-thumb').value||'(vide)','',
     '── BOUCLES PRINCIPALES ──',
     ...arcs.map(a=>'  ['+fmt(a.s*T)+'→'+fmt(a.e*T)+'] '+a.label),'',
     '── SOUS-BOUCLES ──',
@@ -1847,8 +1756,6 @@ function getStateSnapshot(){
       obj:document.getElementById('n-obj').value,
       aud:document.getElementById('n-aud').value,
       thumb:document.getElementById('n-thumb').value,
-      title:document.getElementById('n-title')?document.getElementById('n-title').value:'',
-      thumbImg:document.getElementById('thumb-up-img')&&!document.getElementById('thumb-up-img').hidden?document.getElementById('thumb-up-img').src:'',
     }
   };
 }
@@ -1868,15 +1775,6 @@ function applyStateSnapshot(s){
     document.getElementById('n-obj').value=s.notes.obj||'';
     document.getElementById('n-aud').value=s.notes.aud||'';
     document.getElementById('n-thumb').value=s.notes.thumb||'';
-    var ti=document.getElementById('n-title'); if(ti) ti.value=s.notes.title||'';
-    if(s.notes.thumbImg){
-      var img=document.getElementById('thumb-up-img');
-      var add=document.getElementById('thumb-up-add');
-      var clr=document.getElementById('thumb-up-clr');
-      if(img){img.src=s.notes.thumbImg;img.hidden=false;}
-      if(add) add.hidden=true;
-      if(clr) clr.hidden=false;
-    }
   }
 }
 
@@ -2218,8 +2116,7 @@ function resetToDefault(){
   document.getElementById('vid-title').value='';
   document.getElementById('total-dur').value='15:00';
   const fi=document.getElementById('fil-input');if(fi)fi.value='';
-  ['n-concept','n-obj','n-aud','n-thumb','n-title'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  clearThumbNote();
+  ['n-concept','n-obj','n-aud','n-thumb'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
 }
 
 function defaultEmotions(){
