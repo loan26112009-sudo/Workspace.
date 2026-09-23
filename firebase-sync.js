@@ -28,15 +28,15 @@
       });
     },
 
-    // Redirect Google Sign-In (pas de popup — redirige vers Google puis revient)
+    // Popup Google Sign-In (résultat immédiat dans la Promise, gestion d'erreur directe)
     signIn: function () {
       var provider = new firebase.auth.GoogleAuthProvider();
-      return auth.signInWithRedirect(provider);
+      return auth.signInWithPopup(provider);
     },
 
-    // À appeler au chargement de la page pour récupérer le résultat du redirect
+    // Gardé pour compatibilité (inutilisé avec signInWithPopup)
     getRedirectResult: function () {
-      return auth.getRedirectResult();
+      return Promise.resolve(null);
     },
 
     signOut: function () {

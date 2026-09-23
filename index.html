@@ -522,8 +522,28 @@ function setNavAvatar(photoURL, name){
 }
 function gsyncConnect(){
   var btn=document.getElementById('gsync-btn');
-  if(btn){btn.textContent='Redirection Google...';btn.style.opacity='.7';btn.disabled=true;}
-  FBSYNC.signIn();
+  var oldHtml=btn?btn.innerHTML:'';
+  if(btn){btn.innerHTML='<span style="opacity:.6">●</span> Connexion…';btn.style.opacity='.7';btn.disabled=true;}
+  var errEl=document.getElementById('gsync-err');
+  if(errEl)errEl.remove();
+  FBSYNC.signIn().then(function(result){
+    if(result&&result.user) gsyncShow(result.user);
+  }).catch(function(err){
+    if(btn){btn.innerHTML=oldHtml;btn.style.opacity='';btn.disabled=false;}
+    var msg='';
+    if(err&&err.code==='auth/unauthorized-domain')
+      msg='⚠️ Domaine non autorisé Firebase — ajoute <b>loan26112009-sudo.github.io</b> dans Firebase Console → Authentication → Authorized domains';
+    else if(err&&err.code==='auth/popup-blocked')
+      msg='⚠️ Popup bloquée — autorise les popups pour ce site dans la barre d\'adresse';
+    else
+      msg='⚠️ Erreur Google : '+(err&&(err.message||err.code)||'inconnue');
+    var el=document.createElement('p');
+    el.id='gsync-err';
+    el.style='font-size:11px;color:#ef4444;margin-top:10px;line-height:1.5;text-align:center;font-family:inherit';
+    el.innerHTML=msg;
+    var right=document.querySelector('.gsync-right');
+    if(right)right.appendChild(el);
+  });
 }
 function gsyncShow(user){
   if(!user) return;
@@ -540,11 +560,8 @@ function gsyncShow(user){
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
 }
 FBSYNC.ready().then(function(user){
-  if(user){ document.getElementById('gsync-strip').hidden=false; gsyncShow(user); return; }
-  FBSYNC.getRedirectResult().then(function(res){
-    document.getElementById('gsync-strip').hidden=false;
-    if(res&&res.user) gsyncShow(res.user);
-  }).catch(function(){ document.getElementById('gsync-strip').hidden=false; });
+  document.getElementById('gsync-strip').hidden=false;
+  if(user) gsyncShow(user);
 });
 
 // ── Clock ──

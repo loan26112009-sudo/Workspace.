@@ -408,16 +408,17 @@ if (window.FBSYNC) {
 function onSyncClick() {
   if (!window.FBSYNC) return;
   var user = FBSYNC.getUser();
+  var btn = document.getElementById('sync-btn');
   if (user) {
     FBSYNC.signOut().then(function() {
-      var btn = document.getElementById('sync-btn');
       btn.classList.remove('active');
       btn.innerHTML = 'G';
       btn.title = 'Connecter Google pour sync cross-device';
     });
   } else {
+    var oldHtml = btn.innerHTML;
+    btn.innerHTML = '…';
     FBSYNC.signIn().then(function(result) {
-      var btn = document.getElementById('sync-btn');
       var u = result.user;
       btn.classList.add('active');
       if (u.photoURL) {
@@ -426,7 +427,24 @@ function onSyncClick() {
         btn.textContent = (u.displayName || u.email || 'G')[0].toUpperCase();
       }
       btn.title = (u.displayName || u.email) + ' — cliquer pour déconnecter la sync';
-    }).catch(function(){});
+      // Pre-fill role from saved session
+      FBSYNC.loadSession().then(function(data) {
+        if (data && data.role && !selectedRole) {
+          var card = document.getElementById('card-' + data.role);
+          if (card) card.click();
+        }
+      }).catch(function(){});
+    }).catch(function(err) {
+      btn.innerHTML = oldHtml;
+      var code = err && err.code;
+      if (code === 'auth/unauthorized-domain') {
+        alert('Domaine non autorisé Firebase.\n\nPour activer Google Sign-In :\nFirebase Console → Authentication → Settings → Authorized domains\n→ Ajouter : loan26112009-sudo.github.io');
+      } else if (code === 'auth/popup-blocked') {
+        alert('Popup bloquée par le navigateur.\nAutorise les popups pour ce site dans la barre d\'adresse, puis réessaie.');
+      } else {
+        alert('Erreur Google Sign-In : ' + (err && (err.message || err.code) || 'inconnue'));
+      }
+    });
   }
 }
 </script>
