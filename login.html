@@ -299,7 +299,7 @@ function toggleTheme(){
 (function(){
   var r = AUTH.getRole();
   if(r === 'creator') { location.replace('index.html'); return; }
-  if(r === 'worker')  { location.replace('loop-builder.html'); return; }
+  if(r === 'worker')  { location.replace('worker-home.html'); return; }
 })();
 
 var selectedRole = null;
@@ -333,7 +333,7 @@ function doLogin() {
     showError('Mot de passe incorrect');
     return;
   }
-  var dest = role === 'worker' ? 'loop-builder.html' : 'index.html';
+  var dest = role === 'worker' ? 'worker-home.html' : 'index.html';
   if (window.FBSYNC && FBSYNC.getUser()) {
     FBSYNC.saveSession(role, AUTH.getName()).finally(function(){ location.href = dest; });
   } else {
