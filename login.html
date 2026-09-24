@@ -362,23 +362,11 @@ function startGoogleSignIn() {
   });
 }
 
-// ── Après connexion Google : tente de restaurer la session Firestore ──
+// ── Après connexion Google : toujours montrer le choix de rôle ──
 function _afterGoogleSignIn(user) {
   if (_restored) return;
   _googleUser = user;
-  FBSYNC.loadSession().then(function(data) {
-    if (_restored) return;
-    if (data && data.role) {
-      _restored = true;
-      localStorage.setItem('ws_role', data.role);
-      if (data.name) localStorage.setItem('ws_name', data.name);
-      AUTH.goHome();
-    } else {
-      showRoles(user);
-    }
-  }).catch(function() {
-    showRoles(user);
-  });
+  showRoles(user);
 }
 
 // ── Affiche l'étape 2 (choix de rôle) ──
