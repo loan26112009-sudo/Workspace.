@@ -273,7 +273,7 @@ html,body{overflow-x:hidden;max-width:100%}
   </div>
 </nav>
 <script>(function(){
-  var n=localStorage.getItem('ws_display_name')||AUTH.getName();
+  var n=localStorage.getItem('ws_display_name')||localStorage.getItem('ws_gname')||AUTH.getName();
   var badge=document.getElementById('creator-name-badge');
   if(badge&&n){badge.textContent='✦ '+n;badge.style.display='';}
   var greet=document.getElementById('hero-greeting');
@@ -523,8 +523,8 @@ function toggleTheme(){var html=document.documentElement;var cur=html.getAttribu
 function toggleNamePopup(){
   var p=document.getElementById('name-popup');
   if(p.hidden){
-    var cur=localStorage.getItem('ws_display_name')||AUTH.getName();
-    document.getElementById('name-popup-input').value=cur||'';
+    var cur=localStorage.getItem('ws_display_name')||localStorage.getItem('ws_gname')||'';
+    document.getElementById('name-popup-input').value=cur;
     p.hidden=false;
     setTimeout(function(){document.getElementById('name-popup-input').focus();},50);
     document.addEventListener('click',_namePopupOutside,true);
@@ -544,10 +544,7 @@ function saveDisplayName(){
   var val=document.getElementById('name-popup-input').value.trim();
   if(!val)return;
   localStorage.setItem('ws_display_name',val);
-  localStorage.setItem('ws_name',val);
   var first=val.split(' ')[0];
-  var badge=document.getElementById('creator-name-badge');
-  if(badge)badge.textContent='✦ '+val;
   var greet=document.getElementById('hero-greeting');
   if(greet)greet.textContent='Bonjour '+first+' !';
   var gsName=document.getElementById('gsync-user-name');
