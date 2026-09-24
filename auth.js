@@ -8,6 +8,7 @@
     'loanacces':    'Loan',
     'wondrayacces': 'Wondray',
     'ykudacces':    'Ykud',
+    'testacces':    'Test',
   };
   var WORKER_PWD = 'teamaccesworker';
   var ROLE_KEY = 'ws_role';
