@@ -572,34 +572,33 @@ function gsyncShow(user){
   }catch(e){}
   FBSYNC.saveSession(AUTH.getRole(), AUTH.getName());
 }
-// Affiche depuis le cache immédiatement — photo visible avant même la restauration Firebase
+// Affichage immédiat — nom depuis auth ou cache Google (même logique que worker-home)
 (function(){
+  var authName=AUTH.getName();
   var p,n,e;
   try{p=localStorage.getItem('ws_gphoto');n=localStorage.getItem('ws_gname');e=localStorage.getItem('ws_gemail');}catch(x){}
-  if(p||n){gsyncShow({photoURL:p||null,displayName:n||'',email:e||''});}
+  var name=n||authName;
+  if(p||name){
+    gsyncShow({photoURL:p||null,displayName:name,email:e||''});
+  } else {
+    document.getElementById('gsync-strip').hidden=false;
+  }
 })();
-// Listener persistant — met à jour avec les données live et gère la déconnexion réelle
+// Listener persistant — met à jour avec photo/email Google dès que Firebase charge
 var _gAuthKnown=false;
 firebase.auth().onAuthStateChanged(function(user){
   if(user){
     _gAuthKnown=true;
     gsyncShow(user);
   } else if(_gAuthKnown){
-    // Déconnexion réelle (pas le null initial)
+    // Déconnexion réelle (signOut appelé explicitement)
     try{localStorage.removeItem('ws_gphoto');localStorage.removeItem('ws_gname');localStorage.removeItem('ws_gemail');}catch(x){}
     document.getElementById('gsync-connected').hidden=true;
     document.getElementById('gsync-guest').hidden=false;
     document.getElementById('gsync-strip').hidden=false;
-  } else {
-    // Premier null avant restauration Firebase — si aucun cache, montrer le strip guest
-    var c;try{c=localStorage.getItem('ws_gphoto');}catch(x){}
-    if(!c){document.getElementById('gsync-strip').hidden=false;}
   }
+  // null initial : ne rien faire — l'état connecté est déjà affiché via le nom local
 });
-// Résultat du redirect Google (retour après signInWithRedirect)
-FBSYNC.getRedirectResult().then(function(res){
-  if(res&&res.user) gsyncShow(res.user);
-}).catch(function(){});
 
 // ── Clock ──
 function tickClock(){const d=new Date();document.getElementById('app-clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
