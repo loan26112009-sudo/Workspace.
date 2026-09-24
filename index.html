@@ -599,7 +599,10 @@ function gsyncConnect(){
 }
 function gsyncShow(user){
   if(!user) return;
-  var first=(user.displayName||'').split(' ')[0]||'';
+  var googleFirst=(user.displayName||'').split(' ')[0]||'';
+  var displayName=localStorage.getItem('ws_display_name')||'';
+  var first=displayName?displayName.split(' ')[0]:googleFirst;
+  if(!displayName&&googleFirst) localStorage.setItem('ws_gname',user.displayName||'');
   document.getElementById('gsync-user-name').textContent='Bonjour'+(first?' '+first:'')+' !';
   document.getElementById('gsync-user-email').textContent=user.email||'';
   var av=document.getElementById('gsync-avatar');
