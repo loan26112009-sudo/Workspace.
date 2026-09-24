@@ -13,6 +13,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
 <script src="firebase-sync.js"></script>
 <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 /* ── DARK (défaut) ── */
 :root{
   color-scheme:dark;
@@ -43,8 +45,6 @@
   --shadow:rgba(0,0,0,.2);
   --glow-c:rgba(99,102,241,.1);--glow-w:rgba(245,158,11,.08);
 }
-
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 body{display:flex;flex-direction:column;position:relative}
 
@@ -61,95 +61,110 @@ body{display:flex;flex-direction:column;position:relative}
   -webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 0%,#000 5%,transparent 75%);
   mask-image:radial-gradient(ellipse 100% 100% at 50% 0%,#000 5%,transparent 75%)}
 
-/* ── LOGO (fixed top-left) ── */
-.logo{position:fixed;top:22px;left:26px;z-index:100;display:flex;align-items:center;gap:9px}
-.logo-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.55);animation:dotPulse 3s ease-in-out infinite}
-@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 5px rgba(99,102,241,.08),0 0 28px rgba(99,102,241,.8)}}
-.logo-name{font-size:17px;font-weight:900;letter-spacing:-.04em;color:var(--text)}
-
-/* ── CTRL BUTTONS (fixed top-right) ── */
-.ctrl-row{position:fixed;top:16px;right:20px;z-index:100;display:flex;gap:8px}
-.theme-btn,.sync-btn{
+/* ── CTRL ── */
+.ctrl-row{position:fixed;top:16px;right:20px;z-index:200;display:flex;gap:8px}
+.theme-btn{
   width:42px;height:42px;border-radius:12px;
   background:var(--card-bg);border:1px solid var(--b);
   color:var(--text);font-size:18px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:all .2s;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   box-shadow:0 2px 12px var(--shadow)
 }
-.theme-btn:hover,.sync-btn:hover{border-color:var(--bh);transform:scale(1.06)}
-.sync-btn{font-size:14px;display:none}
-.sync-btn.active{border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.08)}
-.sync-btn img{width:26px;height:26px;border-radius:50%;pointer-events:none}
+.theme-btn:hover{border-color:var(--bh);transform:scale(1.06)}
 
-/* ── CARDS — plein écran 50/50 ── */
-.cards{position:relative;z-index:1;display:flex;flex:1;height:100%}
+/* ── STEP SCREENS ── */
+.step{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;transition:opacity .4s cubic-bezier(.16,1,.3,1),transform .4s cubic-bezier(.16,1,.3,1)}
+.step.out{opacity:0;pointer-events:none;transform:translateY(-18px)}
 
+/* ── STEP 1 : GOOGLE ── */
+#step-google{align-items:center;justify-content:center;padding:0 24px}
+.gs-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;max-width:400px;width:100%}
+.gs-logo{display:flex;align-items:center;gap:10px}
+.gs-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.55);animation:dotPulse 3s ease-in-out infinite;flex-shrink:0}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(99,102,241,.15),0 0 18px rgba(99,102,241,.5)}50%{box-shadow:0 0 0 5px rgba(99,102,241,.08),0 0 28px rgba(99,102,241,.8)}}
+.gs-logo-name{font-size:19px;font-weight:900;letter-spacing:-.04em}
+.gs-title{font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1.08;
+  background:linear-gradient(130deg,var(--text) 30%,var(--acc2) 65%,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gs-sub{font-size:15px;color:var(--sub);line-height:1.65;max-width:300px}
+.gs-sep{width:100%;height:1px;background:var(--b)}
+.btn-google{
+  display:flex;align-items:center;justify-content:center;gap:13px;
+  width:100%;padding:17px 28px;border-radius:16px;
+  background:#fff;color:#1a1a1a;
+  font-family:'Inter',sans-serif;font-size:16px;font-weight:700;
+  border:none;cursor:pointer;
+  box-shadow:0 4px 28px rgba(0,0,0,.45);
+  transition:all .25s cubic-bezier(.16,1,.3,1)
+}
+.btn-google:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 40px rgba(0,0,0,.55)}
+.btn-google:disabled{opacity:.6;cursor:not-allowed}
+.btn-google svg{width:22px;height:22px;flex-shrink:0}
+.gs-err{font-size:12px;color:#ef4444;text-align:center;line-height:1.5;min-height:0}
+.gs-user-row{display:flex;align-items:center;gap:12px;background:var(--card-bg);border:1px solid var(--b);border-radius:14px;padding:12px 16px;width:100%}
+.gs-user-row img{width:36px;height:36px;border-radius:50%;flex-shrink:0}
+.gs-user-row-info{text-align:left;flex:1;min-width:0}
+.gs-user-row-name{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gs-user-row-email{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── STEP 2 : ROLES ── */
+#step-roles{flex-direction:row}
+.cards{display:flex;flex:1;height:100%}
 .role-card{
   flex:1;position:relative;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:100px 48px 120px;
-  cursor:pointer;user-select:none;
+  padding:100px 48px 120px;cursor:pointer;user-select:none;
   transition:background .35s cubic-bezier(.16,1,.3,1);
 }
 .rc-creator{background:linear-gradient(165deg,rgba(99,102,241,.12) 0%,var(--card-bg) 55%);border-right:1px solid var(--b)}
 .rc-worker{background:linear-gradient(165deg,rgba(245,158,11,.09) 0%,var(--card-bg) 55%)}
-
-/* accent stripe top */
-.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:.4;transition:opacity .35s;border-radius:0}
+.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:.4;transition:opacity .35s}
 .rc-creator::before{background:linear-gradient(90deg,transparent,var(--acc),var(--acc2),transparent)}
 .rc-worker::before{background:linear-gradient(90deg,transparent,var(--worker),var(--worker2),transparent)}
-
-/* hover */
 .rc-creator:hover{background:linear-gradient(165deg,rgba(99,102,241,.2) 0%,var(--card-hover) 55%)}
 .rc-worker:hover{background:linear-gradient(165deg,rgba(245,158,11,.16) 0%,var(--card-hover) 55%)}
 .role-card:hover::before{opacity:1}
-
-/* active (selected) */
 .rc-creator.active{background:linear-gradient(165deg,rgba(99,102,241,.25) 0%,var(--card-hover) 45%)}
 .rc-worker.active{background:linear-gradient(165deg,rgba(245,158,11,.2) 0%,var(--card-hover) 45%)}
 .rc-creator.active::before,.rc-worker.active::before{opacity:1}
-
-/* ── ICO ── */
-.role-ico{
-  width:96px;height:96px;border-radius:26px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:44px;margin-bottom:28px;
-  transition:transform .35s cubic-bezier(.16,1,.3,1)
-}
+.role-ico{width:96px;height:96px;border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:28px;transition:transform .35s cubic-bezier(.16,1,.3,1)}
 .role-card:hover .role-ico,.role-card.active .role-ico{transform:scale(1.1) rotate(-6deg)}
 .rc-creator .role-ico{background:rgba(99,102,241,.13);border:1px solid rgba(99,102,241,.28)}
 .rc-worker .role-ico{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.24)}
-
-/* ── TEXTE ── */
 .role-name{font-size:38px;font-weight:900;letter-spacing:-.04em;margin-bottom:10px;color:var(--text);text-align:center}
 .role-tagline{font-size:15px;color:var(--sub);text-align:center;line-height:1.65;margin-bottom:32px;max-width:270px}
-
-/* ── SEPARATOR ── */
 .role-divider{width:72px;height:1px;background:var(--b);margin-bottom:24px}
-
-/* ── PERMS ── */
 .role-perms{display:flex;flex-direction:column;gap:11px;min-width:190px}
 .role-perm{font-size:14px;color:var(--sub);display:flex;align-items:center;gap:10px}
 .perm-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .rc-creator .perm-dot{background:var(--acc2)}
 .rc-worker .perm-dot{background:var(--worker2)}
-
-/* ── CTA HINT ── */
-.corner-hint{
-  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
-  font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--dim);
-  text-transform:uppercase;white-space:nowrap;
-  transition:color .25s
-}
+.corner-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;white-space:nowrap;transition:color .25s}
 .role-card:hover .corner-hint{color:var(--sub)}
 
-/* ── PASSWORD ZONE (slide from bottom) ── */
+/* Bandeau user connecté en haut du step roles */
+.roles-user-bar{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;
+  background:rgba(8,8,8,.7);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--b);
+  font-size:13px;color:var(--sub)
+}
+:root[data-theme="light"] .roles-user-bar{background:rgba(240,242,248,.85)}
+.roles-user-bar img{width:26px;height:26px;border-radius:50%}
+.roles-user-bar .u-name{font-weight:600;color:var(--text)}
+.roles-user-bar .u-sep{margin:0 4px;opacity:.3}
+.roles-user-bar .u-change{margin-left:auto;font-size:11px;color:var(--dim);cursor:pointer;transition:color .15s;text-decoration:underline;text-underline-offset:3px}
+.roles-user-bar .u-change:hover{color:var(--sub)}
+
+/* ── PASSWORD ZONE ── */
 .pwd-zone{
   position:fixed;bottom:0;left:50%;
   transform:translateX(-50%) translateY(110%);
-  z-index:200;
+  z-index:300;
   width:100%;max-width:500px;
   background:var(--pwd-bg);
   border:1px solid var(--b);border-bottom:none;
@@ -182,7 +197,6 @@ body{display:flex;flex-direction:column;position:relative}
 .btn-enter.creator:hover{box-shadow:0 6px 22px rgba(99,102,241,.55);transform:translateY(-1px)}
 .btn-enter.worker{background:linear-gradient(135deg,var(--worker),var(--worker2));color:#000;box-shadow:0 4px 16px rgba(245,158,11,.3)}
 .btn-enter.worker:hover{box-shadow:0 6px 22px rgba(245,158,11,.48);transform:translateY(-1px)}
-
 .err-msg{font-size:12px;color:#ef4444;text-align:center;min-height:18px}
 .err-msg:empty{display:none}
 @keyframes shake{0%,100%{transform:translateX(0)}15%,55%,85%{transform:translateX(-6px)}35%,70%{transform:translateX(6px)}}
@@ -190,11 +204,10 @@ body{display:flex;flex-direction:column;position:relative}
 
 /* ── FOOTER ── */
 .footer-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  position:fixed;bottom:0;left:0;right:0;z-index:5;
   padding:10px 24px;text-align:center;
   font-size:11px;color:var(--footer);
-  pointer-events:none;
-  transition:opacity .3s
+  pointer-events:none;transition:opacity .3s
 }
 .footer-bar.hidden{opacity:0}
 .footer-bar a{color:var(--footer);text-decoration:none;pointer-events:all;transition:color .15s}
@@ -202,7 +215,7 @@ body{display:flex;flex-direction:column;position:relative}
 
 /* ── MOBILE ── */
 @media(max-width:640px){
-  .cards{flex-direction:column}
+  #step-roles{flex-direction:column}
   .rc-creator{border-right:none;border-bottom:1px solid var(--b)}
   .role-card{padding:52px 32px 80px;justify-content:flex-start}
   .role-ico{width:72px;height:72px;font-size:32px;margin-bottom:18px}
@@ -219,52 +232,69 @@ body{display:flex;flex-direction:column;position:relative}
 <div class="bg-glow" aria-hidden="true"></div>
 <div class="bg-grid" aria-hidden="true"></div>
 
-<!-- Logo -->
-<div class="logo" aria-label="Workspace">
-  <div class="logo-dot"></div>
-  <div class="logo-name">Workspace</div>
-</div>
-
-<!-- Ctrl buttons -->
 <div class="ctrl-row">
-  <button class="sync-btn" id="sync-btn" onclick="onSyncClick()" title="Sync Google" aria-label="Sync Google">G</button>
   <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" aria-label="Basculer thème">☀️</button>
 </div>
 
-<!-- Role cards – full screen -->
-<div class="cards">
-
-  <div class="role-card rc-creator" id="card-creator" onclick="selectRole('creator')" role="button" tabindex="0" aria-label="Espace Créateur">
-    <div class="role-ico">✦</div>
-    <div class="role-name">Créateur</div>
-    <div class="role-tagline">Accès complet à tous les outils et analyses de ta chaîne</div>
-    <div class="role-divider"></div>
-    <div class="role-perms">
-      <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Dashboard &amp; analytics</div>
-      <div class="role-perm"><span class="perm-dot"></span>Tous les outils</div>
+<!-- ════ STEP 1 — GOOGLE SIGN-IN ════ -->
+<div class="step" id="step-google">
+  <div class="gs-wrap">
+    <div class="gs-logo">
+      <div class="gs-dot"></div>
+      <div class="gs-logo-name">Workspace</div>
     </div>
-    <div class="corner-hint">APPUIE POUR ENTRER</div>
+    <div class="gs-title">Bienvenue sur<br>ton Workspace</div>
+    <div class="gs-sub">Connecte ton compte Google pour accéder à ton espace de création</div>
+    <div class="gs-sep"></div>
+    <button class="btn-google" id="btn-google-main" onclick="startGoogleSignIn()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continuer avec Google
+    </button>
+    <div class="gs-err" id="gs-err"></div>
   </div>
-
-  <div class="role-card rc-worker" id="card-worker" onclick="selectRole('worker')" role="button" tabindex="0" aria-label="Espace Worker">
-    <div class="role-ico">👥</div>
-    <div class="role-name">Worker</div>
-    <div class="role-tagline">Outils de production pour l'équipe de création</div>
-    <div class="role-divider"></div>
-    <div class="role-perms">
-      <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
-      <div class="role-perm"><span class="perm-dot"></span>Écriture de script</div>
-      <div class="role-perm"><span class="perm-dot"></span>Tes projets</div>
-    </div>
-    <div class="corner-hint">APPUIE POUR ENTRER</div>
-  </div>
-
 </div>
 
-<!-- Password zone (slide-up panel) -->
+<!-- ════ STEP 2 — RÔLE ════ -->
+<div class="step out" id="step-roles">
+  <!-- Bandeau user connecté -->
+  <div class="roles-user-bar" id="roles-user-bar">
+    <img id="roles-user-avatar" src="" alt="" hidden>
+    <span><span class="u-name" id="roles-user-name"></span><span class="u-sep">·</span><span id="roles-user-email"></span></span>
+    <span class="u-change" onclick="changeAccount()">Changer de compte</span>
+  </div>
+
+  <div class="cards">
+    <div class="role-card rc-creator" id="card-creator" onclick="selectRole('creator')" role="button" tabindex="0" aria-label="Espace Créateur">
+      <div class="role-ico">✦</div>
+      <div class="role-name">Créateur</div>
+      <div class="role-tagline">Accès complet à tous les outils et analyses de ta chaîne</div>
+      <div class="role-divider"></div>
+      <div class="role-perms">
+        <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Dashboard &amp; analytics</div>
+        <div class="role-perm"><span class="perm-dot"></span>Tous les outils</div>
+      </div>
+      <div class="corner-hint">APPUIE POUR ENTRER</div>
+    </div>
+
+    <div class="role-card rc-worker" id="card-worker" onclick="selectRole('worker')" role="button" tabindex="0" aria-label="Espace Worker">
+      <div class="role-ico">👥</div>
+      <div class="role-name">Worker</div>
+      <div class="role-tagline">Outils de production pour l'équipe de création</div>
+      <div class="role-divider"></div>
+      <div class="role-perms">
+        <div class="role-perm"><span class="perm-dot"></span>Outlier Finder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Loop Builder</div>
+        <div class="role-perm"><span class="perm-dot"></span>Écriture de script</div>
+        <div class="role-perm"><span class="perm-dot"></span>Tes projets</div>
+      </div>
+      <div class="corner-hint">APPUIE POUR ENTRER</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PASSWORD ZONE (slide-up) ════ -->
 <div class="pwd-zone" id="pwd-zone">
   <div class="pwd-handle"></div>
   <div class="pwd-label" id="pwd-label">MOT DE PASSE CRÉATEUR</div>
@@ -286,7 +316,6 @@ body{display:flex;flex-direction:column;position:relative}
   var t = localStorage.getItem('ws_theme') || 'dark';
   document.getElementById('theme-btn').textContent = t === 'light' ? '🌙' : '☀️';
 })();
-
 function toggleTheme(){
   var html = document.documentElement;
   var cur = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -295,7 +324,7 @@ function toggleTheme(){
   document.getElementById('theme-btn').textContent = cur === 'light' ? '🌙' : '☀️';
 }
 
-// ── Auth redirect ──
+// ── Déjà connecté → redirect immédiat ──
 (function(){
   var r = AUTH.getRole();
   if(r === 'creator') { location.replace('index.html'); return; }
@@ -303,41 +332,115 @@ function toggleTheme(){
 })();
 
 var selectedRole = null;
+var _googleUser  = null;
+var _restored    = false;
 
+// ── Étape 1 → Connexion Google ──
+function startGoogleSignIn() {
+  var btn = document.getElementById('btn-google-main');
+  var errEl = document.getElementById('gs-err');
+  errEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Connexion…';
+  FBSYNC.signIn().then(function(result) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continuer avec Google';
+    if (result && result.user) _afterGoogleSignIn(result.user);
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continuer avec Google';
+    var code = err && err.code;
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+    if (code === 'auth/popup-blocked')
+      errEl.textContent = '⚠️ Popup bloquée — autorise les popups pour ce site dans le navigateur';
+    else if (code === 'auth/unauthorized-domain')
+      errEl.textContent = '⚠️ Domaine non autorisé — ajoute ce domaine dans Firebase Console → Authentication → Authorized domains';
+    else if (code === 'auth/internal-error' || code === 'auth/operation-not-allowed')
+      errEl.textContent = '⚠️ Google Sign-In non activé — Firebase Console → Authentication → Sign-in methods → activer Google';
+    else
+      errEl.textContent = '⚠️ Erreur : ' + (err && (err.message || code) || 'inconnue');
+  });
+}
+
+// ── Après connexion Google : tente de restaurer la session Firestore ──
+function _afterGoogleSignIn(user) {
+  if (_restored) return;
+  _googleUser = user;
+  FBSYNC.loadSession().then(function(data) {
+    if (_restored) return;
+    if (data && data.role) {
+      _restored = true;
+      localStorage.setItem('ws_role', data.role);
+      if (data.name) localStorage.setItem('ws_name', data.name);
+      AUTH.goHome();
+    } else {
+      showRoles(user);
+    }
+  }).catch(function() {
+    showRoles(user);
+  });
+}
+
+// ── Affiche l'étape 2 (choix de rôle) ──
+function showRoles(user) {
+  var u = user || _googleUser;
+  if (u) {
+    var av = document.getElementById('roles-user-avatar');
+    if (u.photoURL) { av.src = u.photoURL; av.hidden = false; }
+    document.getElementById('roles-user-name').textContent = u.displayName || '';
+    document.getElementById('roles-user-email').textContent = u.email || '';
+  }
+  document.getElementById('step-google').classList.add('out');
+  document.getElementById('step-roles').classList.remove('out');
+}
+
+// ── Changer de compte Google ──
+function changeAccount() {
+  FBSYNC.signOut().then(function() {
+    document.getElementById('step-roles').classList.add('out');
+    document.getElementById('step-google').classList.remove('out');
+    document.getElementById('pwd-zone').classList.remove('visible');
+    document.getElementById('footer-bar').classList.remove('hidden');
+    selectedRole = null;
+    _googleUser = null;
+    _restored = false;
+    ['card-creator','card-worker'].forEach(function(id){ document.getElementById(id).classList.remove('active'); });
+  });
+}
+
+// ── Si déjà connecté à Google dans ce navigateur ──
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) _afterGoogleSignIn(user);
+});
+
+// ── Étape 2 → Choix du rôle ──
 function selectRole(role) {
   selectedRole = role;
-
   document.getElementById('card-creator').classList.toggle('active', role === 'creator');
   document.getElementById('card-worker').classList.toggle('active', role === 'worker');
-
   var zone = document.getElementById('pwd-zone');
   var label = document.getElementById('pwd-label');
   var inp = document.getElementById('pwd-inp');
   var btn = document.getElementById('btn-enter');
-
   label.textContent = role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
   inp.value = '';
   inp.className = 'pwd-inp ' + role;
   btn.className = 'btn-enter ' + role;
-
   document.getElementById('err-msg').textContent = '';
   zone.classList.add('visible');
   document.getElementById('footer-bar').classList.add('hidden');
   setTimeout(function(){ inp.focus(); }, 80);
 }
 
+// ── Étape 3 → Mot de passe ──
 function doLogin() {
   var pwd = document.getElementById('pwd-inp').value;
   var role = AUTH.login(pwd);
-  if (!role) {
-    showError('Mot de passe incorrect');
-    return;
-  }
-  var dest = role === 'worker' ? 'worker-home.html' : 'index.html';
-  if (window.FBSYNC && FBSYNC.getUser()) {
-    FBSYNC.saveSession(role, AUTH.getName()).finally(function(){ location.href = dest; });
+  if (!role) { showError('Mot de passe incorrect'); return; }
+  if (window.FBSYNC && _googleUser) {
+    FBSYNC.saveSession(role, AUTH.getName()).then(function(){ AUTH.goHome(); }).catch(function(){ AUTH.goHome(); });
   } else {
-    location.href = dest;
+    AUTH.goHome();
   }
 }
 
@@ -351,7 +454,7 @@ function showError(msg) {
   inp.focus();
 }
 
-// Keyboard: Enter submits, Escape deselects
+// Keyboard
 document.addEventListener('keydown', function(e){
   if (e.key === 'Enter' && selectedRole) { doLogin(); }
   if (e.key === 'Escape') {
@@ -362,102 +465,11 @@ document.addEventListener('keydown', function(e){
     document.getElementById('footer-bar').classList.remove('hidden');
   }
 });
-
 document.querySelectorAll('.role-card').forEach(function(card){
   card.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
   });
 });
-
-// ── Firebase Sync ──
-if (window.FBSYNC) {
-  var _restored = false; // empêche double redirection
-
-  function _updateBtn(user) {
-    var btn = document.getElementById('sync-btn');
-    btn.style.display = 'flex';
-    if (!user) { btn.title = 'Connecter Google pour sync cross-device'; return; }
-    btn.classList.add('active');
-    if (user.photoURL) { btn.innerHTML = '<img src="' + user.photoURL + '" alt="">'; }
-    else { btn.textContent = (user.displayName || user.email || 'G')[0].toUpperCase(); }
-    btn.title = (user.displayName || user.email) + ' — cliquer pour déconnecter la sync';
-  }
-
-  function _handleUser(user) {
-    if (!user) { _updateBtn(null); return; }
-    _updateBtn(user);
-    if (_restored) return;
-    if (!localStorage.getItem('ws_role')) {
-      // Nouvel appareil : restaurer le rôle depuis Firestore → pas de mot de passe nécessaire
-      FBSYNC.loadSession().then(function(data) {
-        if (_restored) return;
-        if (data && data.role) {
-          _restored = true;
-          localStorage.setItem('ws_role', data.role);
-          if (data.name) localStorage.setItem('ws_name', data.name);
-          AUTH.goHome();
-        }
-      }).catch(function(){});
-    } else if (!selectedRole) {
-      // Appareil déjà connu : pré-sélectionner le rôle pour éviter de re-cliquer
-      FBSYNC.loadSession().then(function(data) {
-        if (data && data.role && !selectedRole) {
-          document.getElementById('card-' + data.role).classList.add('active');
-          selectedRole = data.role;
-          var zone  = document.getElementById('pwd-zone');
-          var label = document.getElementById('pwd-label');
-          var inp   = document.getElementById('pwd-inp');
-          var btnE  = document.getElementById('btn-enter');
-          label.textContent = data.role === 'creator' ? 'MOT DE PASSE CRÉATEUR' : 'MOT DE PASSE WORKER';
-          inp.className  = 'pwd-inp ' + data.role;
-          btnE.className = 'btn-enter ' + data.role;
-          zone.classList.add('visible');
-          document.getElementById('footer-bar').classList.add('hidden');
-          setTimeout(function(){ inp.focus(); }, 80);
-        }
-      }).catch(function(){});
-    }
-  }
-
-  // Retour d'un redirect Google (signInWithRedirect → retour sur login.html)
-  FBSYNC.getRedirectResult().then(function(res) {
-    if (res && res.user) _handleUser(res.user);
-  }).catch(function(){});
-
-  // Session Firebase déjà active dans ce navigateur
-  firebase.auth().onAuthStateChanged(function(user) { _handleUser(user); });
-}
-
-function onSyncClick() {
-  if (!window.FBSYNC) return;
-  var user = FBSYNC.getUser();
-  var btn = document.getElementById('sync-btn');
-  if (user) {
-    FBSYNC.signOut().then(function() {
-      btn.classList.remove('active');
-      btn.innerHTML = 'G';
-      btn.title = 'Connecter Google pour sync cross-device';
-    });
-  } else {
-    btn.textContent = '…';
-    FBSYNC.signIn().then(function(result) {
-      if (result && result.user) _handleUser(result.user);
-    }).catch(function(err) {
-      btn.innerHTML = 'G';
-      var code = err && err.code;
-      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
-      if (code === 'auth/popup-blocked') {
-        alert('Popup bloquée — autorise les popups pour ce site dans ton navigateur');
-      } else if (code === 'auth/unauthorized-domain') {
-        alert('Domaine non autorisé Firebase.\n\nFirebase Console → Authentication → Authorized domains → Ajouter : loan26112009-sudo.github.io');
-      } else if (code === 'auth/internal-error' || code === 'auth/operation-not-allowed') {
-        alert('Google Sign-In non activé.\n\nFirebase Console → Authentication → Sign-in methods → activer Google');
-      } else {
-        alert('Erreur Google : ' + (err && (err.message || code) || 'inconnue'));
-      }
-    });
-  }
-}
 </script>
 </body>
 </html>
