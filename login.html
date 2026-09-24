@@ -251,6 +251,7 @@ body{display:flex;flex-direction:column;position:relative}
       Continuer avec Google
     </button>
     <div class="gs-err" id="gs-err"></div>
+    <button onclick="skipGoogle()" style="background:none;border:none;color:var(--sub);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;margin-top:4px;text-decoration:underline;text-underline-offset:3px;padding:4px 0">Continuer sans Google →</button>
   </div>
 </div>
 
@@ -334,6 +335,12 @@ function toggleTheme(){
 var selectedRole = null;
 var _googleUser  = null;
 var _restored    = false;
+
+// ── Passer Google → aller direct au choix du rôle ──
+function skipGoogle() {
+  document.getElementById('step-google').classList.add('out');
+  document.getElementById('step-roles').classList.remove('out');
+}
 
 // ── Étape 1 → Connexion Google ──
 function startGoogleSignIn() {
