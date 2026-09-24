@@ -355,10 +355,10 @@ function startGoogleSignIn() {
       errEl.textContent = '⚠️ Popup bloquée — autorise les popups pour ce site dans le navigateur';
     else if (code === 'auth/unauthorized-domain')
       errEl.textContent = '⚠️ Domaine non autorisé — ajoute ce domaine dans Firebase Console → Authentication → Authorized domains';
-    else if (code === 'auth/internal-error' || code === 'auth/operation-not-allowed')
+    else if (code === 'auth/operation-not-allowed')
       errEl.textContent = '⚠️ Google Sign-In non activé — Firebase Console → Authentication → Sign-in methods → activer Google';
     else
-      errEl.textContent = '⚠️ Erreur : ' + (err && (err.message || code) || 'inconnue');
+      errEl.textContent = '⚠️ Code : ' + (code || '?') + ' — ' + (err && err.message || 'voir F12 Console');
   });
 }
 
