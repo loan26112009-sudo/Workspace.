@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loop Builder</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.ggpht.com https://*.googleusercontent.com https://i.ytimg.com; media-src 'self' data:; connect-src 'self' https://www.googleapis.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.ggpht.com https://*.googleusercontent.com https://i.ytimg.com; media-src 'self' data:; connect-src 'self' https://www.googleapis.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://*.firebaseio.com; frame-src https://accounts.google.com https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="firebase-sync.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1832,6 +1836,36 @@ function getProjects(){
 }
 function saveProjects(list){
   try{localStorage.setItem(STORE_KEY,JSON.stringify(list))}catch(e){}
+  // Sync Firestore — strip thumbImg pour éviter la limite 1MB
+  try{
+    if(window.FBSYNC){
+      var slim=list.map(function(p){
+        if(!p.state)return p;
+        var s=Object.assign({},p.state);
+        if(s.notes)s.notes=Object.assign({},s.notes,{thumbImg:''});
+        return Object.assign({},p,{state:s,thumb:null});
+      });
+      FBSYNC.saveData(STORE_KEY,slim).catch(function(){});
+    }
+  }catch(e){}
+}
+
+// Charge les projets depuis Firestore et fusionne avec localStorage (Firestore gagne)
+function _syncProjectsFromFirestore(){
+  if(!window.FBSYNC)return;
+  FBSYNC.loadData(STORE_KEY).then(function(remoteList){
+    if(!remoteList||!remoteList.length)return;
+    var local=getProjects();
+    // Merge : pour chaque projet remote, remplacer/ajouter dans local
+    var merged=local.slice();
+    remoteList.forEach(function(rp){
+      var idx=merged.findIndex(function(lp){return lp.id===rp.id;});
+      if(idx<0){merged.push(rp);}
+      else if((rp.updated||0)>(merged[idx].updated||0)){merged[idx]=rp;}
+    });
+    try{localStorage.setItem(STORE_KEY,JSON.stringify(merged));}catch(e){}
+    renderProjGrid();
+  }).catch(function(){});
 }
 
 function getStateSnapshot(){
@@ -2241,6 +2275,14 @@ window.addEventListener('load',()=>{
     {id:uid(),label:'Boucle rétention',color:'#0ea5e9'},{id:uid(),label:'Proof / Preuve',color:'#2563eb'},{id:uid(),label:'Chiffre / Stat',color:'#1d4ed8'},{id:uid(),label:'Sponsor',color:'#78716c'},{id:uid(),label:'Fin / Outro',color:'#6b7280'},
   ];
   renderProjGrid();
+  // Sync Firestore cross-device dès que Firebase Auth résout l'utilisateur
+  try{
+    if(window.firebase&&window.FBSYNC){
+      firebase.auth().onAuthStateChanged(function(user){
+        if(user) _syncProjectsFromFirestore();
+      });
+    }
+  }catch(e){}
   loadYT();
   startCountdown();
   renderTools();

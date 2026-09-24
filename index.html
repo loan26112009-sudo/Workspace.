@@ -550,6 +550,7 @@ function saveDisplayName(){
   var val=document.getElementById('name-popup-input').value.trim();
   if(!val)return;
   localStorage.setItem('ws_display_name',val);
+  try{ if(window.FBSYNC) FBSYNC.saveData('displayName',val).catch(function(){}); }catch(e){}
   var first=val.split(' ')[0];
   var greet=document.getElementById('hero-greeting');
   if(greet)greet.textContent='Bonjour '+first+' !';
@@ -645,9 +646,24 @@ firebase.auth().onAuthStateChanged(function(user){
   if(user){
     _gAuthKnown=true;
     gsyncShow(user);
+    // Charger le nom custom depuis Firestore si absent en local (sync cross-device)
+    if(!localStorage.getItem('ws_display_name')){
+      try{FBSYNC.loadData('displayName').then(function(savedName){
+        if(savedName){
+          localStorage.setItem('ws_display_name',savedName);
+          var first=savedName.split(' ')[0];
+          var greet=document.getElementById('hero-greeting');
+          if(greet)greet.textContent='Bonjour '+first+' !';
+          var gsName=document.getElementById('gsync-user-name');
+          if(gsName)gsName.textContent='Bonjour '+first+' !';
+          var ph=localStorage.getItem('ws_gphoto');
+          setNavAvatar(ph||null,first);
+        }
+      }).catch(function(){});}catch(e){}
+    }
   } else if(_gAuthKnown){
     // Déconnexion réelle (signOut appelé explicitement)
-    try{localStorage.removeItem('ws_gphoto');localStorage.removeItem('ws_gname');localStorage.removeItem('ws_gemail');}catch(x){}
+    try{localStorage.removeItem('ws_gphoto');localStorage.removeItem('ws_gname');localStorage.removeItem('ws_gemail');localStorage.removeItem('ws_display_name');}catch(x){}
     document.getElementById('gsync-connected').hidden=true;
     document.getElementById('gsync-guest').hidden=false;
     document.getElementById('gsync-strip').hidden=false;

@@ -70,6 +70,24 @@
       return db.collection('users').doc(u.uid).get().then(function (doc) {
         return doc.exists ? doc.data() : null;
       });
+    },
+
+    // Sauvegarde une valeur arbitraire dans users/{uid}/kv/{key}
+    saveData: function (key, value) {
+      var u = auth.currentUser;
+      if (!u) return Promise.resolve();
+      return db.collection('users').doc(u.uid)
+        .collection('kv').doc(key)
+        .set({ v: value, ts: firebase.firestore.FieldValue.serverTimestamp() });
+    },
+
+    // Charge une valeur depuis users/{uid}/kv/{key}
+    loadData: function (key) {
+      var u = auth.currentUser;
+      if (!u) return Promise.resolve(null);
+      return db.collection('users').doc(u.uid)
+        .collection('kv').doc(key).get()
+        .then(function (doc) { return doc.exists ? doc.data().v : null; });
     }
   };
 })();
