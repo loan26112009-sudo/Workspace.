@@ -440,17 +440,20 @@ function onSyncClick() {
     });
   } else {
     btn.textContent = '…';
-    // signInWithRedirect navigue immédiatement si autorisé ;
-    // .catch() ne s'exécute que si Firebase refuse avant la redirection
-    FBSYNC.signIn().catch(function(err) {
+    FBSYNC.signIn().then(function(result) {
+      if (result && result.user) _handleUser(result.user);
+    }).catch(function(err) {
       btn.innerHTML = 'G';
       var code = err && err.code;
-      if (code === 'auth/unauthorized-domain') {
-        alert('Domaine non autorisé Firebase.\n\n→ Firebase Console → Authentication → Settings → Authorized domains\n→ Ajouter : loan26112009-sudo.github.io');
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+      if (code === 'auth/popup-blocked') {
+        alert('Popup bloquée — autorise les popups pour ce site dans ton navigateur');
+      } else if (code === 'auth/unauthorized-domain') {
+        alert('Domaine non autorisé Firebase.\n\nFirebase Console → Authentication → Authorized domains → Ajouter : loan26112009-sudo.github.io');
       } else if (code === 'auth/internal-error' || code === 'auth/operation-not-allowed') {
-        alert('Google Sign-In non activé.\n\n→ Firebase Console → Authentication → Sign-in methods\n→ Activer le fournisseur "Google"');
+        alert('Google Sign-In non activé.\n\nFirebase Console → Authentication → Sign-in methods → activer Google');
       } else {
-        alert('Erreur Google Sign-In : ' + (err && (err.message || err.code) || 'inconnue'));
+        alert('Erreur Google : ' + (err && (err.message || code) || 'inconnue'));
       }
     });
   }
