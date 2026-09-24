@@ -255,14 +255,25 @@ html,body{overflow-x:hidden;max-width:100%}
   <div class="nav-right">
     <div class="nav-clock" id="app-clock">--:--</div>
     <button class="icon-btn" id="yt-edit-btn" onclick="toggleYTSetup()" title="Connecter YouTube"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-settings"/></svg></button>
-    <div id="creator-name-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:#a5b4fc;letter-spacing:.04em;display:none"></div>
-    <div id="nav-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid rgba(99,102,241,.3);box-shadow:0 0 0 2px rgba(99,102,241,.1);cursor:default"></div>
+    <div style="position:relative;display:flex;align-items:center;gap:6px">
+      <div id="creator-name-badge" onclick="toggleNamePopup()" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.22);color:#a5b4fc;letter-spacing:.04em;display:none;cursor:pointer;transition:background .15s" title="Modifier le nom"></div>
+      <div id="nav-avatar" onclick="toggleNamePopup()" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid rgba(99,102,241,.3);box-shadow:0 0 0 2px rgba(99,102,241,.1);cursor:pointer" title="Modifier le nom"></div>
+      <!-- Popup modifier le nom -->
+      <div id="name-popup" hidden style="position:absolute;top:calc(100% + 10px);right:0;z-index:500;min-width:220px;background:var(--s1);border:1px solid var(--b);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5)">
+        <div style="font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.07em;text-transform:uppercase">Modifier le nom</div>
+        <input id="name-popup-input" type="text" placeholder="Ton prénom ou pseudo…" style="background:var(--inp-bg,rgba(255,255,255,.07));border:1px solid var(--inp-border,rgba(255,255,255,.12));border-radius:9px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:9px 12px;outline:none;width:100%;transition:border-color .2s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor=''" onkeydown="if(event.key==='Enter')saveDisplayName();if(event.key==='Escape')closeNamePopup()">
+        <div style="display:flex;gap:8px">
+          <button onclick="saveDisplayName()" style="flex:1;padding:8px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer">Enregistrer</button>
+          <button onclick="closeNamePopup()" style="padding:8px 12px;border:1px solid var(--b);border-radius:9px;background:transparent;color:var(--sub);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer">Annuler</button>
+        </div>
+      </div>
+    </div>
     <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Thème clair / sombre" style="font-size:16px">☀️</button>
     <button class="icon-btn" onclick="AUTH.logout()" title="Se déconnecter" style="color:rgba(255,255,255,.3)"><svg class="icon" style="width:16px;height:16px"><use href="icons.svg#i-logout"/></svg></button>
   </div>
 </nav>
 <script>(function(){
-  var n=AUTH.getName();
+  var n=localStorage.getItem('ws_display_name')||AUTH.getName();
   var badge=document.getElementById('creator-name-badge');
   if(badge&&n){badge.textContent='✦ '+n;badge.style.display='';}
   var greet=document.getElementById('hero-greeting');
@@ -507,6 +518,44 @@ html,body{overflow-x:hidden;max-width:100%}
 // ── Theme ──
 (function(){var t=localStorage.getItem('ws_theme')||'dark';var btn=document.getElementById('theme-btn');if(btn)btn.textContent=t==='light'?'🌙':'☀️';})();
 function toggleTheme(){var html=document.documentElement;var cur=html.getAttribute('data-theme')==='light'?'dark':'light';html.setAttribute('data-theme',cur);localStorage.setItem('ws_theme',cur);var btn=document.getElementById('theme-btn');if(btn)btn.textContent=cur==='light'?'🌙':'☀️';}
+
+// ── Modifier le nom ──
+function toggleNamePopup(){
+  var p=document.getElementById('name-popup');
+  if(p.hidden){
+    var cur=localStorage.getItem('ws_display_name')||AUTH.getName();
+    document.getElementById('name-popup-input').value=cur||'';
+    p.hidden=false;
+    setTimeout(function(){document.getElementById('name-popup-input').focus();},50);
+    document.addEventListener('click',_namePopupOutside,true);
+  } else { closeNamePopup(); }
+}
+function closeNamePopup(){
+  document.getElementById('name-popup').hidden=true;
+  document.removeEventListener('click',_namePopupOutside,true);
+}
+function _namePopupOutside(e){
+  var p=document.getElementById('name-popup');
+  var av=document.getElementById('nav-avatar');
+  var badge=document.getElementById('creator-name-badge');
+  if(!p.contains(e.target)&&e.target!==av&&e.target!==badge){closeNamePopup();}
+}
+function saveDisplayName(){
+  var val=document.getElementById('name-popup-input').value.trim();
+  if(!val)return;
+  localStorage.setItem('ws_display_name',val);
+  localStorage.setItem('ws_name',val);
+  var first=val.split(' ')[0];
+  var badge=document.getElementById('creator-name-badge');
+  if(badge)badge.textContent='✦ '+val;
+  var greet=document.getElementById('hero-greeting');
+  if(greet)greet.textContent='Bonjour '+first+' !';
+  var gsName=document.getElementById('gsync-user-name');
+  if(gsName)gsName.textContent='Bonjour '+first+' !';
+  var ph=localStorage.getItem('ws_gphoto');
+  setNavAvatar(ph||null,first);
+  closeNamePopup();
+}
 
 // Google Sync
 function setNavAvatar(photoURL, name){
